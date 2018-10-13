@@ -23,8 +23,6 @@ import asyncore
 
 from donkey_gym.core.fps import FPSTimer
 from donkey_gym.core.tcp_server import IMesgHandler, SimServer
-from donkeycar.contrib.coordconv.coord import CoordinateChannel2D
-from donkeycar.utils import linear_unbin
 
 
 class DonkeyUnitySimContoller():
@@ -39,13 +37,13 @@ class DonkeyUnitySimContoller():
         self.wait_time_for_obs = 0.1
 
         # sensor size - height, width, depth
-        self.camera_img_size=(120, 160, 3)
+        self.camera_img_size=(80, 160, 3)
 
         self.address = ('0.0.0.0', port)
 
         self.handler = DonkeyUnitySimHandler(level, time_step=time_step)
-        self.server = SimServer(self.address, self.handler)        
-        
+        self.server = SimServer(self.address, self.handler)
+
         self.thread = Thread(target=asyncore.loop)
         self.thread.daemon = True
         self.thread.start()
@@ -84,6 +82,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     #cross track error max
     CTE_MAX_ERR = 5.0
+    FPS = 60.0
 
     def __init__(self, level, time_step=0.05):
         self.iSceneToLoad = level
@@ -95,9 +94,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.timer = FPSTimer()
 
         # sensor size - height, width, depth
-        self.camera_img_size=(120, 160, 3)
+        self.camera_img_size=(80, 160, 3)
         self.image_array = np.zeros(self.camera_img_size)
         self.last_obs = None
+        self.last_throttle = None
         self.hit = "none"
         self.cte = 0.0
         self.x = 0.0
@@ -141,7 +141,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.send_reset_car()
         time.sleep(1.0)
         self.timer.reset()
-    
+
     def get_sensor_size(self):
         return self.camera_img_size
 
@@ -149,7 +149,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if self.verbose:
             print("take_action")
 
-        self.send_control(action[0], action[1])        
+        # Static throttle
+        action[1] = 0.5
+        self.last_throttle = action[1]
+
+        self.send_control(action[0], action[1])
 
     def observe(self):
         while self.last_obs is self.image_array:
@@ -160,9 +164,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         done = self.is_game_over()
         reward = self.calc_reward(done)
         info = {}
-        
+
         self.timer.on_frame()
-       
+
         return observation, reward, done, info
 
 
@@ -171,14 +175,14 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     ## ------ RL interface ----------- ##
 
+    # Use velocity (m/s) as reward for every step,
+    # except when episode done (failed).
     def calc_reward(self, done):
         if done:
-            return -1.0
+            return 0.0
 
-        if self.cte > self.CTE_MAX_ERR:
-            return -1.0
-
-        return 1.0 - (self.cte / self.CTE_MAX_ERR)
+        velocity = self.last_throttle * (1.0 / self.FPS)
+        return velocity
 
 
     ## ------ Socket interface ----------- ##
@@ -186,7 +190,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def on_telemetry(self, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
-        self.image_array = np.asarray(image)
+        # Crop to the zone of interest - remove top third.
+        # Crop image to size 80x160x3.
+        self.image_array = np.delete(np.asarray(image), np.s_[0:40:], axis=0)
 
         #name of object we just hit. "none" if nothing.
         if self.hit == "none":
