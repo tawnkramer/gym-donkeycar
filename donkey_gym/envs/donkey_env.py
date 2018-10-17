@@ -5,6 +5,8 @@ date: 2018-08-31
 '''
 import os
 from threading import Thread
+import random
+import time
 
 import numpy as np
 import gym
@@ -38,7 +40,7 @@ class DonkeyEnv(gym.Env):
             exe_path = "self_start"
         
         try:
-            port = int(os.environ['DONKEY_SIM_PORT'])
+            port = int(os.environ['DONKEY_SIM_PORT']) + random.randint(0, 1000)
         except:
             print("Missing DONKEY_SIM_PORT environment var. Using defaults")
             port = 9090
@@ -54,9 +56,8 @@ class DonkeyEnv(gym.Env):
         # start simulation com
         self.viewer = DonkeyUnitySimContoller(level=level, time_step=time_step, port=port)
 
-        # steering
-        # TODO(r7vme): Add throttle
-        self.action_space = spaces.Box(low=np.array([-1.0]), high=np.array([1.0]))
+        # steering and throttle
+        self.action_space = spaces.Box(low=np.array([-1.0, 0.0]), high=np.array([1.0, 5.0]), dtype=np.float32 )
 
         # camera sensor data
         self.observation_space = spaces.Box(0, 255, self.viewer.get_sensor_size(), dtype=np.uint8)
@@ -87,6 +88,7 @@ class DonkeyEnv(gym.Env):
     def reset(self):
         self.viewer.reset()
         observation, reward, done, info = self.viewer.observe()
+        time.sleep(1)
         return observation
 
     def render(self, mode="human", close=False):

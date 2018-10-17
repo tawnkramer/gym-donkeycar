@@ -1,5 +1,8 @@
 '''
-migrate something general here
+author: Tawn Kramer
+date: 16 October 2018
+file: tcp_server.py
+notes: a tcp socket server to talk to the unity donkey simulator
 '''
 import os
 import json
@@ -124,7 +127,7 @@ class SimHandler(asyncore.dispatcher):
 
         #if we didn't send all the data..
         if sent < len(data):
-            #then slick off the portion that remains to be sent
+            #then slice off the portion that remains to be sent
             remaining = data[sent:]
 
             #since we've popped it off the list, add it back to the list to send next
@@ -139,7 +142,7 @@ class SimHandler(asyncore.dispatcher):
           processed.
         """
 
-        #receive a chunK of data with the max size chunk_size from our client.
+        #receive a chunk of data with the max size chunk_size from our client.
         data = self.recv(self.chunk_size)
         
         if len(data) == 0:
@@ -173,12 +176,15 @@ class SimHandler(asyncore.dispatcher):
             #something bad happened, usually malformed json packet. jump back to idle and hope things continue
             print(e, 'failed to read json ', chunk)
             return
-
+        '''
         try:
             if self.msg_handler:
                 self.msg_handler.on_recv_message(jsonObj)
         except Exception as e:
             print(e, '>>> failure during on_recv_message:', chunk)
+        '''
+        if self.msg_handler:
+            self.msg_handler.on_recv_message(jsonObj)
 
         
     
