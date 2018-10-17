@@ -9,7 +9,7 @@ Package is under MIT license. *Authored by Tawn Kramer and original sources loca
 
 ## Donkeycar Simulator
 
-The [donkeycar simulator](https://github.com/tawnkramer/sdsandbox/tree/donkey) is a [Unity](www.unity3d.com) application using [Nvidia's PhysX](https://developer.nvidia.com/physx-sdk) to simulate a [donkeycar](www.donkeycar.com) driving in various environments. The simulator connects to an external process via tcp socket. It sends telemetry to and recieves control from the enternal process. 
+The [donkeycar simulator](https://github.com/tawnkramer/sdsandbox/tree/donkey) is a [Unity](http://www.unity3d.com) application using [Nvidia's PhysX](https://developer.nvidia.com/physx-sdk) to simulate a [donkeycar](http://www.donkeycar.com) driving in various environments. The simulator connects to an external process via tcp socket. It sends telemetry to and recieves control from the external process. 
 
 
 ## Installation
