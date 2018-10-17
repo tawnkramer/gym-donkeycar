@@ -29,21 +29,30 @@ class DonkeyEnv(gym.Env):
     def __init__(self, level, time_step=0.05, frame_skip=2):
 
         print("starting DonkeyGym env")
+        
         # start Unity simulation subprocess
         self.proc = DonkeyUnityProcess()
         
         try:
             exe_path = os.environ['DONKEY_SIM_PATH']
         except:
-            print("Missing DONKEY_SIM_PATH environment var. Using defaults")
-            #you must start the executable on your own
+            print("Missing DONKEY_SIM_PATH environment var. you must start sim manually")
             exe_path = "self_start"
+
+        try:
+            port_offset = 0
+            #if more than one sim running on same machine set DONKEY_SIM_MULTI = 1
+            random_port = os.environ['DONKEY_SIM_MULTI']=='1'
+            if random_port:
+                port_offset = random.randint(0, 1000)
+        except:
+            pass
         
         try:
-            port = int(os.environ['DONKEY_SIM_PORT']) + random.randint(0, 1000)
+            port = int(os.environ['DONKEY_SIM_PORT']) + port_offset 
         except:
-            print("Missing DONKEY_SIM_PORT environment var. Using defaults")
-            port = 9090
+            port = 9091 + port_offset
+            print("Missing DONKEY_SIM_PORT environment var. Using default:", port)
             
         try:
             headless = os.environ['DONKEY_SIM_HEADLESS']=='1'

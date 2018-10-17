@@ -27,21 +27,10 @@ from donkey_gym.core.tcp_server import IMesgHandler, SimServer
 
 class DonkeyUnitySimContoller():
 
-    #cross track error max
-    CTE_MAX_ERR = 5.0
-
-    def __init__(self, level, time_step=0.05, port=9090):
-        self.level = level
-        self.time_step = time_step
-        self.verbose = False
-        self.wait_time_for_obs = 0.1
-
-        # sensor size - height, width, depth
-        self.camera_img_size=(120, 160, 3)
-
+    def __init__(self, level, time_step=0.05, port=9090, max_cte=5.0, verbose=False, cam_resolution=(120, 160, 3)):
         self.address = ('0.0.0.0', port)
 
-        self.handler = DonkeyUnitySimHandler(level, time_step=time_step)
+        self.handler = DonkeyUnitySimHandler(level, time_step=time_step, max_cte=max_cte, verbose=verbose, cam_resolution=cam_resolution)
         self.server = SimServer(self.address, self.handler)        
         
         self.thread = Thread(target=asyncore.loop)
@@ -80,20 +69,18 @@ class DonkeyUnitySimContoller():
 
 class DonkeyUnitySimHandler(IMesgHandler):
 
-    #cross track error max
-    CTE_MAX_ERR = 5.0
-
-    def __init__(self, level, time_step=0.05):
+    def __init__(self, level, time_step=0.05, max_cte=5.0, verbose=False, cam_resolution=None):
         self.iSceneToLoad = level
         self.time_step = time_step
         self.wait_time_for_obs = 0.1
         self.sock = None
         self.loaded = False
-        self.verbose = False
+        self.verbose = verbose
+        self.max_cte = max_cte
         self.timer = FPSTimer()
 
         # sensor size - height, width, depth
-        self.camera_img_size=(120, 160, 3)
+        self.camera_img_size = cam_resolution
         self.image_array = np.zeros(self.camera_img_size)
         self.last_obs = None
         self.hit = "none"
@@ -176,29 +163,31 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if done:
             return -1.0
 
-        if self.cte > self.CTE_MAX_ERR:
+        if self.cte > self.max_cte:
             return -1.0
 
         if self.hit != "none":
             return -2.0
 
-        return 1.0 - (self.cte / self.CTE_MAX_ERR) * self.speed
+        #going fast close to the center of lane yeilds best reward
+        return 1.0 - (self.cte / self.max_cte) * self.speed
 
 
     ## ------ Socket interface ----------- ##
 
     def on_telemetry(self, data):
+
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
+        
+        #always update the image_array as the observation loop will hang if not changing.
         self.image_array = np.asarray(image)
 
+        #don't update other telemetry once session over
         if self.over:
             return
         
-        #name of object we just hit. "none" if nothing.
-        if self.hit == "none":
-            self.hit = data["hit"]
-
+        self.hit = data["hit"]
         self.x = data["pos_x"]
         self.y = data["pos_y"]
         self.z = data["pos_z"]
@@ -206,17 +195,21 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         #Cross track error not always present.
         #Will be missing if path is not setup in the given scene.
-        #It should be setup in the 3 scenes available now.
+        #It should be setup in the 4 scenes available now.
         try:
             self.cte = data["cte"]
         except:
             pass
+
+        self.determine_episode_over()
         
+        
+    def determine_episode_over(self):
         #we have a few initial frames on start that are sometimes very large CTE when it's behind
         #the path just slightly. We ignore those.
-        if math.fabs(self.cte) > 2 * self.CTE_MAX_ERR:
+        if math.fabs(self.cte) > 2 * self.max_cte:
             pass
-        elif math.fabs(self.cte) > self.CTE_MAX_ERR:
+        elif math.fabs(self.cte) > self.max_cte:
             if self.verbose:
                 print("game over: cte", self.cte)
             self.over = True
@@ -246,7 +239,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if not self.loaded:
             return
         msg = { 'msg_type' : 'control', 'steering': steer.__str__(), 'throttle':throttle.__str__(), 'brake': '0.0' }
-        self.queue_message(msg)        
+        self.queue_message(msg)
         
     def send_reset_car(self):
         msg = { 'msg_type' : 'reset_car' }
