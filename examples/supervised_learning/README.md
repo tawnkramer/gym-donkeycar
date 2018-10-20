@@ -12,7 +12,7 @@
 
 ### Download the simulator
 
-Download a (simulator binary)[https://github.com/tawnkramer/donkey_gym/releases] for your platform.
+Download a [simulator binary](https://github.com/tawnkramer/donkey_gym/releases) for your platform.
 
 Extract the zip file. Double click on the executable.
 

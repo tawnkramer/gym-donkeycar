@@ -21,13 +21,6 @@ The [donkeycar simulator](https://github.com/tawnkramer/sdsandbox/tree/donkey) i
 
 * Download [simulator binaries](https://github.com/tawnkramer/donkey_gym/releases).
 
-## Use with donkeycar framework
+## Examples
 
-* git clone https://github.com/tawnkramer/donkey
-* pip install -e donkey
-* follow docs [here](https://github.com/tawnkramer/donkey/blob/master/docs/guide/simulator.md)
-
-## Use with stable-baselines
-
-* follow [stable-baselines](https://github.com/hill-a/stable-baselines) install
-* ```python donkey_gym/examples/ppo_train.py --sim <path to simulator>```
+* see [examples](https://github.com/tawnkramer/donkey_gym/tree/master/examples) of use.
