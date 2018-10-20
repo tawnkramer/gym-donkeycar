@@ -104,10 +104,19 @@ if __name__ == "__main__":
         model.learn(total_timesteps=10000)
 
         obs = env.reset()
+        
         for i in range(1000):
+            
             action, _states = model.predict(obs)
+            
             obs, rewards, dones, info = env.step(action)
-            env.render()
+            
+            try:
+                env.render()
+            except Exception as e:
+                print(e)
+                print("failure in render, continuing...")
+                
             if i % 100 == 0:
                 print('saving...')
                 model.save("ppo_donkey")
