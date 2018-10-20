@@ -36,14 +36,19 @@ def make_env(env_id, rank, seed=0):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='ppo_train')
-    parser.add_argument('--sim', type=str, default="manual", help='path to unity simulator. maybe be left at manual if you would like to start the sim on your own.')
+    parser.add_argument('--sim', type=str, default="sim_path", help='path to unity simulator. maybe be left at manual if you would like to start the sim on your own.')
     parser.add_argument('--headless', type=int, default=0, help='1 to supress graphics')
     parser.add_argument('--port', type=int, default=9091, help='port to use for tcp')
-    parser.add_argument('--test', action="store_true", help='load the model and play')
+    parser.add_argument('--test', action="store_true", help='load the trained model and play')
+    parser.add_argument('--multi', action="store_true", help='start multiple sims at once')
     
 
     args = parser.parse_args()
 
+    if args.sim == "sim_path" and args.multi:
+        print("you must supply the sim path with --sim when running multiple environments")
+        exit(1)
+    
     #we pass arguments to the donkey_gym init via these
     os.environ['DONKEY_SIM_PATH'] = args.sim
     os.environ['DONKEY_SIM_PORT'] = str(args.port)
@@ -52,6 +57,8 @@ if __name__ == "__main__":
     env_id = "donkey-generated-track-v0"
 
     if args.test:
+
+        #Make an environment test our trained policy
         env = gym.make(env_id)
         env = DummyVecEnv([lambda: env])
 
@@ -66,12 +73,34 @@ if __name__ == "__main__":
         print("done testing")
         
     else:
+    
+        if args.multi:
 
-        num_cpu = 4  # Number of processes to use
-        # Create the vectorized environment
-        env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
+            #setup random offset of network ports
+            os.environ['DONKEY_SIM_MULTI'] = '1'
 
-        model = PPO2(CnnLstmPolicy, env, verbose=1)
+            # Number of processes to use
+            num_cpu = 4
+
+            # Create the vectorized environment
+            env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
+
+            #create recurrent policy
+            model = PPO2(CnnLstmPolicy, env, verbose=1)
+
+        else:
+
+            #make gym env
+            env = gym.make(env_id)
+
+            # Create the vectorized environment
+            env = DummyVecEnv([lambda: env])
+
+            #create cnn policy
+            model = PPO2(CnnPolicy, env, verbose=1)
+
+
+        #set up model in learning mode with goal number of timesteps to complete
         model.learn(total_timesteps=10000)
 
         obs = env.reset()
@@ -86,5 +115,6 @@ if __name__ == "__main__":
         # Save the agent
         model.save("ppo_donkey")
         print("done training")
+
 
     env.close()

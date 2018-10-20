@@ -14,6 +14,7 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 from donkey_gym.envs.donkey_sim import DonkeyUnitySimContoller
 from donkey_gym.envs.donkey_proc import DonkeyUnityProcess
+from donkey_gym.envs.donkey_ex import SimFailed
 
 class DonkeyEnv(gym.Env):
     """
@@ -64,7 +65,7 @@ class DonkeyEnv(gym.Env):
 
         # start simulation com
         self.viewer = DonkeyUnitySimContoller(level=level, time_step=time_step, port=port)
-
+        
         # steering and throttle
         self.action_space = spaces.Box(low=np.array([-1.0, 0.0]), high=np.array([1.0, 5.0]), dtype=np.float32 )
 

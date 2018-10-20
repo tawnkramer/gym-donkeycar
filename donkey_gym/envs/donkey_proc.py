@@ -16,7 +16,7 @@ class DonkeyUnityProcess(object):
     def start(self, sim_path, headless=False, port=9090):
 
         if not os.path.exists(sim_path):
-            print(sim_path, "does not exist. not starting sim.")
+            print(sim_path, "does not exist. you must start sim manually.")
             return
 
         port_args = ["--port", str(port), '-logFile', 'unitylog.txt']

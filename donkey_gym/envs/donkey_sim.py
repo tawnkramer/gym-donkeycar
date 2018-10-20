@@ -23,7 +23,7 @@ import asyncore
 
 from donkey_gym.core.fps import FPSTimer
 from donkey_gym.core.tcp_server import IMesgHandler, SimServer
-
+from donkey_gym.envs.donkey_ex import SimFailed
 
 class DonkeyUnitySimContoller():
 
@@ -31,7 +31,12 @@ class DonkeyUnitySimContoller():
         self.address = ('0.0.0.0', port)
 
         self.handler = DonkeyUnitySimHandler(level, time_step=time_step, max_cte=max_cte, verbose=verbose, cam_resolution=cam_resolution)
-        self.server = SimServer(self.address, self.handler)        
+
+        try:
+            self.server = SimServer(self.address, self.handler)
+        except OSError:
+            print('raising custom error')
+            raise SimFailed("failed to listen on address %s" % self.address)
         
         self.thread = Thread(target=asyncore.loop)
         self.thread.daemon = True
@@ -39,7 +44,7 @@ class DonkeyUnitySimContoller():
 
     def wait_until_loaded(self):
         while not self.handler.loaded:
-            print("waiting to load..")
+            print("waiting for sim to start..")
             time.sleep(3.0)
 
     def reset(self):
@@ -202,7 +207,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             pass
 
         self.determine_episode_over()
-        
+
         
     def determine_episode_over(self):
         #we have a few initial frames on start that are sometimes very large CTE when it's behind
