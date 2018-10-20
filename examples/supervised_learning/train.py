@@ -92,17 +92,12 @@ def generator(samples, batch_size=32, perc_to_augment=0.5):
             controls = []
             for fullpath in batch_samples:
                 try:
-                    if conf.data_format == 1:
-                        frame_number = os.path.basename(fullpath).split("_")[0]
-                        json_filename = os.path.join(os.path.dirname(fullpath), "record_" + frame_number + ".json")
-                        data = load_json(json_filename)
-                        steering = float(data["user/angle"])
-                        throttle = float(data["user/throttle"]) / 10.0
-                    else:    
-                        data = parse_img_filepath(fullpath)
-                        steering = float(data["steering"])
-                        throttle = float(data["throttle"])                          
-
+                    frame_number = os.path.basename(fullpath).split("_")[0]
+                    json_filename = os.path.join(os.path.dirname(fullpath), "record_" + frame_number + ".json")
+                    data = load_json(json_filename)
+                    steering = float(data["user/angle"])
+                    throttle = float(data["user/throttle"])
+                
                     try:
                         image = Image.open(fullpath)
                     except:
@@ -250,6 +245,7 @@ def go(model_name, epochs=50, inputs='./log/*.jpg', limit=None, aug_mult=1, aug_
             plt.xlabel('epoch')
             plt.legend(['train', 'test'], loc='upper left')
             plt.savefig(model_name + 'loss.png')
+            plt.show()
     except:
         print("problems with loss graph")
 
