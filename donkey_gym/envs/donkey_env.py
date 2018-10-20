@@ -25,7 +25,12 @@ class DonkeyEnv(gym.Env):
         "render.modes": ["human", "rgb_array"],
     }
 
-    ACTION = ["steer", "throttle"]
+    ACTION_NAMES = ["steer", "throttle"]
+    STEER_LIMIT_LEFT = -1.0
+    STEER_LIMIT_RIGHT = 1.0
+    THROTTLE_MIN = 0.0
+    THROTTLE_MAX = 5.0
+    VAL_PER_PIXEL = 255
 
     def __init__(self, level, time_step=0.05, frame_skip=2):
 
@@ -67,10 +72,11 @@ class DonkeyEnv(gym.Env):
         self.viewer = DonkeyUnitySimContoller(level=level, time_step=time_step, port=port)
         
         # steering and throttle
-        self.action_space = spaces.Box(low=np.array([-1.0, 0.0]), high=np.array([1.0, 5.0]), dtype=np.float32 )
+        self.action_space = spaces.Box(low=np.array([self.STEER_LIMIT_LEFT, self.THROTTLE_MIN]),
+            high=np.array([self.STEER_LIMIT_RIGHT, self.THROTTLE_MAX]), dtype=np.float32 )
 
         # camera sensor data
-        self.observation_space = spaces.Box(0, 255, self.viewer.get_sensor_size(), dtype=np.uint8)
+        self.observation_space = spaces.Box(0, self.VAL_PER_PIXEL, self.viewer.get_sensor_size(), dtype=np.uint8)
 
         # simulation related variables.
         self.seed()
