@@ -23,7 +23,6 @@ import datetime
 
 from donkey_gym.core.fps import FPSTimer
 from donkey_gym.core.tcp_server import IMesgHandler, SimServer
-from donkeycar.contrib.coordconv.coord import CoordinateChannel2D
 from donkeycar.utils import linear_unbin
 import conf
 
