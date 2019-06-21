@@ -96,7 +96,7 @@ def generator(samples, batch_size=32, perc_to_augment=0.5):
                     json_filename = os.path.join(os.path.dirname(fullpath), "record_" + frame_number + ".json")
                     data = load_json(json_filename)
                     steering = float(data["user/angle"])
-                    throttle = float(data["user/throttle"])
+                    throttle = float(data["user/throttle"]) / conf.throttle_out_scale
                 
                     try:
                         image = Image.open(fullpath)

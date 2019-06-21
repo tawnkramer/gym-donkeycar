@@ -152,7 +152,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         observation = self.image_array
         done = self.is_game_over()
         reward = self.calc_reward(done)
-        info = {}
+        info = {'pos': ( self.x, self.y, self.z), 'cte' : self.cte, "speed": self.speed, "hit": self.hit }
         
         self.timer.on_frame()
        
@@ -188,11 +188,6 @@ class DonkeyUnitySimHandler(IMesgHandler):
         #always update the image_array as the observation loop will hang if not changing.
         self.image_array = np.asarray(image)
 
-        #don't update other telemetry once session over
-        if self.over:
-            return
-        
-        self.hit = data["hit"]
         self.x = data["pos_x"]
         self.y = data["pos_y"]
         self.z = data["pos_z"]
@@ -201,11 +196,15 @@ class DonkeyUnitySimHandler(IMesgHandler):
         #Cross track error not always present.
         #Will be missing if path is not setup in the given scene.
         #It should be setup in the 4 scenes available now.
-        try:
+        if "cte" in data:
             self.cte = data["cte"]
-        except:
-            pass
 
+        #don't update hit once session over
+        if self.over:
+            return
+        
+        self.hit = data["hit"]
+        
         self.determine_episode_over()
 
         
