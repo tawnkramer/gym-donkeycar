@@ -37,7 +37,7 @@ class DonkeyUnitySimContoller():
         except OSError:
             print('raising custom error')
             raise SimFailed("failed to listen on address %s" % self.address)
-        
+
         self.thread = Thread(target=asyncore.loop)
         self.thread.daemon = True
         self.thread.start()
@@ -134,7 +134,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.send_reset_car()
         self.timer.reset()
         time.sleep(1)
-    
+
     def get_sensor_size(self):
         return self.camera_img_size
 
@@ -142,7 +142,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if self.verbose:
             print("take_action")
 
-        self.send_control(action[0], action[1])        
+        self.send_control(action[0], action[1])
 
     def observe(self):
         while self.last_obs is self.image_array:
@@ -155,7 +155,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         info = {'pos': ( self.x, self.y, self.z), 'cte' : self.cte, "speed": self.speed, "hit": self.hit }
         
         self.timer.on_frame()
-       
+
         return observation, reward, done, info
 
 
@@ -184,7 +184,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
-        
+
         #always update the image_array as the observation loop will hang if not changing.
         self.image_array = np.asarray(image)
 
@@ -207,7 +207,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         
         self.determine_episode_over()
 
-        
+
     def determine_episode_over(self):
         #we have a few initial frames on start that are sometimes very large CTE when it's behind
         #the path just slightly. We ignore those.
@@ -244,7 +244,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             return
         msg = { 'msg_type' : 'control', 'steering': steer.__str__(), 'throttle':throttle.__str__(), 'brake': '0.0' }
         self.queue_message(msg)
-        
+
     def send_reset_car(self):
         msg = { 'msg_type' : 'reset_car' }
         self.queue_message(msg)
@@ -262,7 +262,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             if self.verbose:
                 print('skiping:', msg)
             return
-            
+
         if self.verbose:
             print('sending', msg)
         self.sock.queue_message(msg)

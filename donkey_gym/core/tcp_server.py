@@ -4,12 +4,34 @@ date: 16 October 2018
 file: tcp_server.py
 notes: a tcp socket server to talk to the unity donkey simulator
 '''
-import os
 import json
 import time
+import re
 import asyncore
-import json
 import socket
+
+
+def replace_float_notation(string):
+    """
+    Replace unity float notation for languages like
+    French or German that use comma instead of dot.
+    This convert the json sent by Unity to a valid one.
+    Ex: "test": 1,2, "key": 2 -> "test": 1.2, "key": 2
+
+    :param string: (str) The incorrect json string
+    :return: (str) Valid JSON string
+    """
+    regex_french_notation = r'"[a-zA-Z_]+":(?P<num>[0-9,E-]+),'
+    regex_end = r'"[a-zA-Z_]+":(?P<num>[0-9,E-]+)}'
+
+    for regex in [regex_french_notation, regex_end]:
+        matches = re.finditer(regex, string, re.MULTILINE)
+
+        for match in matches:
+            num = match.group('num').replace(',', '.')
+            string = string.replace(match.group('num'), num)
+    return string
+
 
 class IMesgHandler(object):
 
@@ -31,7 +53,7 @@ class SimServer(asyncore.dispatcher):
       Receives network connections and establishes handlers for each client.
       Each client connection is handled by a new instance of the SteeringHandler class.
     """
-    
+
     def __init__(self, address, msg_handler):
         asyncore.dispatcher.__init__(self)
 
@@ -43,33 +65,33 @@ class SimServer(asyncore.dispatcher):
 
         #let TCP stack know that we'd like to sit on this address and listen for connections
         self.bind(address)
-        
+
         #confirm for users what address we are listening on
         self.address = self.socket.getsockname()
         print('binding to', self.address)
-        
+
         #let tcp stack know we plan to process one outstanding request to connect request each loop
         self.listen(5)
 
         #keep a pointer to our IMesgHandler handler
         self.msg_handler = msg_handler
-        
+
 
     def handle_accept(self):
         # Called when a client connects to our socket
         client_info = self.accept()
-        
+
         print('got a new client', client_info[1])
 
         #make a new steering handler to communicate with the client
         SimHandler(sock=client_info[0], msg_handler=self.msg_handler)
-        
-    
+
+
     def handle_close(self):
         print("server shutdown")
         # Called then server is shutdown
         self.close()
-    
+
         if self.msg_handler:
             self.msg_handler.on_close()
 
@@ -78,11 +100,11 @@ class SimHandler(asyncore.dispatcher):
     """
       Handles messages from a single TCP client.
     """
-    
+
     def __init__(self, sock, chunk_size=(16*1024), msg_handler=None):
         #we call our base class init
         asyncore.dispatcher.__init__(self, sock=sock)
-        
+
         #msg_handler handles incoming messages
         self.msg_handler = msg_handler
 
@@ -98,7 +120,7 @@ class SimHandler(asyncore.dispatcher):
         #and image bytes is an empty list of partial bytes of the image as it comes in
         self.data_to_read = []
 
-    
+
     def writable(self):
         """
           We want to write if we have received data.
@@ -110,7 +132,7 @@ class SimHandler(asyncore.dispatcher):
     def queue_message(self, msg):
         json_msg = json.dumps(msg)
         self.data_to_write.append(json_msg)
-    
+
 
     def handle_write(self):
         """
@@ -144,7 +166,7 @@ class SimHandler(asyncore.dispatcher):
 
         #receive a chunk of data with the max size chunk_size from our client.
         data = self.recv(self.chunk_size)
-        
+
         if len(data) == 0:
           #this only happens when the connection is dropped
           self.handle_close()
@@ -153,7 +175,7 @@ class SimHandler(asyncore.dispatcher):
         self.data_to_read.append(data.decode("utf-8"))
 
         messages = ''.join(self.data_to_read).split('\n')
-        
+
         self.data_to_read = []
 
         for mesg in messages:
@@ -170,6 +192,9 @@ class SimHandler(asyncore.dispatcher):
         We are expecing a json object
         '''
         try:
+            # Replace comma with dots for floats
+            # useful when using unity in a language different from English
+            chunk = replace_float_notation(chunk)
             #convert data into a string with decode, and then load it as a json object
             jsonObj = json.loads(chunk)
         except Exception as e:
@@ -186,8 +211,8 @@ class SimHandler(asyncore.dispatcher):
         if self.msg_handler:
             self.msg_handler.on_recv_message(jsonObj)
 
-        
-    
+
+
     def handle_close(self):
         #when client drops or closes connection
         if self.msg_handler:
@@ -195,4 +220,4 @@ class SimHandler(asyncore.dispatcher):
             self.msg_handler = None
             print('connection dropped')
 
-        self.close()        
+        self.close()
