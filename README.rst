@@ -53,6 +53,15 @@ Environments
 Credits
 ------------
 
+Original Source Code
+
+Tawn Kramer - https://github.com/tawnkramer/donkey_gym
+Roma Sokolkov - https://github.com/r7vme/donkey_gym
+
+Release Engineer
+
+.. _Leigh Johnson: https://github.com/leigh-johnson
+
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
