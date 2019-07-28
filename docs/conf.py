@@ -18,12 +18,12 @@
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 #
+import gym_donkeycar
 import os
 from pathlib import Path
 
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-import gym_donkeycar
 # -- General configuration ---------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -47,7 +47,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'OpenAI Gym for Donkey Car (https://www.donkeycar.com/)'
+project = u'DonkeyCar OpenAI Gym'
 copyright = u"2019, Leigh Johnson"
 author = u"Leigh Johnson"
 
@@ -129,7 +129,7 @@ latex_elements = {
 # [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'gym_donkeycar.tex',
-     u'OpenAI Gym for Donkey Car (https://www.donkeycar.com/) Documentation',
+     u'OpenAI Gym Environments for Donkey CarDocumentation',
      u'Leigh Johnson', 'manual'),
 ]
 
@@ -140,7 +140,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'gym_donkeycar',
-     u'OpenAI Gym for Donkey Car (https://www.donkeycar.com/) Documentation',
+     u'OpenAI Gym Environments for Donkey CarDocumentation',
      [author], 1)
 ]
 
@@ -152,7 +152,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'gym_donkeycar',
-     u'OpenAI Gym for Donkey Car (https://www.donkeycar.com/) Documentation',
+     u'OpenAI Gym Environments for Donkey CarDocumentation',
      author,
      'gym_donkeycar',
      'One line description of project.',

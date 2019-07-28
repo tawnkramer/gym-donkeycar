@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Top-level package for OpenAI Gym for Donkey Car (https://www.donkeycar.com/)."""
+"""Top-level package for OpenAI Gym Environments for Donkey Car."""
 
 __author__ = """Leigh Johnson"""
 __email__ = 'leigh@data-literate.com'

@@ -1,4 +1,4 @@
-Welcome to OpenAI Gym for Donkey Car (https://www.donkeycar.com/)'s documentation!
+OpenAI Gym Environments for Donkey Car
 ======================================
 
 .. toctree::

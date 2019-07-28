@@ -1,5 +1,5 @@
 ======================================================
-OpenAI Gym for Donkey Car (https://www.donkeycar.com/)
+OpenAI Gym Environments for Donkey Car
 ======================================================
 
 
@@ -17,10 +17,10 @@ Donkey Car OpenAI Gym
 
 
 * Free software: MIT license
-* Documentation: https://gym-donkeycar.readthedocs.io.
+* Documentation: https://gym-donkeycar.readthedocs.io/en/latest/
 
 Installation
---------
+--------------
 
 * Install with `pip`
     `pip install gym-donkeycar`
@@ -29,24 +29,26 @@ Installation
 
 
 Example Usage
---------
+--------------
 
-```python
-import gym
+.. code-block:: python
 
-env = gym.make("donkey-generated-track-v0)
-```
+    import gym
+
+    env = gym.make("donkey-generated-track-v0)
+
+
 Environments
---------
+---------------
 
-* `"donkey-warehouse-v0"`
-* `"donkey-generated-roads-v0"`
-* `"donkey-avc-sparkfun-v0"`
-* `"donkey-generated-track-v0"`
+* "donkey-warehouse-v0"
+* "donkey-generated-roads-v0"
+* "donkey-avc-sparkfun-v0"
+* "donkey-generated-track-v0"
 
 
 Credits
--------
+------------
 
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 

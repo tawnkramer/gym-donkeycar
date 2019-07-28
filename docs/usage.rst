@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use OpenAI Gym for Donkey Car (https://www.donkeycar.com/) in a project::
+To use OpenAI Gym Environments for Donkey Carin a project::
 
     import gym_donkeycar

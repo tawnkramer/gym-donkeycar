@@ -8,7 +8,7 @@ from gym_donkeycar import __version__
 """The setup script."""
 
 description = """
-    OpenAI Gym for Donkey Car (https://www.donkeycar.com/)
+    OpenAI Gym Environments for Donkey Car
 
     Forked from
     https://github.com/tawnkramer/donkey_gym 

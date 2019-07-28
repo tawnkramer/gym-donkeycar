@@ -1,4 +1,4 @@
-* OpenAI Gym for Donkey Car (https://www.donkeycar.com/) version:
+* OpenAI Gym Environments for Donkey Carversion:
 * Python version:
 * Operating System:
 
