@@ -22,10 +22,13 @@ Donkey Car OpenAI Gym
 Installation
 --------------
 
-* Install with `pip`
-    `pip install gym-donkeycar`
+* Install with pip
 
-* Download [simulator binaries](https://github.com/tawnkramer/donkey_gym/releases)
+.. code-block:: shell
+
+    pip install gym-donkeycar
+
+* Download simulator binaries: https://github.com/tawnkramer/donkey_gym/releases
 
 
 Example Usage

@@ -7,17 +7,7 @@ from gym_donkeycar import __version__
 
 """The setup script."""
 
-description = """
-    OpenAI Gym Environments for Donkey Car
-
-    Forked from
-    https://github.com/tawnkramer/donkey_gym 
-    https://github.com/r7vme/donkey_gym
-
-    Depends on sdsandbox by Tawn Kramer
-
-    https://github.com/tawnkramer/sdsandbox/
-"""
+description = 'OpenAI Gym Environments for Donkey Car'
 
 
 with open('README.rst') as readme_file:
