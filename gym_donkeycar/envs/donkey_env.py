@@ -4,17 +4,15 @@ author: Tawn Kramer
 date: 2018-08-31
 '''
 import os
-from threading import Thread
 import random
 import time
 
 import numpy as np
 import gym
-from gym import error, spaces, utils
+from gym import spaces
 from gym.utils import seeding
 from gym_donkeycar.envs.donkey_sim import DonkeyUnitySimContoller
 from gym_donkeycar.envs.donkey_proc import DonkeyUnityProcess
-from gym_donkeycar.envs.donkey_ex import SimFailed
 
 
 class DonkeyEnv(gym.Env):

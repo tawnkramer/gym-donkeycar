@@ -4,23 +4,16 @@ author: Tawn Kramer
 date: 2018-08-31
 '''
 
-import os
-import json
-import logging
-import shutil
-import base64
-import random
 import time
 from io import BytesIO
 import math
+import logging
 from threading import Thread
+import asyncore
+import base64
 
 import numpy as np
 from PIL import Image
-from io import BytesIO
-import base64
-import datetime
-import asyncore
 
 from gym_donkeycar.core.fps import FPSTimer
 from gym_donkeycar.core.tcp_server import IMesgHandler, SimServer
@@ -39,9 +32,9 @@ class DonkeyUnitySimContoller():
         self.address = (hostname, port)
 
         self.handler = DonkeyUnitySimHandler(
-            level, time_step=time_step, max_cte=max_cte, cam_resolution=cam_resolution)
-        
-        import pdb; pdb.set_trace()
+            level, time_step=time_step, max_cte=max_cte,
+            cam_resolution=cam_resolution)
+
         try:
             self.server = SimServer(self.address, self.handler)
         except OSError:
@@ -115,7 +108,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.sock = None
 
     def on_recv_message(self, message):
-        if not 'msg_type' in message:
+        if 'msg_type' not in message:
             logger.error('expected msg_type field')
             return
 

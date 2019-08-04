@@ -1,3 +1,4 @@
+# flake8: noqa
 from gym.envs.registration import register
 from .donkey_env import GeneratedRoadsEnv, WarehouseEnv, AvcSparkfunEnv, GeneratedTrackEnv
 

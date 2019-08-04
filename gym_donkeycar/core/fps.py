@@ -1,5 +1,6 @@
 import time
 
+
 class FPSTimer(object):
     def __init__(self):
         self.t = time.time()
