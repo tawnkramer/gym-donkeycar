@@ -1,5 +1,5 @@
 from gym.envs.registration import register
-from donkey_env import GeneratedRoadsEnv, WarehouseEnv, AvcSparkfunEnv, GeneratedTrackEnv
+from .donkey_env import GeneratedRoadsEnv, WarehouseEnv, AvcSparkfunEnv, GeneratedTrackEnv
 
 register(
     id='donkey-generated-roads-v0',
