@@ -126,3 +126,7 @@ $ git push
 $ git push --tags
 
 Travis will then deploy to PyPI if tests pass.
+
+WARNING: Ensure tests have passed on `branch` before cutting a release with `bumpversion && git push --tags`. 
+
+If the deploy build flakes, you will need run `bumpversion` and `git push --tags` again. 
