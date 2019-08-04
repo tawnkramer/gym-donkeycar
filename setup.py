@@ -48,7 +48,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/leigh-johnson/gym_donkeycar',
+    url='https://github.com/leigh-johnson/gym-donkeycar',
     version=__version__,
     zip_safe=False,
 )
