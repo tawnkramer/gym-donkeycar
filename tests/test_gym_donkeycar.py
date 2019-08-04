@@ -3,20 +3,28 @@
 
 """Tests for `gym_donkeycar` package."""
 
+import os
 import pytest
 
+import gym
+import gym_donkeycar.envs
 
-@pytest.fixture
-def response():
-    """Sample pytest fixture.
+env_list = [
+       "donkey-warehouse-v0",
+       "donkey-generated-roads-v0",
+       "donkey-avc-sparkfun-v0",
+       "donkey-generated-track-v0"
+]
 
-    See more at: http://doc.pytest.org/en/latest/fixture.html
-    """
-    # import requests
-    # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
+def test_load_gyms(mocker):
+    sim_ctl = mocker.patch('gym_donkeycar.envs.donkey_env.DonkeyUnitySimContoller')
+    unity_proc = mocker.patch('gym_donkeycar.envs.donkey_env.DonkeyUnityProcess')
 
+    for i, gym_name in enumerate(env_list):
 
-def test_content(response):
-    """Sample pytest test function with the pytest fixture as an argument."""
-    # from bs4 import BeautifulSoup
-    # assert 'GitHub' in BeautifulSoup(response.content).title.string
+        env = gym.make(gym_name)
+        assert env.ACTION_NAMES == ['steer', 'throttle']
+        assert env.spec.id == gym_name
+        assert sim_ctl.call_count == i+1
+        assert unity_proc.call_count == i+1
+

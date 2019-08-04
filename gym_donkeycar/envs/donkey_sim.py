@@ -39,8 +39,9 @@ class DonkeyUnitySimContoller():
         self.address = (hostname, port)
 
         self.handler = DonkeyUnitySimHandler(
-            level, time_step=time_step, max_cte=max_cte, verbose=verbose, cam_resolution=cam_resolution)
-
+            level, time_step=time_step, max_cte=max_cte, cam_resolution=cam_resolution)
+        
+        import pdb; pdb.set_trace()
         try:
             self.server = SimServer(self.address, self.handler)
         except OSError:
