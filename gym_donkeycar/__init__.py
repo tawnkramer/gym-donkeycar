@@ -4,4 +4,4 @@
 
 __author__ = """Leigh Johnson"""
 __email__ = 'leigh@data-literate.com'
-__version__ = '1.0.5'
+__version__ = '1.0.6'
