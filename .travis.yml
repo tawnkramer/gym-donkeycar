@@ -12,7 +12,6 @@ deploy:
     distributions: sdist bdist_wheel
     user: leigh-johnson
     on:
-      all_branches: true
       tags: true
       repo: leigh-johnson/gym-donkeycar
       python: 3.6
