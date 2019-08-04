@@ -27,7 +27,7 @@ setup_requirements = ['pytest-runner', ]
 test_requirements = ['pytest', ]
 
 setup(
-    author="Tawn Kramer, Leigh Johnson",
+    author='Tawn Kramer',
     author_email='leigh@data-literate.com',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
