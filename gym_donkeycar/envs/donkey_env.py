@@ -4,17 +4,16 @@ author: Tawn Kramer
 date: 2018-08-31
 '''
 import os
-from threading import Thread
 import random
 import time
 
 import numpy as np
 import gym
-from gym import error, spaces, utils
+from gym import spaces
 from gym.utils import seeding
-from donkey_gym.envs.donkey_sim import DonkeyUnitySimContoller
-from donkey_gym.envs.donkey_proc import DonkeyUnityProcess
-from donkey_gym.envs.donkey_ex import SimFailed
+from gym_donkeycar.envs.donkey_sim import DonkeyUnitySimContoller
+from gym_donkeycar.envs.donkey_proc import DonkeyUnityProcess
+
 
 class DonkeyEnv(gym.Env):
     """
@@ -35,10 +34,10 @@ class DonkeyEnv(gym.Env):
     def __init__(self, level, time_step=0.05, frame_skip=2):
 
         print("starting DonkeyGym env")
-        
+
         # start Unity simulation subprocess
         self.proc = DonkeyUnityProcess()
-        
+
         try:
             exe_path = os.environ['DONKEY_SIM_PATH']
         except:
@@ -47,21 +46,21 @@ class DonkeyEnv(gym.Env):
 
         try:
             port_offset = 0
-            #if more than one sim running on same machine set DONKEY_SIM_MULTI = 1
-            random_port = os.environ['DONKEY_SIM_MULTI']=='1'
+            # if more than one sim running on same machine set DONKEY_SIM_MULTI = 1
+            random_port = os.environ['DONKEY_SIM_MULTI'] == '1'
             if random_port:
                 port_offset = random.randint(0, 1000)
         except:
             pass
-        
+
         try:
-            port = int(os.environ['DONKEY_SIM_PORT']) + port_offset 
+            port = int(os.environ['DONKEY_SIM_PORT']) + port_offset
         except:
             port = 9091 + port_offset
             print("Missing DONKEY_SIM_PORT environment var. Using default:", port)
-            
+
         try:
-            headless = os.environ['DONKEY_SIM_HEADLESS']=='1'
+            headless = os.environ['DONKEY_SIM_HEADLESS'] == '1'
         except:
             print("Missing DONKEY_SIM_HEADLESS environment var. Using defaults")
             headless = False
@@ -69,14 +68,16 @@ class DonkeyEnv(gym.Env):
         self.proc.start(exe_path, headless=headless, port=port)
 
         # start simulation com
-        self.viewer = DonkeyUnitySimContoller(level=level, time_step=time_step, port=port)
-        
+        self.viewer = DonkeyUnitySimContoller(
+            level=level, time_step=time_step, port=port)
+
         # steering and throttle
         self.action_space = spaces.Box(low=np.array([self.STEER_LIMIT_LEFT, self.THROTTLE_MIN]),
-            high=np.array([self.STEER_LIMIT_RIGHT, self.THROTTLE_MAX]), dtype=np.float32 )
+                                       high=np.array([self.STEER_LIMIT_RIGHT, self.THROTTLE_MAX]), dtype=np.float32)
 
         # camera sensor data
-        self.observation_space = spaces.Box(0, self.VAL_PER_PIXEL, self.viewer.get_sensor_size(), dtype=np.uint8)
+        self.observation_space = spaces.Box(
+            0, self.VAL_PER_PIXEL, self.viewer.get_sensor_size(), dtype=np.uint8)
 
         # simulation related variables.
         self.seed()
@@ -126,15 +127,18 @@ class GeneratedRoadsEnv(DonkeyEnv):
     def __init__(self):
         super(GeneratedRoadsEnv, self).__init__(level=0)
 
+
 class WarehouseEnv(DonkeyEnv):
 
     def __init__(self):
         super(WarehouseEnv, self).__init__(level=1)
 
+
 class AvcSparkfunEnv(DonkeyEnv):
 
     def __init__(self):
         super(AvcSparkfunEnv, self).__init__(level=2)
+
 
 class GeneratedTrackEnv(DonkeyEnv):
 
