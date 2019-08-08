@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/leigh-johnson/gym_donkeycar
+    $ git clone git://github.com/tawnkramer/gym-donkeycar
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/leigh-johnson/gym_donkeycar/tarball/master
+    $ curl  -OL https://github.com/tawnkramer/gym-donkeycar/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/leigh-johnson/gym_donkeycar
-.. _tarball: https://github.com/leigh-johnson/gym_donkeycar/tarball/master
+.. _Github repo: https://github.com/tawnkramer/gym-donkeycar
+.. _tarball: https://github.com/tawnkramer/gym-donkeycar/tarball/master
