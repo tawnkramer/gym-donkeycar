@@ -67,7 +67,8 @@ Action space
 
 A permissable action is a numpy array of length two with first steering and throttle, respectively. E.g. np.array([0,1]) goes straight at full speed, np.array([-5,1]) turns left etc.
 
-Action Space: Box(2,)  
+Action Space: Box(2,)
+
 Action names: ['steer', 'throttle']
 
 
