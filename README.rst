@@ -85,7 +85,8 @@ What you receive back on step
   - hit: 'none' if all is good.
 
 example info:
-.. code-block:: json
+
+.. code-block:: python
 
 {'pos': (51.49209, 0.7399381, 117.3004),
  'cte': -5.865292,
