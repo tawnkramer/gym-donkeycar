@@ -21,8 +21,8 @@ from io import BytesIO
 import base64
 import datetime
 
-from donkey_gym.core.fps import FPSTimer
-from donkey_gym.core.tcp_server import IMesgHandler, SimServer
+from gym_donkeycar.core.fps import FPSTimer
+from gym_donkeycar.core.tcp_server import IMesgHandler, SimServer
 from donkeycar.utils import linear_unbin
 import conf
 

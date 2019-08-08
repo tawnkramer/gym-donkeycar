@@ -8,7 +8,7 @@ https://github.com/hill-a/stable-baselines
 import os
 import argparse
 import gym
-import donkey_gym
+import gym_donkeycar
 
 from stable_baselines.common.policies import MlpPolicy, CnnPolicy, CnnLstmPolicy
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         print("you must supply the sim path with --sim when running multiple environments")
         exit(1)
     
-    #we pass arguments to the donkey_gym init via these
+    #we pass arguments to the gym-donkeycar init via these
     os.environ['DONKEY_SIM_PATH'] = args.sim
     os.environ['DONKEY_SIM_PORT'] = str(args.port)
     os.environ['DONKEY_SIM_HEADLESS'] = str(args.headless)

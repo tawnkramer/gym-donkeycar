@@ -28,7 +28,7 @@ test_requirements = ['pytest', ]
 
 setup(
     author='Tawn Kramer',
-    author_email='leigh@data-literate.com',
+    author_email='tawnkramer@gmail.com',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -48,7 +48,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/leigh-johnson/gym-donkeycar',
+    url='https://github.com/tawnkramer/gym-donkeycar',
     version=__version__,
     zip_safe=False,
 )

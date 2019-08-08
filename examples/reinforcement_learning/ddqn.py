@@ -31,7 +31,7 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D
 import tensorflow as tf
 from tensorflow.keras import backend as K
 
-import donkey_gym
+import gym_donkeycar
 
 EPISODES = 10000
 img_rows, img_cols = 80, 80
@@ -220,7 +220,7 @@ def run_ddqn(args):
     sess = tf.Session(config=config)
     K.set_session(sess)
 
-    #we pass arguments to the donkey_gym init via these
+    #we pass arguments to the gym-donkeycar init via these
     os.environ['DONKEY_SIM_PATH'] = args.sim
     os.environ['DONKEY_SIM_PORT'] = str(args.port)
     os.environ['DONKEY_SIM_HEADLESS'] = str(args.headless)

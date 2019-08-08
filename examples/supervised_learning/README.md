@@ -12,7 +12,7 @@
 
 ### Download the simulator
 
-Download a [simulator binary](https://github.com/tawnkramer/donkey_gym/releases) for your platform.
+Download a [simulator binary](https://github.com/tawnkramer/gym-donkeycar/releases) for your platform.
 
 Extract the zip file. Double click on the executable.
 
@@ -32,7 +32,7 @@ In the simulator, press "Exit" to go the Menu screen.
 
 ### Save data to a log
 
-Click the "log dir" button and specify a log dir to save data. You may choose the `donkey_gym/examples/supervised_learning/log` folder for example.
+Click the "log dir" button and specify a log dir to save data. You may choose the `gym-donkeycar/examples/supervised_learning/log` folder for example.
 
 Select your prefered environment.
 

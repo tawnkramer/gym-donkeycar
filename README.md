@@ -1,10 +1,10 @@
-# donkey_gym
+# gym-donkeycar
 
 OpenAI gym environment for donkeycar simulator.
 
 # Legal notice
 
-Package is under MIT license. *Authored by Tawn Kramer and original sources located [here](https://github.com/tawnkramer/sdsandbox/tree/donkey/src/donkey_gym)*. 
+Package is under MIT license. *Authored by Tawn Kramer and original sources located [here](https://github.com/tawnkramer/sdsandbox/tree/donkey/src/gym-donkeycar)*. 
 
 
 ## Donkeycar Simulator
@@ -14,16 +14,16 @@ The [donkeycar simulator](https://github.com/tawnkramer/sdsandbox/tree/donkey) i
 
 ## Installation
 
-* git clone https://github.com/tawnkramer/donkey_gym
-* pip install -e donkey_gym
+* git clone https://github.com/tawnkramer/gym-donkeycar
+* pip install gym_donkeycar
 
 ## Simulator Binaries
 
-* Download [simulator binaries](https://github.com/tawnkramer/donkey_gym/releases).
+* Download [simulator binaries](https://github.com/tawnkramer/gym-donkeycar/releases).
 
 ## Examples
 
-* see [examples](https://github.com/tawnkramer/donkey_gym/tree/master/examples) of use.
+* see [examples](https://github.com/tawnkramer/gym-donkeycar/tree/master/examples) of use.
 
 
 ## Environment quickstart:
@@ -32,7 +32,7 @@ Simple example code:
 ```
 import os
 import gym
-import donkey_gym
+import gym_donkeycar
 import numpy as np
 
 #%% SET UP ENVIRONMENT
