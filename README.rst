@@ -30,6 +30,9 @@ Installation
 
 * Download simulator binaries: https://github.com/tawnkramer/gym-donkeycar/releases
 
+Installation Help Video:
+https://youtu.be/J6Ll5Obtuxk
+
 
 Example Usage
 --------------
