@@ -22,7 +22,8 @@ import base64
 import datetime
 
 from gym_donkeycar.core.fps import FPSTimer
-from gym_donkeycar.core.tcp_server import IMesgHandler, SimServer
+from gym_donkeycar.core.message import IMesgHandler
+from gym_donkeycar.core.sim_client import SimClient
 from donkeycar.utils import linear_unbin
 import conf
 
@@ -61,14 +62,15 @@ class DonkeySimMsgHandler(IMesgHandler):
         self.movie_handler = movie_handler
         self.fns = {'telemetry' : self.on_telemetry}
 
-    def on_connect(self, socketHandler):
-        self.sock = socketHandler
+    def on_connect(self, client):
+        self.client = client
         self.timer.reset()
 
     def on_recv_message(self, message):
         self.timer.on_frame()
         if not 'msg_type' in message:
             print('expected msg_type field')
+            print('got:', message)
             return
 
         msg_type = message['msg_type']
@@ -128,8 +130,7 @@ class DonkeySimMsgHandler(IMesgHandler):
     def send_control(self, steer, throttle):
         msg = { 'msg_type' : 'control', 'steering': steer.__str__(), 'throttle':throttle.__str__(), 'brake': '0.0' }
         #print(steer, throttle)
-        self.sock.queue_message(msg)
-        
+        self.client.queue_message(msg)
 
     def on_disconnect(self):
         if self.movie_handler:
@@ -150,14 +151,16 @@ def go(filename, address, constant_throttle, gif):
   
     #setup the server
     handler = DonkeySimMsgHandler(model, constant_throttle, movie_handler)
-    server = SimServer(address, handler)
+    client = SimClient(address, handler)
 
-    try:
-        #asyncore.loop() will keep looping as long as any asyncore dispatchers are alive
-        asyncore.loop()
-    except KeyboardInterrupt:
-        #unless some hits Ctrl+C and then we get this interrupt
-        print('stopping')
+    while client.is_connected():
+        try:
+            time.sleep(1.0)
+        except KeyboardInterrupt:
+            #unless some hits Ctrl+C and then we get this interrupt
+            print('stopping')
+            break
+
 
 # ***** main loop *****
 if __name__ == "__main__":

@@ -16,7 +16,8 @@ import numpy as np
 from PIL import Image
 
 from gym_donkeycar.core.fps import FPSTimer
-from gym_donkeycar.core.tcp_server import IMesgHandler, SimServer
+from gym_donkeycar.core.message import IMesgHandler
+from gym_donkeycar.core.sim_client import SimClient
 from gym_donkeycar.envs.donkey_ex import SimFailed
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 class DonkeyUnitySimContoller():
 
-    def __init__(self, level, time_step=0.05, hostname='0.0.0.0',
+    def __init__(self, level, time_step=0.05, hostname='127.0.0.1',
                  port=9090, max_cte=5.0, loglevel='INFO', cam_resolution=(120, 160, 3)):
 
         logger.setLevel(loglevel)
@@ -35,14 +36,8 @@ class DonkeyUnitySimContoller():
             level, time_step=time_step, max_cte=max_cte,
             cam_resolution=cam_resolution)
 
-        try:
-            self.server = SimServer(self.address, self.handler)
-        except OSError:
-            raise SimFailed("failed to listen on address %s" % self.address)
+        self.client = SimClient(self.address, self.handler)
 
-        self.thread = Thread(target=asyncore.loop)
-        self.thread.daemon = True
-        self.thread.start()
 
     def wait_until_loaded(self):
         while not self.handler.loaded:
@@ -62,7 +57,7 @@ class DonkeyUnitySimContoller():
         return self.handler.observe()
 
     def quit(self):
-        pass
+        self.client.stop()
 
     def render(self, mode):
         pass
@@ -80,7 +75,6 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.iSceneToLoad = level
         self.time_step = time_step
         self.wait_time_for_obs = 0.1
-        self.sock = None
         self.loaded = False
         self.max_cte = max_cte
         self.timer = FPSTimer()
@@ -99,13 +93,17 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.fns = {'telemetry': self.on_telemetry,
                     "scene_selection_ready": self.on_scene_selection_ready,
                     "scene_names": self.on_recv_scene_names,
-                    "car_loaded": self.on_car_loaded}
+                    "car_loaded": self.on_car_loaded,
+                    "aborted": self.on_abort}
 
-    def on_connect(self, socketHandler):
-        self.sock = socketHandler
+    def on_connect(self, client):
+        self.client = client
 
     def on_disconnect(self):
-        self.sock = None
+        self.client = None
+
+    def on_abort(self):
+        self.client.stop()
 
     def on_recv_message(self, message):
         if 'msg_type' not in message:
@@ -249,9 +247,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.queue_message(msg)
 
     def queue_message(self, msg):
-        if self.sock is None:
+        if self.client is None:
             logger.debug(f'skiping: \n {msg}')
             return
 
         logger.debug(f'sending \n {msg}')
-        self.sock.queue_message(msg)
+        self.client.queue_message(msg)

@@ -31,7 +31,7 @@ class DonkeyEnv(gym.Env):
     THROTTLE_MAX = 5.0
     VAL_PER_PIXEL = 255
 
-    def __init__(self, level, time_step=0.05, frame_skip=2):
+    def __init__(self, level, time_step=0.05, frame_skip=2, start_delay=5.0):
 
         print("starting DonkeyGym env")
 
@@ -45,18 +45,8 @@ class DonkeyEnv(gym.Env):
             exe_path = "self_start"
 
         try:
-            port_offset = 0
-            # if more than one sim running on same machine set DONKEY_SIM_MULTI = 1
-            random_port = os.environ['DONKEY_SIM_MULTI'] == '1'
-            if random_port:
-                port_offset = random.randint(0, 1000)
+            port = int(os.environ['DONKEY_SIM_PORT'])
         except:
-            pass
-
-        try:
-            port = int(os.environ['DONKEY_SIM_PORT']) + port_offset
-        except:
-            port = 9091 + port_offset
             print("Missing DONKEY_SIM_PORT environment var. Using default:", port)
 
         try:
@@ -66,6 +56,9 @@ class DonkeyEnv(gym.Env):
             headless = False
 
         self.proc.start(exe_path, headless=headless, port=port)
+
+        # wait for simulator to startup and begin listening
+        time.sleep(start_delay)
 
         # start simulation com
         self.viewer = DonkeyUnitySimContoller(
@@ -92,6 +85,7 @@ class DonkeyEnv(gym.Env):
         self.close()
 
     def close(self):
+        self.viewer.quit()
         self.proc.quit()
 
     def seed(self, seed=None):

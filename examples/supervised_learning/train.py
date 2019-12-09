@@ -1,6 +1,6 @@
 '''
 Train
-Train your nerual network
+Train your neural network
 Author: Tawn Kramer
 '''
 from __future__ import print_function
@@ -10,14 +10,16 @@ import glob
 import time
 import fnmatch
 import argparse
+import random
+import json
+
 import numpy as np
 from PIL import Image
 from tensorflow import keras
+
 import conf
-import random
 import augment
 import models
-import json
 
 '''
 matplotlib can be a pain to setup. So handle the case where it is absent. When present,
