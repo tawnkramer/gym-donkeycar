@@ -53,8 +53,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='gym_test')
     parser.add_argument('--sim', type=str, default="sim_path",
                         help='path to unity simulator. maybe be left at default if you would like to start the sim on your own.')
-    parser.add_argument('--headless', type=int, default=0,
-                        help='1 to supress graphics')
     parser.add_argument('--port', type=int, default=9091,
                         help='port to use for websockets')
     parser.add_argument('--env_name', type=str, default='donkey-generated-track-v0',
@@ -62,12 +60,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # we pass arguments to the gym_donkeycar init via these
-    os.environ['DONKEY_SIM_PATH'] = args.sim
-    os.environ['DONKEY_SIM_PORT'] = str(args.port)
-    os.environ['DONKEY_SIM_HEADLESS'] = str(args.headless)
-
-    env = gym.make(args.env_name)
+    env = gym.make(args.env_name, exe_path=args.sim, port=args.port)
 
     simulate(env)
 

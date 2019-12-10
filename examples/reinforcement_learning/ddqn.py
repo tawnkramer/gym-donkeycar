@@ -215,19 +215,16 @@ def run_ddqn(args):
     run a DDQN training session, or test it's result, with the donkey simulator
     '''
 
+    # only needed if TF==1.13.1
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     sess = tf.Session(config=config)
     K.set_session(sess)
 
-    #we pass arguments to the gym-donkeycar init via these
-    os.environ['DONKEY_SIM_PATH'] = args.sim
-    os.environ['DONKEY_SIM_PORT'] = str(args.port)
-    os.environ['DONKEY_SIM_HEADLESS'] = str(args.headless)
+    # Construct gym environment. Starts the simulator if path is given.
+    env = gym.make(args.env_name, exe_path=args.sim, port=args.port)
 
-    env = gym.make(args.env_name)
-
-    #not working on windows...
+    # not working on windows...
     def signal_handler(signal, frame):
         print("catching ctrl+c")
         env.unwrapped.close()
@@ -329,7 +326,6 @@ if __name__ == "__main__":
     parser.add_argument('--sim', type=str, default="manual", help='path to unity simulator. maybe be left at manual if you would like to start the sim on your own.')
     parser.add_argument('--model', type=str, default="rl_driver.h5", help='path to model')
     parser.add_argument('--test', action="store_true", help='agent uses learned model to navigate env')
-    parser.add_argument('--headless', type=int, default=0, help='1 to supress graphics')
     parser.add_argument('--port', type=int, default=9091, help='port to use for websockets')
     parser.add_argument('--throttle', type=float, default=0.3, help='constant throttle for driving')
     parser.add_argument('--env_name', type=str, default='donkey-generated-track-v0', help='name of donkey sim environment', choices=env_list)

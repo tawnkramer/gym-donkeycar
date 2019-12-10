@@ -171,5 +171,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    address = ('0.0.0.0', 9091)
+    address = ('127.0.0.1', 9091)
     go(args.model, address, args.constant_throttle, args.gif)

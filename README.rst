@@ -45,11 +45,10 @@ Simple example code:
     import numpy as np
 
     #%% SET UP ENVIRONMENT
-    os.environ['DONKEY_SIM_PATH'] = f"{PATH_TO_APP}/donkey_sim.app/Contents/MacOS/donkey_sim"
-    os.environ['DONKEY_SIM_PORT'] = str(9091)
-    os.environ['DONKEY_SIM_HEADLESS'] = str(0) # "1" is headless
+    exe_path = f"{PATH_TO_APP}/donkey_sim.app/Contents/MacOS/donkey_sim"
+    port = 9091    
 
-    env = gym.make("donkey-warehouse-v0")
+    env = gym.make("donkey-warehouse-v0", exe_path=exe_path, port=port)
 
     #%% PLAY
     obv = env.reset()

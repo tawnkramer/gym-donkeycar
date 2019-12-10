@@ -31,38 +31,21 @@ class DonkeyEnv(gym.Env):
     THROTTLE_MAX = 5.0
     VAL_PER_PIXEL = 255
 
-    def __init__(self, level, time_step=0.05, frame_skip=2, start_delay=5.0):
+    def __init__(self, level=0, exe_path="self_start", host='127.0.0.1', port=9091, frame_skip=2, start_delay=5.0):
 
         print("starting DonkeyGym env")
 
         # start Unity simulation subprocess
         self.proc = DonkeyUnityProcess()
 
-        try:
-            exe_path = os.environ['DONKEY_SIM_PATH']
-        except:
-            print("Missing DONKEY_SIM_PATH environment var. you must start sim manually")
-            exe_path = "self_start"
-
-        try:
-            port = int(os.environ['DONKEY_SIM_PORT'])
-        except:
-            print("Missing DONKEY_SIM_PORT environment var. Using default:", port)
-
-        try:
-            headless = os.environ['DONKEY_SIM_HEADLESS'] == '1'
-        except:
-            print("Missing DONKEY_SIM_HEADLESS environment var. Using defaults")
-            headless = False
-
-        self.proc.start(exe_path, headless=headless, port=port)
+        # the unity sim server will bind to the host ip given
+        self.proc.start(exe_path, host='0.0.0.0', port=port)
 
         # wait for simulator to startup and begin listening
         time.sleep(start_delay)
 
         # start simulation com
-        self.viewer = DonkeyUnitySimContoller(
-            level=level, time_step=time_step, port=port)
+        self.viewer = DonkeyUnitySimContoller(level=level, host=host, port=port)
 
         # steering and throttle
         self.action_space = spaces.Box(low=np.array([self.STEER_LIMIT_LEFT, self.THROTTLE_MIN]),
@@ -118,23 +101,23 @@ class DonkeyEnv(gym.Env):
 
 class GeneratedRoadsEnv(DonkeyEnv):
 
-    def __init__(self):
-        super(GeneratedRoadsEnv, self).__init__(level=0)
+    def __init__(self, *args, **kwargs):
+        super(GeneratedRoadsEnv, self).__init__(level=0, *args, **kwargs)
 
 
 class WarehouseEnv(DonkeyEnv):
 
-    def __init__(self):
-        super(WarehouseEnv, self).__init__(level=1)
+    def __init__(self, *args, **kwargs):
+        super(WarehouseEnv, self).__init__(level=1, *args, **kwargs)
 
 
 class AvcSparkfunEnv(DonkeyEnv):
 
-    def __init__(self):
-        super(AvcSparkfunEnv, self).__init__(level=2)
+    def __init__(self, *args, **kwargs):
+        super(AvcSparkfunEnv, self).__init__(level=2, *args, **kwargs)
 
 
 class GeneratedTrackEnv(DonkeyEnv):
 
-    def __init__(self):
-        super(GeneratedTrackEnv, self).__init__(level=3)
+    def __init__(self, *args, **kwargs):
+        super(GeneratedTrackEnv, self).__init__(level=3, *args, **kwargs)

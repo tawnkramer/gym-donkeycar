@@ -5,12 +5,11 @@ date: 2018-08-31
 '''
 
 import time
-from io import BytesIO
 import math
 import logging
-from threading import Thread
-import asyncore
 import base64
+from threading import Thread
+from io import BytesIO
 
 import numpy as np
 from PIL import Image
@@ -25,15 +24,15 @@ logger = logging.getLogger(__name__)
 
 class DonkeyUnitySimContoller():
 
-    def __init__(self, level, time_step=0.05, hostname='127.0.0.1',
+    def __init__(self, level, host='127.0.0.1',
                  port=9090, max_cte=5.0, loglevel='INFO', cam_resolution=(120, 160, 3)):
 
         logger.setLevel(loglevel)
 
-        self.address = (hostname, port)
+        self.address = (host, port)
 
         self.handler = DonkeyUnitySimHandler(
-            level, time_step=time_step, max_cte=max_cte,
+            level, max_cte=max_cte,
             cam_resolution=cam_resolution)
 
         self.client = SimClient(self.address, self.handler)
@@ -71,10 +70,8 @@ class DonkeyUnitySimContoller():
 
 class DonkeyUnitySimHandler(IMesgHandler):
 
-    def __init__(self, level, time_step=0.05, max_cte=5.0, cam_resolution=None):
+    def __init__(self, level, max_cte=5.0, cam_resolution=None):
         self.iSceneToLoad = level
-        self.time_step = time_step
-        self.wait_time_for_obs = 0.1
         self.loaded = False
         self.max_cte = max_cte
         self.timer = FPSTimer()

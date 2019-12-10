@@ -46,7 +46,6 @@ if __name__ == "__main__":
 	
     parser = argparse.ArgumentParser(description='ppo_train')
     parser.add_argument('--sim', type=str, default="sim_path", help='path to unity simulator. maybe be left at manual if you would like to start the sim on your own.')
-    parser.add_argument('--headless', type=int, default=0, help='1 to supress graphics')
     parser.add_argument('--port', type=int, default=9091, help='port to use for tcp')
     parser.add_argument('--test', action="store_true", help='load the trained model and play')
     parser.add_argument('--multi', action="store_true", help='start multiple sims at once')
@@ -58,17 +57,12 @@ if __name__ == "__main__":
         print("you must supply the sim path with --sim when running multiple environments")
         exit(1)
     
-    #we pass arguments to the gym-donkeycar init via these
-    os.environ['DONKEY_SIM_PATH'] = args.sim
-    os.environ['DONKEY_SIM_PORT'] = str(args.port)
-    os.environ['DONKEY_SIM_HEADLESS'] = str(args.headless)
-
     env_id = args.env_name
 
     if args.test:
 
         #Make an environment test our trained policy
-        env = gym.make(env_id)
+        env = gym.make(env_id, exe_path=args.sim, port=args.port)
         env = DummyVecEnv([lambda: env])
 
         model = PPO2.load("ppo_donkey")

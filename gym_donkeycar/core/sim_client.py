@@ -27,22 +27,14 @@ class SimClient(SDClient):
         msg_handler.on_connect(self)
 
     def queue_message(self, msg):
-        # right now, no queue. Just immediate send.
+        # takes a dict input msg, converts to json string
+        # and sends immediately. right now, no queue.
         json_msg = json.dumps(msg)
         self.send(json_msg)
 
     def on_msg_recv(self, jsonObj):
         # pass message on to handler
         self.msg_handler.on_recv_message(jsonObj)
-
-    def handle_close(self):
-        # when client drops or closes connection
-        if self.msg_handler:
-            self.msg_handler.on_disconnect()
-            self.msg_handler = None
-            print('connection dropped')
-
-        self.close()
 
     def is_connected(self):
         return not self.aborted

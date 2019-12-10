@@ -1,5 +1,6 @@
 """
 IMesgHandler
+Author: Tawn Kramer
 
 Base class for a handler expected by SimClient
 """
