@@ -6,10 +6,6 @@ training_batch_size = 128
 
 training_default_epochs = 100
 
-training_default_aug_mult = 1
-
-training_default_aug_percent = 0.0
-
 image_width = 160
 image_height = 120
 image_depth = 3
@@ -23,7 +19,5 @@ num_outputs = 2
 
 #when steering alone:
 #num_outputs = 1
-
-steering_scale = 16.0
 
 throttle_out_scale = 1.0

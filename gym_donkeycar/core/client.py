@@ -20,10 +20,11 @@ from .util import replace_float_notation
 
 
 class SDClient:
-    def __init__(self, host, port):
+    def __init__(self, host, port, poll_socket_sleep_time=0.05):
         self.msg = None
         self.host = host
         self.port = port
+        self.poll_socket_sleep_sec = poll_socket_sleep_time
 
         # the aborted flag will be set when we have detected a problem with the socket
         # that we can't recover from.
@@ -37,7 +38,6 @@ class SDClient:
         # connecting to the server 
         print("connecting to", self.host, self.port)
         self.s.connect((self.host, self.port))
-        print("socket connected")
 
         # time.sleep(pause_on_create)
         self.do_process_msgs = True
@@ -79,7 +79,7 @@ class SDClient:
         while self.do_process_msgs:
             # without this sleep, I was getting very consistent socket errors
             # on Windows. Perhaps we don't need this sleep on other platforms.
-            time.sleep(0.05)
+            time.sleep(self.poll_socket_sleep_sec)
 
             try:
                 # test our socket for readable, writable states.

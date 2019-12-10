@@ -18,7 +18,6 @@ from PIL import Image
 from tensorflow import keras
 
 import conf
-import augment
 import models
 
 '''
@@ -82,7 +81,6 @@ def generator(samples, batch_size=32, perc_to_augment=0.5):
     negated.
     '''
     num_samples = len(samples)
-    shadows = augment.load_shadow_images('./shadows/*.png')    
     
     while 1: # Loop forever so the generator never terminates
         samples = shuffle(samples)
@@ -110,18 +108,14 @@ def generator(samples, batch_size=32, perc_to_augment=0.5):
                         continue
 
                     #PIL Image as a numpy array
-                    image = np.array(image)
+                    image = np.array(image, dtype=np.float32)
 
-                    if len(shadows) > 0 and random.uniform(0.0, 1.0) < perc_to_augment:
-                        image = augment.augment_image(image, shadows)
-
-                    center_angle = steering
                     images.append(image)
                     
                     if conf.num_outputs == 2:
-                        controls.append([center_angle, throttle])
+                        controls.append([steering, throttle])
                     elif conf.num_outputs == 1:
-                        controls.append([center_angle])
+                        controls.append([steering])
                     else:
                         print("expected 1 or 2 ouputs")
 
@@ -141,8 +135,6 @@ def get_files(filemask):
     '''
     use a filemask and search a path recursively for matches
     '''
-    #matches = glob.glob(os.path.expanduser(filemask))
-    #return matches
     filemask = os.path.expanduser(filemask)
     path, mask = os.path.split(filemask)
     
@@ -186,8 +178,8 @@ def make_generators(inputs, limit=None, batch_size=32, aug_perc=0.0):
     print("num train/val", len(train_samples), len(validation_samples))
     
     # compile and train the model using the generator function
-    train_generator = generator(train_samples, batch_size=batch_size, perc_to_augment=aug_perc)
-    validation_generator = generator(validation_samples, batch_size=batch_size, perc_to_augment=0.0)
+    train_generator = generator(train_samples, batch_size=batch_size)
+    validation_generator = generator(validation_samples, batch_size=batch_size)
     
     n_train = len(train_samples)
     n_val = len(validation_samples)
@@ -195,7 +187,7 @@ def make_generators(inputs, limit=None, batch_size=32, aug_perc=0.0):
     return train_generator, validation_generator, n_train, n_val
 
 
-def go(model_name, epochs=50, inputs='./log/*.jpg', limit=None, aug_mult=1, aug_perc=0.0):
+def go(model_name, epochs=50, inputs='./log/*.jpg', limit=None):
 
     print('working on model', model_name)
 
@@ -218,7 +210,7 @@ def go(model_name, epochs=50, inputs='./log/*.jpg', limit=None, aug_mult=1, aug_
 
 
     #Train on session images
-    train_generator, validation_generator, n_train, n_val = make_generators(inputs, limit=limit, batch_size=batch_size, aug_perc=aug_perc)
+    train_generator, validation_generator, n_train, n_val = make_generators(inputs, limit=limit, batch_size=batch_size)
 
     if n_train == 0:
         print('no training data found')
@@ -257,10 +249,9 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=conf.training_default_epochs, help='number of epochs')
     parser.add_argument('--inputs', default='./log/*.jpg', help='input mask to gather images')
     parser.add_argument('--limit', type=int, default=None, help='max number of images to train with')
-    parser.add_argument('--aug_mult', type=int, default=conf.training_default_aug_mult, help='how many more images to augment')
-    parser.add_argument('--aug_perc', type=float, default=conf.training_default_aug_percent, help='what percentage of images to augment 0 - 1')
-    args = parser.parse_args()
+     args = parser.parse_args()
     
-    go(args.model, epochs=args.epochs, limit=args.limit, inputs=args.inputs, aug_mult=args.aug_mult, aug_perc=args.aug_perc)
+    go(args.model, epochs=args.epochs, limit=args.limit, inputs=args.inputs)
 
-#python train.py --model=./models/mymodel.h5 --epochs=200 --aug_mult=4 --aug_perc=0.9
+# Example:
+# python train.py --model=./models/mymodel.h5 --epochs=200
