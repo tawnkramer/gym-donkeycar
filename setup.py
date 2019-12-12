@@ -3,8 +3,6 @@
 
 from setuptools import setup, find_packages
 
-from gym_donkeycar import __version__
-
 """The setup script."""
 
 description = 'OpenAI Gym Environments for Donkey Car'
@@ -27,6 +25,7 @@ setup_requirements = ['pytest-runner', ]
 test_requirements = ['pytest', ]
 
 setup(
+    name='gym_donkeycar',
     author='Tawn Kramer',
     author_email='tawnkramer@gmail.com',
     classifiers=[
@@ -42,13 +41,12 @@ setup(
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
-    keywords='gym_donkeycar',
-    name='gym_donkeycar',
+    keywords='donkeycar, environment, agent, rl, openaigym, openai-gym, gym',
     packages=find_packages(),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/tawnkramer/gym-donkeycar',
-    version=__version__,
+    version='1.0.14',
     zip_safe=False,
 )
