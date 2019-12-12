@@ -22,7 +22,7 @@ requirements = [
 
 setup_requirements = ['pytest-runner', ]
 
-test_requirements = ['pytest', ]
+test_requirements = ['pytest', 'pytest-mock']
 
 setup(
     name='gym_donkeycar',
@@ -37,7 +37,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     description=description,
-    install_requires=requirements,
+    install_requires=requirements + test_requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
