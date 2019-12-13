@@ -5,7 +5,7 @@ python:
 - 3.6
 install: 
   - pip install -e .
-script: pytest -v ./tests --cov=./
+script: pytest -v ./tests
 deploy:
   - provider: pypi
     distributions: sdist bdist_wheel
