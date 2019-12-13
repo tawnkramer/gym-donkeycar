@@ -4,9 +4,8 @@ python:
 - 3.7
 - 3.6
 install: 
-  - pip install -U tox-travis
   - pip install -e .
-script: tox
+script: pytest -v ./tests --cov=./
 deploy:
   - provider: pypi
     distributions: sdist bdist_wheel
