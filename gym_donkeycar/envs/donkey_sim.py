@@ -37,6 +37,8 @@ class DonkeyUnitySimContoller():
 
         self.client = SimClient(self.address, self.handler)
 
+    def set_car_config(self, body_style, body_rgb, car_name, font_size):
+        self.handler.send_car_config(body_style, body_rgb, car_name, font_size)
 
     def wait_until_loaded(self):
         while not self.handler.loaded:
@@ -241,6 +243,19 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def send_load_scene(self, scene_name):
         msg = {'msg_type': 'load_scene', 'scene_name': scene_name}
+        self.queue_message(msg)
+
+    def send_car_config(self, body_style, body_rgb, car_name, font_size):
+        # body_style = "donkey" | "bare" | "car01" choice of string
+        # body_rgb  = (128, 128, 128) tuple of ints
+        # car_name = "string less than 64 char"
+        msg = {'msg_type': 'car_config',
+            'body_style': body_style,
+            'body_r' : body_rgb[0].__str__(),
+            'body_g' : body_rgb[1].__str__(),
+            'body_b' : body_rgb[2].__str__(),
+            'car_name': car_name,
+            'font_size' : font_size.__str__() }
         self.queue_message(msg)
 
     def queue_message(self, msg):

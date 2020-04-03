@@ -7,6 +7,7 @@ notes: wraps a tcp socket client with a handler to talk to the unity donkey simu
 import json
 from .client import SDClient
 from .message import IMesgHandler
+import time
 
 class SimClient(SDClient):
     """

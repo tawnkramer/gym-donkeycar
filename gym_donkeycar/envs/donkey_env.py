@@ -64,6 +64,10 @@ class DonkeyEnv(gym.Env):
         # wait until loaded
         self.viewer.wait_until_loaded()
 
+        # send car config
+        # self.viewer.set_car_config("car01", (255, 0, 0), "Tawn", 100)
+        
+
     def __del__(self):
         self.close()
 
