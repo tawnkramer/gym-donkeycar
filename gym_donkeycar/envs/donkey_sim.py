@@ -104,7 +104,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def on_recv_message(self, message):
         if 'msg_type' not in message:
-            logger.error('expected msg_type field')
+            logger.error('expected msg_type field. got: ' + str(message))
             return
 
         msg_type = message['msg_type']

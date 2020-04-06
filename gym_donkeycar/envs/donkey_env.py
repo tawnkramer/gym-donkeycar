@@ -34,6 +34,7 @@ class DonkeyEnv(gym.Env):
     def __init__(self, level=0, exe_path="self_start", host='127.0.0.1', port=9091, frame_skip=2, start_delay=5.0):
 
         print("starting DonkeyGym env")
+        self.viewer = None
 
         # start Unity simulation subprocess
         self.proc = DonkeyUnityProcess()
@@ -68,7 +69,8 @@ class DonkeyEnv(gym.Env):
         self.close()
 
     def close(self):
-        self.viewer.quit()
+        if self.viewer:
+            self.viewer.quit()
         self.proc.quit()
 
     def seed(self, seed=None):

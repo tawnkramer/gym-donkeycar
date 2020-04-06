@@ -25,11 +25,16 @@ class SDClient:
         self.host = host
         self.port = port
         self.poll_socket_sleep_sec = poll_socket_sleep_time
+        self.th = None
 
         # the aborted flag will be set when we have detected a problem with the socket
         # that we can't recover from.
         self.aborted = False
-        self.connect()
+        try:
+            self.connect()
+        except Exception as e:
+            print(e)
+            raise Exception("Failed to connect to sim server. Do you have it running and are connection settings correct?")
 
 
     def connect(self):
@@ -59,7 +64,8 @@ class SDClient:
         # signal proc_msg loop to stop, then wait for thread to finish
         # close socket
         self.do_process_msgs = False
-        self.th.join()
+        if self.th:
+            self.th.join()
         self.s.close()
 
 
