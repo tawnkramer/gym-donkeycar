@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-from gym_donkeycar import __version__
+__version__ = '1.0.13'
 
 """The setup script."""
 
