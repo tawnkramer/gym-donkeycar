@@ -119,6 +119,7 @@ class SDClient:
                             if last_char == '}':
                                 if partial[0][0] == "{":
                                     assembled_packet = "".join(partial)
+                                    assembled_packet = replace_float_notation(assembled_packet)
                                     j = json.loads(assembled_packet)
                                     self.on_msg_recv(j)
                                 else:
