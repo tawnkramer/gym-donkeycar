@@ -87,7 +87,12 @@ class SDClient:
 
                 for s in readable:
                     # print("waiting to recv")
-                    data = s.recv(1024 * 64)
+                    try:
+                        data = s.recv(1024 * 64)
+                    except ConnectionAbortedError:
+                        print("socket connection aborted")
+                        self.do_process_msgs = False
+                        break
                     
                     # we don't technically need to convert from bytes to string
                     # for json.loads, but we do need a string in order to do

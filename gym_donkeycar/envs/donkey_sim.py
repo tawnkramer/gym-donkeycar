@@ -101,7 +101,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def on_disconnect(self):
         self.client = None
 
-    def on_abort(self):
+    def on_abort(self, message):
         self.client.stop()
 
     def on_recv_message(self, message):
