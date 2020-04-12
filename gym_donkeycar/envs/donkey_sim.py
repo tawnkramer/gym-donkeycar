@@ -119,6 +119,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def reset(self):
         logger.debug("reseting")
+        self.send_reset_car()
+        self.timer.reset()
+        time.sleep(1)
         self.image_array = np.zeros(self.camera_img_size)
         self.last_obs = self.image_array
         self.hit = "none"
@@ -128,9 +131,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.z = 0.0
         self.speed = 0.0
         self.over = False
-        self.send_reset_car()
-        self.timer.reset()
-        time.sleep(1)
+
 
     def get_sensor_size(self):
         return self.camera_img_size
