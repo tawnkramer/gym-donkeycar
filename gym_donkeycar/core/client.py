@@ -59,7 +59,10 @@ class SDClient:
         # signal proc_msg loop to stop, then wait for thread to finish
         # close socket
         self.do_process_msgs = False
-        self.th.join()
+        try:
+            self.th.join()
+        except:
+            pass
         self.s.close()
 
 
@@ -137,5 +140,6 @@ class SDClient:
             except Exception as e:
                 print("Exception:", e)
                 self.aborted = True
+                self.do_process_msgs = False
                 self.on_msg_recv({"msg_type" : "aborted"})
                 break
