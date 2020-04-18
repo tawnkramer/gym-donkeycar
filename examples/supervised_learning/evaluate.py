@@ -139,7 +139,7 @@ class DonkeySimMsgHandler(IMesgHandler):
 
 def go(filename, address, constant_throttle, gif):
 
-    model = load_model(filename)
+    model = load_model(filename, compile=False)
 
     #In this mode, looks like we have to compile it
     model.compile("sgd", "mse")
