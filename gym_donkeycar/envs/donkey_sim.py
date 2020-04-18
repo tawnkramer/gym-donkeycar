@@ -40,6 +40,9 @@ class DonkeyUnitySimContoller():
     def set_car_config(self, body_style, body_rgb, car_name, font_size):
         self.handler.send_car_config(body_style, body_rgb, car_name, font_size)
 
+    def set_cam_config(self, **kwargs):
+        self.handler.send_cam_config(**kwargs)
+
     def wait_until_loaded(self):
         while not self.handler.loaded:
             logger.warning("waiting for sim to start..")
@@ -265,6 +268,32 @@ class DonkeyUnitySimHandler(IMesgHandler):
             'car_name': car_name,
             'font_size' : font_size.__str__() }
         self.queue_message(msg)
+        time.sleep(0.1)
+
+    def send_cam_config(self, img_w=0, img_h=0, img_d=0, img_enc=0, fov=0, fish_eye_x=0, fish_eye_y=0, offset_x=0, offset_y=0, offset_z=0, rot_x=0):
+        """ Camera config
+            set any field to Zero to get the default camera setting.
+            offset_x moves camera left/right
+            offset_y moves camera up/down
+            offset_z moves camera forward/back
+            rot_x will rotate the camera
+            with fish_eye_x/y == 0.0 then you get no distortion
+            img_enc can be one of JPG|PNG|TGA
+        """
+        msg = {"msg_type" : "cam_config",
+               "fov" : str(fov),
+               "fish_eye_x" : str(fish_eye_x),
+               "fish_eye_y" : str(fish_eye_y),
+               "img_w" : str(img_w),
+               "img_h" : str(img_h),
+               "img_d" : str(img_d),
+               "img_enc" : str(img_enc),
+               "offset_x" : str(offset_x),
+               "offset_y" : str(offset_y),
+               "offset_z" : str(offset_z),
+               "rot_x" : str(rot_x) }
+        self.queue_message(msg)
+        time.sleep(0.1)
 
     def queue_message(self, msg):
         if self.client is None:
