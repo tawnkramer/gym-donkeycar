@@ -93,6 +93,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "scene_selection_ready": self.on_scene_selection_ready,
                     "scene_names": self.on_recv_scene_names,
                     "car_loaded": self.on_car_loaded,
+                    "ping": self.on_ping,
                     "aborted": self.on_abort}
 
     def on_connect(self, client):
@@ -119,6 +120,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def reset(self):
         logger.debug("reseting")
+        self.send_reset_car()
+        self.timer.reset()
+        time.sleep(1)
         self.image_array = np.zeros(self.camera_img_size)
         self.last_obs = self.image_array
         self.hit = "none"
@@ -128,9 +132,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.z = 0.0
         self.speed = 0.0
         self.over = False
-        self.send_reset_car()
-        self.timer.reset()
-        time.sleep(1)
+
 
     def get_sensor_size(self):
         return self.camera_img_size
@@ -199,6 +201,12 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.hit = data["hit"]
 
         self.determine_episode_over()
+
+    def on_ping(self, message):
+        '''
+        no reply needed at this point. Server sends these as a keep alive to make sure clients haven't gone away.
+        '''
+        pass
 
     def determine_episode_over(self):
         # we have a few initial frames on start that are sometimes very large CTE when it's behind
