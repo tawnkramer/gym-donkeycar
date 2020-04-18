@@ -31,8 +31,7 @@ class DonkeyEnv(gym.Env):
     THROTTLE_MAX = 5.0
     VAL_PER_PIXEL = 255
 
-    def __init__(self, level=0, exe_path="self_start", host='127.0.0.1', port=9091, frame_skip=2, start_delay=5.0):
-
+    def __init__(self, level=0, exe_path="self_start", host='127.0.0.1', port=9091, frame_skip=2, start_delay=5.0, cam_resolution=(120,160,3)):
         print("starting DonkeyGym env")
 
         # start Unity simulation subprocess
@@ -45,7 +44,7 @@ class DonkeyEnv(gym.Env):
         time.sleep(start_delay)
 
         # start simulation com
-        self.viewer = DonkeyUnitySimContoller(level=level, host=host, port=port)
+        self.viewer = DonkeyUnitySimContoller(level=level, host=host, port=port, cam_resolution=cam_resolution)
 
         # steering and throttle
         self.action_space = spaces.Box(low=np.array([self.STEER_LIMIT_LEFT, self.THROTTLE_MIN]),
