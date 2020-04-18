@@ -266,11 +266,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def send_cam_config(self, img_w=0, img_h=0, img_d=0, img_enc=0, fov=0, fish_eye_x=0, fish_eye_y=0, offset_x=0, offset_y=0, offset_z=0, rot_x=0):
         """ Camera config
             set any field to Zero to get the default camera setting.
-            this will position the camera right above the car, with max fisheye and wide fov
-            this also changes the img output to 255x255x1 ( actually 255x255x3 just all three channels have same value)
-            the offset_x moves camera left/right
-            the offset_y moves camera up/down
-            the offset_z moves camera forward/back
+            offset_x moves camera left/right
+            offset_y moves camera up/down
+            offset_z moves camera forward/back
+            rot_x will rotate the camera
             with fish_eye_x/y == 0.0 then you get no distortion
             img_enc can be one of JPG|PNG|TGA
         """
