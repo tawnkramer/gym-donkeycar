@@ -24,24 +24,15 @@ logger = logging.getLogger(__name__)
 
 class DonkeyUnitySimContoller():
 
-    def __init__(self, level, host='127.0.0.1',
-                 port=9090, max_cte=5.0, loglevel='INFO', cam_resolution=(120, 160, 3)):
+    def __init__(self, conf):
 
-        logger.setLevel(loglevel)
+        logger.setLevel(conf["log_level"])
 
-        self.address = (host, port)
+        self.address = (conf["host"], conf["port"])
 
-        self.handler = DonkeyUnitySimHandler(
-            level, max_cte=max_cte,
-            cam_resolution=cam_resolution)
+        self.handler = DonkeyUnitySimHandler(conf=conf)
 
         self.client = SimClient(self.address, self.handler)
-
-    def set_car_config(self, body_style, body_rgb, car_name, font_size):
-        self.handler.send_car_config(body_style, body_rgb, car_name, font_size)
-
-    def set_cam_config(self, **kwargs):
-        self.handler.send_cam_config(**kwargs)
 
     def wait_until_loaded(self):
         while not self.handler.loaded:
@@ -75,14 +66,15 @@ class DonkeyUnitySimContoller():
 
 class DonkeyUnitySimHandler(IMesgHandler):
 
-    def __init__(self, level, max_cte=5.0, cam_resolution=None):
-        self.iSceneToLoad = level
+    def __init__(self, conf):
+        self.conf = conf
+        self.iSceneToLoad = conf["level"]
         self.loaded = False
-        self.max_cte = max_cte
+        self.max_cte = conf["max_cte"]
         self.timer = FPSTimer()
 
         # sensor size - height, width, depth
-        self.camera_img_size = cam_resolution
+        self.camera_img_size = conf["cam_resolution"]
         self.image_array = np.zeros(self.camera_img_size)
         self.last_obs = None
         self.hit = "none"
@@ -97,23 +89,55 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "scene_names": self.on_recv_scene_names,
                     "car_loaded": self.on_car_loaded,
                     "ping": self.on_ping,
-                    "aborted": self.on_abort}
+                    "aborted": self.on_abort,
+                    "need_car_config": self.on_need_car_config}
 
     def on_connect(self, client):
+        logger.debug("socket connected")
         self.client = client
 
     def on_disconnect(self):
+        logger.debug("socket disconnected")
         self.client = None
 
     def on_abort(self, message):
         self.client.stop()
 
+    def on_need_car_config(self, message):
+        logger.info("on need car config")
+        self.loaded = True
+        self.send_config(self.conf)
+
+    def extract_keys(self, dct, lst):
+        ret_dct = {}
+        for key in lst:
+            if key in dct:
+                ret_dct[key] = dct[key]
+        return ret_dct
+
+    def send_config(self, conf):
+        logger.info("sending car config.")
+        self.set_car_config(conf)
+        self.set_racer_bio(conf)
+        cam_config = self.extract_keys(conf, ["img_w", "img_h", "img_d", "img_enc", "fov", "fish_eye_x", "fish_eye_y", "offset_x", "offset_y", "offset_z", "rot_x"])
+        self.send_cam_config(**cam_config)
+        logger.info("done sending car config.")
+
+    def set_car_config(self, conf):
+        if "body_style" in conf :
+            self.send_car_config(conf["body_style"], conf["body_rgb"], conf["car_name"], conf["font_size"])
+
+    def set_racer_bio(self, conf):
+        self.conf = conf
+        if "bio" in conf :
+            self.send_racer_bio(conf["racer_name"], conf["car_name"], conf["bio"], conf["country"])
+
     def on_recv_message(self, message):
         if 'msg_type' not in message:
-            logger.error('expected msg_type field')
+            logger.warn('expected msg_type field')
             return
-
         msg_type = message['msg_type']
+        logger.debug("got message :" + msg_type)
         if msg_type in self.fns:
             self.fns[msg_type](message)
         else:
@@ -267,7 +291,19 @@ class DonkeyUnitySimHandler(IMesgHandler):
             'body_b' : body_rgb[2].__str__(),
             'car_name': car_name,
             'font_size' : font_size.__str__() }
-        self.queue_message(msg)
+        self.blocking_send(msg)
+        time.sleep(0.1)
+
+    def send_racer_bio(self, racer_name, car_name, bio, country):
+        # body_style = "donkey" | "bare" | "car01" choice of string
+        # body_rgb  = (128, 128, 128) tuple of ints
+        # car_name = "string less than 64 char"
+        msg = {'msg_type': 'racer_info',
+            'racer_name': racer_name,
+            'car_name' : car_name,
+            'bio' : bio,
+            'country' : country }
+        self.blocking_send(msg)
         time.sleep(0.1)
 
     def send_cam_config(self, img_w=0, img_h=0, img_d=0, img_enc=0, fov=0, fish_eye_x=0, fish_eye_y=0, offset_x=0, offset_y=0, offset_z=0, rot_x=0):
@@ -292,8 +328,16 @@ class DonkeyUnitySimHandler(IMesgHandler):
                "offset_y" : str(offset_y),
                "offset_z" : str(offset_z),
                "rot_x" : str(rot_x) }
-        self.queue_message(msg)
+        self.blocking_send(msg)
         time.sleep(0.1)
+
+    def blocking_send(self, msg):
+        if self.client is None:
+            logger.debug(f'skiping: \n {msg}')
+            return
+
+        logger.debug(f'blocking send \n {msg}')
+        self.client.send_now(msg)
 
     def queue_message(self, msg):
         if self.client is None:

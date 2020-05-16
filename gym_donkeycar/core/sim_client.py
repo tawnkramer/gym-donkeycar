@@ -27,9 +27,15 @@ class SimClient(SDClient):
         # we connect right away
         msg_handler.on_connect(self)
 
-    def queue_message(self, msg):
+    def send_now(self, msg):
         # takes a dict input msg, converts to json string
         # and sends immediately. right now, no queue.
+        json_msg = json.dumps(msg)
+        super().send_now(json_msg)
+
+    def queue_message(self, msg):
+        # takes a dict input msg, converts to json string
+        # and adds to a lossy queue that sends only the last msg
         json_msg = json.dumps(msg)
         self.send(json_msg)
 
