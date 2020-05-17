@@ -96,6 +96,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "scene_selection_ready": self.on_scene_selection_ready,
                     "scene_names": self.on_recv_scene_names,
                     "car_loaded": self.on_car_loaded,
+                    "cross_start": self.on_cross_start,
                     "ping": self.on_ping,
                     "aborted": self.on_abort}
 
@@ -204,6 +205,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.hit = data["hit"]
 
         self.determine_episode_over()
+
+    def on_cross_start(self, data):
+        logger.info(f"crossed start line: lap_time {data['lap_time']}")
 
     def on_ping(self, message):
         '''
