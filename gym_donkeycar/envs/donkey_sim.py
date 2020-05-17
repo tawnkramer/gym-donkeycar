@@ -235,6 +235,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if data:
             names = data['scene_names']
             logger.debug(f"SceneNames: {names}")
+            print("loading scene", self.iSceneToLoad, names[self.iSceneToLoad])
             self.send_load_scene(names[self.iSceneToLoad])
 
     def send_control(self, steer, throttle):

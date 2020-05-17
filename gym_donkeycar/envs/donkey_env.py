@@ -128,3 +128,9 @@ class GeneratedTrackEnv(DonkeyEnv):
 
     def __init__(self, *args, **kwargs):
         super(GeneratedTrackEnv, self).__init__(level=3, *args, **kwargs)
+
+
+class MountainTrackEnv(DonkeyEnv):
+
+    def __init__(self, *args, **kwargs):
+        super(MountainTrackEnv, self).__init__(level=4, *args, **kwargs)
