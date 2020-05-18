@@ -42,8 +42,9 @@ class IAgent:
 
 class GeneticAlg:
 
-    def __init__(self, population):
+    def __init__(self, population, conf = {}):
         self.population = population
+        self.conf = conf
 
     def finished(self):
         return False
@@ -53,12 +54,18 @@ class GeneticAlg:
         while not self.finished() and iIter < num_iter:
             s = time.time()
             self.evaluate_agents()
+            self.on_agents_finished()
+
             e = time.time() - s
             self.breed_agents()
             iIter += 1
             d = time.time() - s
             # Time per iteration getting worse?!
             print("Iter %d eval time: %f total time: %f" % ( iIter, e, d))
+            
+
+    def on_agents_finished(self):
+        pass
 
     def evaluate_agents(self):
         for agent in self.population:

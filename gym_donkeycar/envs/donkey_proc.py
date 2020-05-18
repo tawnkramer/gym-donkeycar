@@ -17,7 +17,6 @@ class DonkeyUnityProcess(object):
     def start(self, sim_path, host='0.0.0.0', port=9091):
 
         if sim_path == "remote":
-            print("not starting local sim.")
             return
 
         if not os.path.exists(sim_path):

@@ -10,6 +10,7 @@ import logging
 import base64
 from threading import Thread
 from io import BytesIO
+import types
 
 import numpy as np
 from PIL import Image
@@ -42,6 +43,12 @@ class DonkeyUnitySimContoller():
 
     def set_cam_config(self, **kwargs):
         self.handler.send_cam_config(**kwargs)
+
+    def set_reward_fn(self, reward_fn):
+        self.handler.set_reward_fn(reward_fn)
+
+    def set_episode_over_fn(self, ep_over_fn):
+        self.handler.set_episode_over_fn(ep_over_fn)
 
     def wait_until_loaded(self):
         while not self.handler.loaded:
@@ -164,6 +171,13 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     ## ------ RL interface ----------- ##
 
+    def set_reward_fn(self, reward_fn):
+        """
+        allow users to set their own reward function
+        """
+        self.calc_reward = types.MethodType(reward_fn, self)
+        logger.debug("custom reward fn set.")
+
     def calc_reward(self, done):
         if done:
             return -1.0
@@ -173,9 +187,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         if self.hit != "none":
             return -2.0
-
+        
         # going fast close to the center of lane yeilds best reward
         return (1.0 - (math.fabs(self.cte) / self.max_cte)) * self.speed
+
 
     ## ------ Socket interface ----------- ##
 
@@ -210,10 +225,17 @@ class DonkeyUnitySimHandler(IMesgHandler):
         logger.info(f"crossed start line: lap_time {data['lap_time']}")
 
     def on_ping(self, message):
-        '''
+        """
         no reply needed at this point. Server sends these as a keep alive to make sure clients haven't gone away.
-        '''
+        """
         pass
+
+    def set_episode_over_fn(self, ep_over_fn):
+        """
+        allow userd to define their own episode over function
+        """
+        self.determine_episode_over = types.MethodType(ep_over_fn, self)
+        logger.debug("custom ep_over fn set.")
 
     def determine_episode_over(self):
         # we have a few initial frames on start that are sometimes very large CTE when it's behind
@@ -262,9 +284,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.queue_message(msg)
 
     def send_car_config(self, body_style, body_rgb, car_name, font_size):
+        """
         # body_style = "donkey" | "bare" | "car01" choice of string
         # body_rgb  = (128, 128, 128) tuple of ints
         # car_name = "string less than 64 char"
+        """
         msg = {'msg_type': 'car_config',
             'body_style': body_style,
             'body_r' : body_rgb[0].__str__(),
