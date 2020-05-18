@@ -21,6 +21,7 @@ import warnings
 with warnings.catch_warnings():  
     warnings.filterwarnings("ignore",category=FutureWarning)
     import tensorflow as tf
+    from tensorflow.keras import backend as K
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 
@@ -300,7 +301,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(args)
+    # only needed if TF==1.13.1
+    #config = tf.ConfigProto()
+    #config.gpu_options.allow_growth = True
+    #sess = tf.Session(config=config)
+    #K.set_session(sess)
+
 
     test_image_agent(
         model_filename = args.model,
