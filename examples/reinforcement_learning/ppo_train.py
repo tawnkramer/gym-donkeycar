@@ -41,7 +41,8 @@ if __name__ == "__main__":
        "donkey-warehouse-v0",
        "donkey-generated-roads-v0",
        "donkey-avc-sparkfun-v0",
-       "donkey-generated-track-v0"
+       "donkey-generated-track-v0",
+       "donkey-mountain-track-v0"
     ]
 	
     parser = argparse.ArgumentParser(description='ppo_train')
