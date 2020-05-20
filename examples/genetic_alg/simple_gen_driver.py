@@ -229,9 +229,9 @@ if __name__ == "__main__":
         conf = { "layers_to_mutate" : to_mutate}
         conf["layers_to_combine"] = to_mutate
         conf["mutation_rate"] = 1.0
-        conf["mutation_max"] = 0.3
+        conf["mutation_max"] = 0.1
         conf["mutation_min"] = 0.0
-        conf["mutation_decay"] = 1.0
+        conf["mutation_decay"] = 0.99
         conf['port'] = args.port
         conf['env_name'] = args.env_name
         conf['MAX_TIME_STEPS'] = args.max_steps

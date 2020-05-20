@@ -104,6 +104,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "scene_names": self.on_recv_scene_names,
                     "car_loaded": self.on_car_loaded,
                     "cross_start": self.on_cross_start,
+                    "race_start": self.on_race_start,
+                    "race_stop": self.on_race_stop,
+                    "DQ": self.on_DQ,
                     "ping": self.on_ping,
                     "aborted": self.on_abort}
 
@@ -162,7 +165,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         info = {'pos': (self.x, self.y, self.z), 'cte': self.cte,
                 "speed": self.speed, "hit": self.hit}
 
-        self.timer.on_frame()
+        #self.timer.on_frame()
 
         return observation, reward, done, info
 
@@ -221,8 +224,18 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         self.determine_episode_over()
 
-    def on_cross_start(self, data):
+    def on_cross_start(self, data):        
         logger.info(f"crossed start line: lap_time {data['lap_time']}")
+
+    def on_race_start(self, data):
+        logger.debug(f"race started")
+
+    def on_race_stop(self, data):
+        logger.debug(f"race stoped")
+
+    def on_DQ(self, data):
+        logger.info(f"racer DQ")
+        self.over = True
 
     def on_ping(self, message):
         """

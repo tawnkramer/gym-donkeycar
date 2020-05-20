@@ -52,6 +52,7 @@ class GeneticAlg:
     def process(self, num_iter):
         iIter = 0
         while not self.finished() and iIter < num_iter:
+            print("starting epoch", iIter)
             s = time.time()
             self.evaluate_agents()
             self.on_agents_finished()
@@ -61,6 +62,7 @@ class GeneticAlg:
             iIter += 1
             d = time.time() - s
             # Time per iteration getting worse?!
+            print("finish epoch", iIter)
             print("Iter %d eval time: %f total time: %f" % ( iIter, e, d))
             
 
