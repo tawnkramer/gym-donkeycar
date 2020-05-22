@@ -65,7 +65,7 @@ class KerasDriveAgent(KerasNNAgent):
             K.set_session(self.sess)
             self.model._make_predict_function()
 
-        env = gym.make(conf['env_name'], exe_path="remote", port=conf['port'])
+        env = gym.make(conf['env_name'], exe_path="remote", host=conf['host'], port=conf['port'])
         
         # setup some custom reward and over functions
         env.set_reward_fn(custom_reward)
@@ -131,11 +131,11 @@ class KerasDriveAgent(KerasNNAgent):
     def select_action(self, img_arr):
         with self.graph.as_default():
             K.set_session(self.sess)
-
             one_byte_scale = 1.0 / 255.0
             img_arr = img_arr.astype(np.float32) * one_byte_scale
             img_arr = img_arr.reshape((1,) + img_arr.shape)
-            pred = self.model.predict(img_arr)
+            #print("img_arr", type(img_arr), img_arr.shape)
+            pred = self.model.predict_on_batch(img_arr)
             steering = pred[0][0][0]
             throttle = pred[1][0][0]
             action = [steering, throttle]
@@ -200,6 +200,7 @@ if __name__ == "__main__":
     ]
 	
     parser = argparse.ArgumentParser(description='simple_gen_driver')
+    parser.add_argument('--host', type=str, default='127.0.0.1', help='host to use for tcp')
     parser.add_argument('--port', type=int, default=9091, help='port to use for tcp')
     parser.add_argument('--test', action="store_true", help='load the trained model and play')
     parser.add_argument('--num_agents', type=int, default=8, help='how many agents in our population')
@@ -232,6 +233,7 @@ if __name__ == "__main__":
         conf["mutation_max"] = 0.3
         conf["mutation_min"] = 0.0
         conf["mutation_decay"] = 1.0
+        conf['host'] = args.host
         conf['port'] = args.port
         conf['env_name'] = args.env_name
         conf['MAX_TIME_STEPS'] = args.max_steps
