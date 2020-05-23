@@ -249,7 +249,7 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=conf.training_default_epochs, help='number of epochs')
     parser.add_argument('--inputs', default='./log/*.jpg', help='input mask to gather images')
     parser.add_argument('--limit', type=int, default=None, help='max number of images to train with')
-     args = parser.parse_args()
+    args = parser.parse_args()
     
     go(args.model, epochs=args.epochs, limit=args.limit, inputs=args.inputs)
 

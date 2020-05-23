@@ -121,16 +121,24 @@ class SDClient:
                             # Replace comma with dots for floats
                             # useful when using unity in a language different from English
                             m = replace_float_notation(m)
-                            j = json.loads(m)
-                            self.on_msg_recv(j)
+                            try:
+                                j = json.loads(m)
+                                self.on_msg_recv(j)
+                            except Exception as e:
+                                print("Exception:", e)
+                                print("json:", m)
                         else:
                             partial.append(m)
                             if last_char == '}':
                                 if partial[0][0] == "{":
                                     assembled_packet = "".join(partial)
                                     assembled_packet = replace_float_notation(assembled_packet)
-                                    j = json.loads(assembled_packet)
-                                    self.on_msg_recv(j)
+                                    try:
+                                        j = json.loads(assembled_packet)
+                                        self.on_msg_recv(j)
+                                    except Exception as e:
+                                        print(e)
+                                        print("json:", assembled_packet)
                                 else:
                                     logger.error("failed packet.")
                                 partial.clear()

@@ -100,6 +100,12 @@ class DonkeyEnv(gym.Env):
         if self.proc is not None:
             self.proc.quit()
 
+    def set_reward_fn(self, reward_fn):
+        self.viewer.set_reward_fn(reward_fn)
+
+    def set_episode_over_fn(self, ep_over_fn):
+        self.viewer.set_episode_over_fn(ep_over_fn)
+
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
@@ -150,3 +156,9 @@ class GeneratedTrackEnv(DonkeyEnv):
 
     def __init__(self, *args, **kwargs):
         super(GeneratedTrackEnv, self).__init__(level=3, *args, **kwargs)
+
+
+class MountainTrackEnv(DonkeyEnv):
+
+    def __init__(self, *args, **kwargs):
+        super(MountainTrackEnv, self).__init__(level=4, *args, **kwargs)

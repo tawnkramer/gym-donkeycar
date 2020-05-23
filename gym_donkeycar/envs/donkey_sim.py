@@ -10,6 +10,7 @@ import logging
 import base64
 from threading import Thread
 from io import BytesIO
+import types
 
 import numpy as np
 from PIL import Image
@@ -33,6 +34,18 @@ class DonkeyUnitySimContoller():
         self.handler = DonkeyUnitySimHandler(conf=conf)
 
         self.client = SimClient(self.address, self.handler)
+
+    def set_car_config(self, body_style, body_rgb, car_name, font_size):
+        self.handler.send_car_config(body_style, body_rgb, car_name, font_size)
+
+    def set_cam_config(self, **kwargs):
+        self.handler.send_cam_config(**kwargs)
+
+    def set_reward_fn(self, reward_fn):
+        self.handler.set_reward_fn(reward_fn)
+
+    def set_episode_over_fn(self, ep_over_fn):
+        self.handler.set_episode_over_fn(ep_over_fn)
 
     def wait_until_loaded(self):
         while not self.handler.loaded:
@@ -88,6 +101,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "scene_selection_ready": self.on_scene_selection_ready,
                     "scene_names": self.on_recv_scene_names,
                     "car_loaded": self.on_car_loaded,
+                    "cross_start": self.on_cross_start,
+                    "race_start": self.on_race_start,
+                    "race_stop": self.on_race_stop,
+                    "DQ": self.on_DQ,
                     "ping": self.on_ping,
                     "aborted": self.on_abort,
                     "need_car_config": self.on_need_car_config}
@@ -178,7 +195,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         info = {'pos': (self.x, self.y, self.z), 'cte': self.cte,
                 "speed": self.speed, "hit": self.hit}
 
-        self.timer.on_frame()
+        #self.timer.on_frame()
 
         return observation, reward, done, info
 
@@ -186,6 +203,13 @@ class DonkeyUnitySimHandler(IMesgHandler):
         return self.over
 
     ## ------ RL interface ----------- ##
+
+    def set_reward_fn(self, reward_fn):
+        """
+        allow users to set their own reward function
+        """
+        self.calc_reward = types.MethodType(reward_fn, self)
+        logger.debug("custom reward fn set.")
 
     def calc_reward(self, done):
         if done:
@@ -196,9 +220,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         if self.hit != "none":
             return -2.0
-
+        
         # going fast close to the center of lane yeilds best reward
         return (1.0 - (math.fabs(self.cte) / self.max_cte)) * self.speed
+
 
     ## ------ Socket interface ----------- ##
 
@@ -229,11 +254,31 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         self.determine_episode_over()
 
+    def on_cross_start(self, data):        
+        logger.info(f"crossed start line: lap_time {data['lap_time']}")
+
+    def on_race_start(self, data):
+        logger.debug(f"race started")
+
+    def on_race_stop(self, data):
+        logger.debug(f"race stoped")
+
+    def on_DQ(self, data):
+        logger.info(f"racer DQ")
+        self.over = True
+
     def on_ping(self, message):
-        '''
+        """
         no reply needed at this point. Server sends these as a keep alive to make sure clients haven't gone away.
-        '''
+        """
         pass
+
+    def set_episode_over_fn(self, ep_over_fn):
+        """
+        allow userd to define their own episode over function
+        """
+        self.determine_episode_over = types.MethodType(ep_over_fn, self)
+        logger.debug("custom ep_over fn set.")
 
     def determine_episode_over(self):
         # we have a few initial frames on start that are sometimes very large CTE when it's behind
@@ -259,6 +304,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if data:
             names = data['scene_names']
             logger.debug(f"SceneNames: {names}")
+            print("loading scene", self.iSceneToLoad, names[self.iSceneToLoad])
             self.send_load_scene(names[self.iSceneToLoad])
 
     def send_control(self, steer, throttle):
@@ -281,9 +327,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.queue_message(msg)
 
     def send_car_config(self, body_style, body_rgb, car_name, font_size):
+        """
         # body_style = "donkey" | "bare" | "car01" choice of string
         # body_rgb  = (128, 128, 128) tuple of ints
         # car_name = "string less than 64 char"
+        """
         msg = {'msg_type': 'car_config',
             'body_style': body_style,
             'body_r' : body_rgb[0].__str__(),
