@@ -95,9 +95,9 @@ class DonkeyEnv(gym.Env):
         self.close()
 
     def close(self):
-        if self.viewer is not None:
+        if hasattr(self, "viewer") and self.viewer is not None:
             self.viewer.quit()
-        if self.proc is not None:
+        if hasattr(self, "proc") and self.proc is not None:
             self.proc.quit()
 
     def set_reward_fn(self, reward_fn):
