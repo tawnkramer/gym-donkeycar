@@ -6,6 +6,7 @@ date: 2018-08-31
 import os
 import random
 import time
+import logging
 
 import numpy as np
 import gym
@@ -13,6 +14,20 @@ from gym import spaces
 from gym.utils import seeding
 from gym_donkeycar.envs.donkey_sim import DonkeyUnitySimContoller
 from gym_donkeycar.envs.donkey_proc import DonkeyUnityProcess
+
+logger = logging.getLogger(__name__)
+
+def supply_defaults(conf):
+    defaults = [("start_delay", 5.0),
+                ("max_cte", 5.0),
+                ("frame_skip", 2),
+                ("cam_resolution", (120,160,3)),
+                ("log_level", logging.INFO)]
+
+    for key, val in defaults:
+        if not key in conf:
+            conf[key] = val
+            print("setting default: %s %s" % (key, val.__str__()))
 
 
 class DonkeyEnv(gym.Env):
@@ -31,22 +46,32 @@ class DonkeyEnv(gym.Env):
     THROTTLE_MAX = 5.0
     VAL_PER_PIXEL = 255
 
-    def __init__(self, level=0, exe_path="self_start", host='127.0.0.1', port=9091, frame_skip=2, start_delay=5.0, cam_resolution=(120,160,3)):
+    def __init__(self, level, conf):
         print("starting DonkeyGym env")
         self.viewer = None
         self.proc = None
+        conf["level"] = level
+
+        # ensure defaults are supplied if missing.
+        supply_defaults(conf)        
+
+        # set logging level
+        logging.basicConfig(level=conf["log_level"])
+
+        logger.debug("DEBUG ON")
+        logger.debug(conf)
 
         # start Unity simulation subprocess
         self.proc = DonkeyUnityProcess()
 
         # the unity sim server will bind to the host ip given
-        self.proc.start(exe_path, host='0.0.0.0', port=port)
+        self.proc.start(conf['exe_path'], host='0.0.0.0', port=conf['port'])
 
         # wait for simulator to startup and begin listening
-        time.sleep(start_delay)
+        time.sleep(conf["start_delay"])
 
         # start simulation com
-        self.viewer = DonkeyUnitySimContoller(level=level, host=host, port=port, cam_resolution=cam_resolution)
+        self.viewer = DonkeyUnitySimContoller(conf=conf)
 
         # steering and throttle
         self.action_space = spaces.Box(low=np.array([self.STEER_LIMIT_LEFT, self.THROTTLE_MIN]),
@@ -60,14 +85,11 @@ class DonkeyEnv(gym.Env):
         self.seed()
 
         # Frame Skipping
-        self.frame_skip = frame_skip
+        self.frame_skip = conf["frame_skip"]
 
         # wait until loaded
         self.viewer.wait_until_loaded()
 
-        # send car config
-        # self.viewer.set_car_config("car01", (255, 0, 0), "Tawn", 100)
-        
 
     def __del__(self):
         self.close()
