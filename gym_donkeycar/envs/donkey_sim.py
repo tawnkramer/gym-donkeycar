@@ -96,6 +96,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.y = 0.0
         self.z = 0.0
         self.speed = 0.0
+        self.missed_checkpoint = False
+        self.dq = False
         self.over = False
         self.fns = {'telemetry': self.on_telemetry,
                     "scene_selection_ready": self.on_scene_selection_ready,
@@ -107,6 +109,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "DQ": self.on_DQ,
                     "ping": self.on_ping,
                     "aborted": self.on_abort,
+                    "missed_checkpoint": self.on_missed_checkpoint,
                     "need_car_config": self.on_need_car_config}
 
     def on_connect(self, client):
@@ -176,6 +179,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.z = 0.0
         self.speed = 0.0
         self.over = False
+        self.missed_checkpoint = False
+        self.dq = False
 
 
     def get_sensor_size(self):
@@ -263,9 +268,13 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def on_race_stop(self, data):
         logger.debug(f"race stoped")
 
+    def on_missed_checkpoint(self, message):
+        logger.info(f"racer missed checkpoint")
+        self.missed_checkpoint = True
+
     def on_DQ(self, data):
         logger.info(f"racer DQ")
-        self.over = True
+        self.dq = True
 
     def on_ping(self, message):
         """
@@ -290,6 +299,12 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.over = True
         elif self.hit != "none":
             logger.debug(f"game over: hit {self.hit}")
+            self.over = True
+        elif self.missed_checkpoint:
+            logger.debug("missed checkpoint")
+            self.over = True
+        elif self.dq:
+            logger.debug("disqualified")
             self.over = True
 
     def on_scene_selection_ready(self, data):

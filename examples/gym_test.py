@@ -18,6 +18,7 @@ MAX_TIME_STEPS = 1000
 
 def select_action(env):
     return env.action_space.sample()
+    #return [0.0, 0.1] # enable this to test checkpoint failure
 
 
 def simulate(env):
@@ -33,9 +34,10 @@ def simulate(env):
             action = select_action(env)
 
             # execute the action
-            obv, reward, done, _ = env.step(action)
+            obv, reward, done, info = env.step(action)
 
             if done:
+                print("done w episode.", info)
                 break
 
 
@@ -47,7 +49,8 @@ if __name__ == "__main__":
         "donkey-warehouse-v0",
         "donkey-generated-roads-v0",
         "donkey-avc-sparkfun-v0",
-        "donkey-generated-track-v0"
+        "donkey-generated-track-v0",
+        "donkey-mountain-track-v0"
     ]
 
     parser = argparse.ArgumentParser(description='gym_test')
@@ -55,7 +58,7 @@ if __name__ == "__main__":
                         help='path to unity simulator. maybe be left at default if you would like to start the sim on your own.')
     parser.add_argument('--port', type=int, default=9091,
                         help='port to use for websockets')
-    parser.add_argument('--env_name', type=str, default='donkey-generated-track-v0',
+    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0',
                         help='name of donkey sim environment', choices=env_list)
 
     args = parser.parse_args()
@@ -71,7 +74,9 @@ if __name__ == "__main__":
 
         "racer_name" : "test",
         "country" : "USA",
-        "bio" : "I am test client"
+        "bio" : "I am test client",
+
+        "max_cte" : 20,
         }
 
     env = gym.make(args.env_name, conf=conf)
