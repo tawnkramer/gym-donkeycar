@@ -60,8 +60,22 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    env = gym.make(args.env_name, exe_path=args.sim, port=args.port)
+    conf = {"exe_path" : args.sim, 
+        "host" : "127.0.0.1",
+        "port" : args.port,
 
+        "body_style" : "donkey",
+        "body_rgb" : (128, 128, 128),
+        "car_name" : "me",
+        "font_size" : 100,
+
+        "racer_name" : "test",
+        "country" : "USA",
+        "bio" : "I am test client"
+        }
+
+    env = gym.make(args.env_name, conf=conf)
+    
     simulate(env)
 
     env.close()

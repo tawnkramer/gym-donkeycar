@@ -15,7 +15,8 @@ if __name__ == "__main__":
         "donkey-warehouse-v0",
         "donkey-generated-roads-v0",
         "donkey-avc-sparkfun-v0",
-        "donkey-generated-track-v0"
+        "donkey-generated-track-v0",
+        "donkey-mountain-track-v0"
     ]
 
     parser = argparse.ArgumentParser(description='gym_test')
@@ -23,7 +24,7 @@ if __name__ == "__main__":
                         help='path to unity simulator. maybe be left at default if you would like to start the sim on your own.')
     parser.add_argument('--port', type=int, default=9091,
                         help='port to use for websockets')
-    parser.add_argument('--env_name', type=str, default='donkey-generated-track-v0',
+    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0',
                         help='name of donkey sim environment', choices=env_list)
 
     args = parser.parse_args()
@@ -31,22 +32,27 @@ if __name__ == "__main__":
 #%% SET UP ENVIRONMENT
 
     cam = (256,256,3)
-    env = gym.make(args.env_name, exe_path=args.sim, port=args.port, cam_resolution=cam)
+    
+    conf = {"exe_path" : args.sim, 
+        "host" : "127.0.0.1",
+        "port" : args.port,
 
-    cam_config = {
-        #"fov" : 150,
-        #"fish_eye_x" : 0.0,
-        #"fish_eye_y" : 0.0,
+        "body_style" : "donkey",
+        "body_rgb" : (128, 128, 128),
+        "car_name" : "me",
+        "font_size" : 100,
+
+        "racer_name" : "test",
+        "country" : "USA",
+        "bio" : "I am test client",
+
+        "cam_resolution" : cam,
         "img_w" : cam[0],
         "img_h" : cam[1],
         "img_d" : cam[2],
-        #"img_enc" : "PNG",
-        #"offset_x" : 0.0,
-        #"offset_y" : 0.0,
-        #"offset_z" : 0.0,
-        #"rot_x" : 0.0
         }
-    env.viewer.set_cam_config(**cam_config)
+
+    env = gym.make(args.env_name, conf=conf)
 
     print( "Env cam size: {}".format( env.viewer.get_sensor_size() ) )
 
