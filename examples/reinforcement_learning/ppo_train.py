@@ -50,7 +50,7 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=9091, help='port to use for tcp')
     parser.add_argument('--test', action="store_true", help='load the trained model and play')
     parser.add_argument('--multi', action="store_true", help='start multiple sims at once')
-    parser.add_argument('--env_name', type=str, default='donkey-generated-track-v0', help='name of donkey sim environment', choices=env_list)
+    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0', help='name of donkey sim environment', choices=env_list)
     
     args = parser.parse_args()
 
@@ -60,10 +60,27 @@ if __name__ == "__main__":
     
     env_id = args.env_name
 
+    conf = {"exe_path" : args.sim, 
+        "host" : "127.0.0.1",
+        "port" : args.port,
+
+        "body_style" : "donkey",
+        "body_rgb" : (128, 128, 128),
+        "car_name" : "me",
+        "font_size" : 100,
+
+        "racer_name" : "PPO",
+        "country" : "USA",
+        "bio" : "Learning to drive w PPO RL",
+
+        "max_cte" : 10,
+        }
+    
+
     if args.test:
 
         #Make an environment test our trained policy
-        env = gym.make(env_id, exe_path=args.sim, port=args.port)
+        env = gym.make(args.env_name, conf=conf)
         env = DummyVecEnv([lambda: env])
 
         model = PPO2.load("ppo_donkey")
@@ -78,30 +95,14 @@ if __name__ == "__main__":
         
     else:
     
-        if args.multi:
+        #make gym env
+        env = gym.make(args.env_name, conf=conf)
 
-            #setup random offset of network ports
-            os.environ['DONKEY_SIM_MULTI'] = '1'
+        # Create the vectorized environment
+        env = DummyVecEnv([lambda: env])
 
-            # Number of processes to use
-            num_cpu = 4
-
-            # Create the vectorized environment
-            env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
-
-            #create recurrent policy
-            model = PPO2(CnnLstmPolicy, env, verbose=1)
-
-        else:
-
-            #make gym env
-            env = gym.make(env_id)
-
-            # Create the vectorized environment
-            env = DummyVecEnv([lambda: env])
-
-            #create cnn policy
-            model = PPO2(CnnPolicy, env, verbose=1)
+        #create cnn policy
+        model = PPO2(CnnPolicy, env, verbose=1)
 
 
         #set up model in learning mode with goal number of timesteps to complete

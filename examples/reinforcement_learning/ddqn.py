@@ -221,8 +221,25 @@ def run_ddqn(args):
     sess = tf.Session(config=config)
     K.set_session(sess)
 
+    conf = {"exe_path" : args.sim, 
+        "host" : "127.0.0.1",
+        "port" : args.port,
+
+        "body_style" : "donkey",
+        "body_rgb" : (128, 128, 128),
+        "car_name" : "me",
+        "font_size" : 100,
+
+        "racer_name" : "DDQN",
+        "country" : "USA",
+        "bio" : "Learning to drive w DDQN RL",
+
+        "max_cte" : 10,
+        }
+    
+
     # Construct gym environment. Starts the simulator if path is given.
-    env = gym.make(args.env_name, exe_path=args.sim, port=args.port)
+    env = gym.make(args.env_name, conf=conf)
 
     # not working on windows...
     def signal_handler(signal, frame):
@@ -329,7 +346,7 @@ if __name__ == "__main__":
     parser.add_argument('--test', action="store_true", help='agent uses learned model to navigate env')
     parser.add_argument('--port', type=int, default=9091, help='port to use for websockets')
     parser.add_argument('--throttle', type=float, default=0.3, help='constant throttle for driving')
-    parser.add_argument('--env_name', type=str, default='donkey-generated-track-v0', help='name of donkey sim environment', choices=env_list)
+    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0', help='name of donkey sim environment', choices=env_list)
 
     args = parser.parse_args()
 
