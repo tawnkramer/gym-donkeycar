@@ -47,8 +47,10 @@ Simple example code:
     #%% SET UP ENVIRONMENT
     exe_path = f"{PATH_TO_APP}/donkey_sim.app/Contents/MacOS/donkey_sim"
     port = 9091    
+    
+    conf = { "exe_path" : exe_path, "port" : port }
 
-    env = gym.make("donkey-warehouse-v0", exe_path=exe_path, port=port)
+    env = gym.make("donkey-warehouse-v0", conf=conf)
 
     #%% PLAY
     obv = env.reset()
