@@ -11,6 +11,7 @@ import gym
 import gym_donkeycar
 import time
 import random
+import uuid
 
 NUM_EPISODES = 3
 MAX_TIME_STEPS = 1000
@@ -75,6 +76,7 @@ if __name__ == "__main__":
         "racer_name" : "test",
         "country" : "USA",
         "bio" : "I am test client",
+        "guid" : str(uuid.uuid4()),
 
         "max_cte" : 20,
         }

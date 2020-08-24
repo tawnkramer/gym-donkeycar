@@ -97,7 +97,7 @@ class SDClient:
                 for s in readable:
                     # print("waiting to recv")
                     try:
-                        data = s.recv(1024 * 64)
+                        data = s.recv(1024 * 256)
                     except ConnectionAbortedError:
                         logger.warn("socket connection aborted")
                         self.do_process_msgs = False

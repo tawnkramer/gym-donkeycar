@@ -9,6 +9,7 @@ import sys
 import random
 import argparse
 import signal
+import uuid
 
 import numpy as np
 import gym
@@ -233,6 +234,7 @@ def run_ddqn(args):
         "racer_name" : "DDQN",
         "country" : "USA",
         "bio" : "Learning to drive w DDQN RL",
+        "guid" : str(uuid.uuid4()),
 
         "max_cte" : 10,
         }

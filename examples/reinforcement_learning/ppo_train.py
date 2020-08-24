@@ -9,6 +9,7 @@ import os
 import argparse
 import gym
 import gym_donkeycar
+import uuid
 
 from stable_baselines.common.policies import MlpPolicy, CnnPolicy, CnnLstmPolicy
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
@@ -72,6 +73,7 @@ if __name__ == "__main__":
         "racer_name" : "PPO",
         "country" : "USA",
         "bio" : "Learning to drive w PPO RL",
+        "guid" : str(uuid.uuid4()),
 
         "max_cte" : 10,
         }

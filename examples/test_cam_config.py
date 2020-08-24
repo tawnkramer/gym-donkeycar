@@ -6,6 +6,7 @@ import argparse
 import gym
 import gym_donkeycar
 import numpy as np
+import uuid
 
 if __name__ == "__main__":
 
@@ -45,6 +46,7 @@ if __name__ == "__main__":
         "racer_name" : "test",
         "country" : "USA",
         "bio" : "I am test client",
+        "guid" : str(uuid.uuid4()),
 
         "cam_resolution" : cam,
         "img_w" : cam[0],

@@ -150,7 +150,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def set_racer_bio(self, conf):
         self.conf = conf
         if "bio" in conf :
-            self.send_racer_bio(conf["racer_name"], conf["car_name"], conf["bio"], conf["country"])
+            self.send_racer_bio(conf["racer_name"], conf["car_name"], conf["bio"], conf["country"], conf["guid"])
 
     def on_recv_message(self, message):
         if 'msg_type' not in message:
@@ -357,15 +357,17 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.blocking_send(msg)
         time.sleep(0.1)
 
-    def send_racer_bio(self, racer_name, car_name, bio, country):
+    def send_racer_bio(self, racer_name, car_name, bio, country, guid):
         # body_style = "donkey" | "bare" | "car01" choice of string
         # body_rgb  = (128, 128, 128) tuple of ints
         # car_name = "string less than 64 char"
+        # guid = "some random string"
         msg = {'msg_type': 'racer_info',
             'racer_name': racer_name,
             'car_name' : car_name,
             'bio' : bio,
-            'country' : country }
+            'country' : country,
+            'guid' : guid }
         self.blocking_send(msg)
         time.sleep(0.1)
 
