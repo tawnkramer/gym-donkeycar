@@ -18,8 +18,8 @@ MAX_TIME_STEPS = 1000
 
 
 def select_action(env):
-    return env.action_space.sample()
-    #return [0.0, 0.1] # enable this to test checkpoint failure
+    #return env.action_space.sample()
+    return [0.0, 0.1] # enable this to test checkpoint failure
 
 
 def simulate(env):
@@ -57,15 +57,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='gym_test')
     parser.add_argument('--sim', type=str, default="sim_path",
                         help='path to unity simulator. maybe be left at default if you would like to start the sim on your own.')
+    parser.add_argument('--host', type=str, default="127.0.0.1",
+                        help='host to use for tcp')
     parser.add_argument('--port', type=int, default=9091,
-                        help='port to use for websockets')
+                        help='port to use for tcp')
     parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0',
                         help='name of donkey sim environment', choices=env_list)
 
     args = parser.parse_args()
 
     conf = {"exe_path" : args.sim, 
-        "host" : "127.0.0.1",
+        "host" : args.host,
         "port" : args.port,
 
         "body_style" : "donkey",

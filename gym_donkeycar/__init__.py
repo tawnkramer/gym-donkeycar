@@ -4,7 +4,7 @@
 
 __author__ = """Tawn Kramer"""
 __email__ = 'tawnkramer@gmail.com'
-__version__ = '1.0.15'
+__version__ = '1.0.16'
 
 from gym.envs.registration import register
 from .envs.donkey_env import GeneratedRoadsEnv, WarehouseEnv, AvcSparkfunEnv, GeneratedTrackEnv, MountainTrackEnv

@@ -125,10 +125,11 @@ class SDClient:
                                 j = json.loads(m)
                                 self.on_msg_recv(j)
                             except Exception as e:
-                                print("Exception:", e)
-                                print("json:", m)
+                                logger.error("Exception:" + str(e))
+                                logger.error("json: " + m)
                         else:
                             partial.append(m)
+                            # logger.info("partial packet:" + m)
                             if last_char == '}':
                                 if partial[0][0] == "{":
                                     assembled_packet = "".join(partial)
@@ -137,8 +138,8 @@ class SDClient:
                                         j = json.loads(assembled_packet)
                                         self.on_msg_recv(j)
                                     except Exception as e:
-                                        print(e)
-                                        print("json:", assembled_packet)
+                                        logger.error("Exception:" + str(e))
+                                        logger.error("partial json: " + assembled_packet)
                                 else:
                                     logger.error("failed packet.")
                                 partial.clear()

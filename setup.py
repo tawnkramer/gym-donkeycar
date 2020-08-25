@@ -47,6 +47,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/tawnkramer/gym-donkeycar',
-    version='1.0.15',
+    version='1.0.16',
     zip_safe=False,
 )
