@@ -134,7 +134,7 @@ class SDClient:
                                 if partial[0][0] == "{":
                                     assembled_packet = "".join(partial)
                                     assembled_packet = replace_float_notation(assembled_packet)
-                                    second_open = assembled_packet.find('{', 1)
+                                    second_open = assembled_packet.find('{"msg', 1)
                                     if second_open != -1:
                                         # hmm what to do? We have a partial packet. Trimming just
                                         # the good part and discarding the rest.
