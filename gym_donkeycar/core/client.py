@@ -138,7 +138,7 @@ class SDClient:
                                     if second_open != -1:
                                         # hmm what to do? We have a partial packet. Trimming just
                                         # the good part and discarding the rest.
-                                        logger.warn("got partial packet:" + assembled_packet[:10])
+                                        logger.warn("got partial packet:" + assembled_packet[:20])
                                         assembled_packet = assembled_packet[second_open:]
 
                                     try:
