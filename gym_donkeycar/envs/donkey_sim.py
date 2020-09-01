@@ -138,7 +138,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def send_config(self, conf):
         logger.info("sending car config.")
         self.set_car_config(conf)
-        self.set_racer_bio(conf)
+        # self.set_racer_bio(conf)
         cam_config = self.extract_keys(conf, ["img_w", "img_h", "img_d", "img_enc", "fov", "fish_eye_x", "fish_eye_y", "offset_x", "offset_y", "offset_z", "rot_x"])
         self.send_cam_config(**cam_config)
         logger.info("done sending car config.")
@@ -314,6 +314,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def on_car_loaded(self, data):
         logger.debug("car loaded")
         self.loaded = True
+        self.on_need_car_config("")
 
     def on_recv_scene_names(self, data):
         if data:
