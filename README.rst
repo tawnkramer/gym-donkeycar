@@ -22,12 +22,6 @@ Donkey Car OpenAI Gym
 Installation
 --------------
 
-* Install with pip
-
-.. code-block:: shell
-
-    pip install gym-donkeycar
-
 * Download simulator binaries: https://github.com/tawnkramer/gym-donkeycar/releases
 
 
@@ -45,12 +39,12 @@ Simple example code:
     import numpy as np
 
     #%% SET UP ENVIRONMENT
-    exe_path = f"{PATH_TO_APP}/donkey_sim.app/Contents/MacOS/donkey_sim"
+    exe_path = f"{PATH_TO_APP}/donkey_sim.exe"
     port = 9091    
     
     conf = { "exe_path" : exe_path, "port" : port }
 
-    env = gym.make("donkey-warehouse-v0", conf=conf)
+    env = gym.make("donkey-generated-track-v0", conf=conf)
 
     #%% PLAY
     obv = env.reset()
@@ -103,7 +97,6 @@ Environments
 * "donkey-generated-roads-v0"
 * "donkey-avc-sparkfun-v0"
 * "donkey-generated-track-v0"
-* "donkey-mountain-track-v0"
 
 
 Credits
