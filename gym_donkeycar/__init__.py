@@ -4,10 +4,10 @@
 
 __author__ = """Tawn Kramer"""
 __email__ = 'tawnkramer@gmail.com'
-__version__ = '1.0.16'
+__version__ = '1.0.15'
 
 from gym.envs.registration import register
-from .envs.donkey_env import GeneratedRoadsEnv, WarehouseEnv, AvcSparkfunEnv, GeneratedTrackEnv, MountainTrackEnv
+from .envs.donkey_env import GeneratedRoadsEnv, WarehouseEnv, AvcSparkfunEnv, GeneratedTrackEnv, MountainTrackEnv, LakeTrackEnv
 
 register(
     id='donkey-generated-roads-v0',
@@ -32,4 +32,9 @@ register(
 register(
     id='donkey-mountain-track-v0',
     entry_point='gym_donkeycar.envs.donkey_env:MountainTrackEnv',
+)
+
+register(
+    id='donkey-lake-track-v0',
+    entry_point='gym_donkeycar.envs.donkey_env:LakeTrackEnv',
 )

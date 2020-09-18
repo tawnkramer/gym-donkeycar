@@ -162,3 +162,8 @@ class MountainTrackEnv(DonkeyEnv):
 
     def __init__(self, *args, **kwargs):
         super(MountainTrackEnv, self).__init__(level=4, *args, **kwargs)
+
+class LakeTrackEnv(DonkeyEnv):
+
+    def __init__(self, *args, **kwargs):
+        super(LakeTrackEnv, self).__init__(level=5, *args, **kwargs)
