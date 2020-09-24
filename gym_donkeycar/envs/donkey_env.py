@@ -162,3 +162,9 @@ class MountainTrackEnv(DonkeyEnv):
 
     def __init__(self, *args, **kwargs):
         super(MountainTrackEnv, self).__init__(level=4, *args, **kwargs)
+
+
+class RoboRacingLeagueTrackEnv(DonkeyEnv):
+
+    def __init__(self, *args, **kwargs):
+        super(RoboRacingLeagueTrackEnv, self).__init__(level=5, *args, **kwargs)
