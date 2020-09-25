@@ -97,6 +97,7 @@ Environments
 * "donkey-generated-roads-v0"
 * "donkey-avc-sparkfun-v0"
 * "donkey-generated-track-v0"
+* "donkey-roboracingleague-track-v0"
 
 
 Credits
