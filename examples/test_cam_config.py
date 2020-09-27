@@ -17,7 +17,7 @@ if __name__ == "__main__":
         "donkey-generated-roads-v0",
         "donkey-avc-sparkfun-v0",
         "donkey-generated-track-v0",
-        "donkey-mountain-track-v0"
+        "donkey-roboracingleague-track-v0"
     ]
 
     parser = argparse.ArgumentParser(description='gym_test')
@@ -25,7 +25,7 @@ if __name__ == "__main__":
                         help='path to unity simulator. maybe be left at default if you would like to start the sim on your own.')
     parser.add_argument('--port', type=int, default=9091,
                         help='port to use for websockets')
-    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0',
+    parser.add_argument('--env_name', type=str, default='donkey-warehouse-v0',
                         help='name of donkey sim environment', choices=env_list)
 
     args = parser.parse_args()

@@ -36,22 +36,22 @@ def make_env(env_id, rank, seed=0):
 
 if __name__ == "__main__":
 
-	# Initialize the donkey environment
-    # where env_name one of:    
+    # Initialize the donkey environment
+    # where env_name one of:
     env_list = [
-       "donkey-warehouse-v0",
-       "donkey-generated-roads-v0",
-       "donkey-avc-sparkfun-v0",
-       "donkey-generated-track-v0",
-       "donkey-mountain-track-v0"
+        "donkey-warehouse-v0",
+        "donkey-generated-roads-v0",
+        "donkey-avc-sparkfun-v0",
+        "donkey-generated-track-v0",
+        "donkey-roboracingleague-track-v0"
     ]
-	
+
     parser = argparse.ArgumentParser(description='ppo_train')
     parser.add_argument('--sim', type=str, default="sim_path", help='path to unity simulator. maybe be left at manual if you would like to start the sim on your own.')
     parser.add_argument('--port', type=int, default=9091, help='port to use for tcp')
     parser.add_argument('--test', action="store_true", help='load the trained model and play')
     parser.add_argument('--multi', action="store_true", help='start multiple sims at once')
-    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0', help='name of donkey sim environment', choices=env_list)
+    parser.add_argument('--env_name', type=str, default='donkey-warehouse-v0', help='name of donkey sim environment', choices=env_list)
     
     args = parser.parse_args()
 

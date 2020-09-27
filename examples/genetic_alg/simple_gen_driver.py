@@ -189,14 +189,14 @@ class GeneticPositiveRewardAlg(GeneticAlg):
 
 if __name__ == "__main__":
 
-	# Initialize the donkey environment
+    # Initialize the donkey environment
     # where env_name one of:
     env_list = [
-       "donkey-warehouse-v0",
-       "donkey-generated-roads-v0",
-       "donkey-avc-sparkfun-v0",
-       "donkey-generated-track-v0",
-       "donkey-mountain-track-v0"
+        "donkey-warehouse-v0",
+        "donkey-generated-roads-v0",
+        "donkey-avc-sparkfun-v0",
+        "donkey-generated-track-v0",
+        "donkey-roboracingleague-track-v0"
     ]
 	
     parser = argparse.ArgumentParser(description='simple_gen_driver')
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_agents', type=int, default=8, help='how many agents in our population')
     parser.add_argument('--num_iter', type=int, default=8, help='how many generations before we stop')
     parser.add_argument('--max_steps', type=int, default=200, help='how many sim steps before we stop an epoch')
-    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0', help='name of donkey sim environment', choices=env_list)
+    parser.add_argument('--env_name', type=str, default='donkey-warehouse-v0', help='name of donkey sim environment', choices=env_list)
     parser.add_argument('--in_model', type=str, help='.h5 model produced by donkeycar. expects the default linear model type.')
     parser.add_argument('--out_model', type=str,  default='out.h5', help='.h5 model to save.')
 
