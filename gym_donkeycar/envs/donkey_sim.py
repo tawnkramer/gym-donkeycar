@@ -81,7 +81,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def __init__(self, conf):
         self.conf = conf
-        self.iSceneToLoad = conf["level"]
+        self.SceneToLoad = conf["level"]
         self.loaded = False
         self.max_cte = conf["max_cte"]
         self.timer = FPSTimer()
@@ -320,8 +320,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if data:
             names = data['scene_names']
             logger.debug(f"SceneNames: {names}")
-            print("loading scene", self.iSceneToLoad, names[self.iSceneToLoad])
-            self.send_load_scene(names[self.iSceneToLoad])
+            print("loading scene", self.SceneToLoad)
+            if self.SceneToLoad in names:
+                self.send_load_scene(self.SceneToLoad)
+            else:
+                raise ValueError("Scene name not in scene list")
 
     def send_control(self, steer, throttle):
         if not self.loaded:
