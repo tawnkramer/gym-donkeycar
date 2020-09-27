@@ -32,7 +32,6 @@ def test_track(env_name, conf):
 
 def select_action(env):
     return env.action_space.sample()  # taking random action from the action_space
-    # return [random.uniform(-1, 1), random.uniform(0, 1)]  # sending random steering and throttle
 
 
 def simulate(env):
@@ -46,7 +45,6 @@ def simulate(env):
 
             # Select an action
             action = select_action(env)
-            print(action)
 
             # execute the action
             obv, reward, done, info = env.step(action)
