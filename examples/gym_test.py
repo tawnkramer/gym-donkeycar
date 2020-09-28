@@ -17,9 +17,21 @@ NUM_EPISODES = 3
 MAX_TIME_STEPS = 1000
 
 
+def test_track(env_name, conf):
+    env = gym.make(env_name, conf=conf)
+
+    # make sure you have no track loaded
+    exit_scene(env)
+
+    simulate(env)
+
+    # exit the scene and close the env
+    exit_scene(env)
+    env.close()
+
+
 def select_action(env):
-    #return env.action_space.sample()
-    return [0.0, 0.1] # enable this to test checkpoint failure
+    return env.action_space.sample()  # taking random action from the action_space
 
 
 def simulate(env):
@@ -42,6 +54,10 @@ def simulate(env):
                 break
 
 
+def exit_scene(env):
+    env.viewer.exit_scene()
+
+
 if __name__ == "__main__":
 
     # Initialize the donkey environment
@@ -51,7 +67,7 @@ if __name__ == "__main__":
         "donkey-generated-roads-v0",
         "donkey-avc-sparkfun-v0",
         "donkey-generated-track-v0",
-        "donkey-mountain-track-v0"
+        "donkey-roboracingleague-track-v0"
     ]
 
     parser = argparse.ArgumentParser(description='gym_test')
@@ -61,32 +77,35 @@ if __name__ == "__main__":
                         help='host to use for tcp')
     parser.add_argument('--port', type=int, default=9091,
                         help='port to use for tcp')
-    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0',
-                        help='name of donkey sim environment', choices=env_list)
+    parser.add_argument('--env_name', type=str, default="all",
+                        help='name of donkey sim environment', choices=env_list+['all'])
 
     args = parser.parse_args()
 
-    conf = {"exe_path" : args.sim, 
-        "host" : args.host,
-        "port" : args.port,
+    conf = {
+        "exe_path": args.sim,
+        "host": args.host,
+        "port": args.port,
 
-        "body_style" : "donkey",
-        "body_rgb" : (128, 128, 128),
-        "car_name" : "me",
-        "font_size" : 100,
+        "body_style": "donkey",
+        "body_rgb": (128, 128, 128),
+        "car_name": "me",
+        "font_size": 100,
 
-        "racer_name" : "test",
-        "country" : "USA",
-        "bio" : "I am test client",
-        "guid" : str(uuid.uuid4()),
+        "racer_name": "test",
+        "country": "USA",
+        "bio": "I am test client",
+        "guid": str(uuid.uuid4()),
 
-        "max_cte" : 20,
-        }
+        "start_delay": 1,
+        "max_cte": 5,
+    }
 
-    env = gym.make(args.env_name, conf=conf)
-    
-    simulate(env)
+    if args.env_name == 'all':
+        for env_name in env_list:
+            test_track(env_name, conf)
 
-    env.close()
+    else:
+        test_track(args.env_name, conf)
 
     print("test finished")

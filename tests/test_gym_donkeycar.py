@@ -10,10 +10,11 @@ import gym
 import gym_donkeycar.envs
 
 env_list = [
-       "donkey-warehouse-v0",
-       "donkey-generated-roads-v0",
-       "donkey-avc-sparkfun-v0",
-       "donkey-generated-track-v0"
+    "donkey-warehouse-v0",
+    "donkey-generated-roads-v0",
+    "donkey-avc-sparkfun-v0",
+    "donkey-generated-track-v0",
+    "donkey-roboracingleague-track-v0"
 ]
 
 def test_load_gyms(mocker):

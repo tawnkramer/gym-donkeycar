@@ -67,6 +67,9 @@ class DonkeyUnitySimContoller():
     def quit(self):
         self.client.stop()
 
+    def exit_scene(self):
+        self.handler.send_exit_scene()
+
     def render(self, mode):
         pass
 
@@ -324,7 +327,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             if self.SceneToLoad in names:
                 self.send_load_scene(self.SceneToLoad)
             else:
-                raise ValueError("Scene name not in scene list")
+                raise ValueError(f"Scene name {self.SceneToLoad} not in scene list {names}")
 
     def send_control(self, steer, throttle):
         if not self.loaded:
@@ -343,6 +346,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def send_load_scene(self, scene_name):
         msg = {'msg_type': 'load_scene', 'scene_name': scene_name}
+        self.queue_message(msg)
+
+    def send_exit_scene(self):
+        msg = {'msg_type': 'exit_scene'}
         self.queue_message(msg)
 
     def send_car_config(self, body_style, body_rgb, car_name, font_size):

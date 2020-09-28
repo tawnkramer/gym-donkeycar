@@ -43,7 +43,7 @@ class DonkeyEnv(gym.Env):
     STEER_LIMIT_LEFT = -1.0
     STEER_LIMIT_RIGHT = 1.0
     THROTTLE_MIN = 0.0
-    THROTTLE_MAX = 5.0
+    THROTTLE_MAX = 1.0
     VAL_PER_PIXEL = 255
 
     def __init__(self, level, conf):

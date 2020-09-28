@@ -333,13 +333,13 @@ def run_ddqn(args):
 if __name__ == "__main__":
 
     # Initialize the donkey environment
-    # where env_name one of:    
+    # where env_name one of:
     env_list = [
-       "donkey-warehouse-v0",
-       "donkey-generated-roads-v0",
-       "donkey-avc-sparkfun-v0",
-       "donkey-generated-track-v0"
-       "donkey-mountain-track-v0"
+        "donkey-warehouse-v0",
+        "donkey-generated-roads-v0",
+        "donkey-avc-sparkfun-v0",
+        "donkey-generated-track-v0",
+        "donkey-roboracingleague-track-v0"
     ]
 
     parser = argparse.ArgumentParser(description='ddqn')
@@ -348,11 +348,8 @@ if __name__ == "__main__":
     parser.add_argument('--test', action="store_true", help='agent uses learned model to navigate env')
     parser.add_argument('--port', type=int, default=9091, help='port to use for websockets')
     parser.add_argument('--throttle', type=float, default=0.3, help='constant throttle for driving')
-    parser.add_argument('--env_name', type=str, default='donkey-mountain-track-v0', help='name of donkey sim environment', choices=env_list)
+    parser.add_argument('--env_name', type=str, default='donkey-warehouse-v0', help='name of donkey sim environment', choices=env_list)
 
     args = parser.parse_args()
 
     run_ddqn(args)
-    
-
-
