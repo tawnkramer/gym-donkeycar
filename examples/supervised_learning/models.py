@@ -14,6 +14,12 @@ from tensorflow.keras.optimizers import Adadelta
 import conf
 
 def show_model_summary(model):
+    """
+    Print summary of model summary.
+
+    Args:
+        model: (todo): write your description
+    """
     model.summary()
     for layer in model.layers:
         print(layer.output_shape)

@@ -30,6 +30,13 @@ import conf
 class GifCreator(object):
 
     def __init__(self, filename):
+        """
+        Initialize the image.
+
+        Args:
+            self: (todo): write your description
+            filename: (str): write your description
+        """
         import imageio
         self.filename = filename
         self.images = []
@@ -37,11 +44,24 @@ class GifCreator(object):
         self.i_frame = 0
 
     def add_image(self, image):
+        """
+        Add an image to the image.
+
+        Args:
+            self: (todo): write your description
+            image: (array): write your description
+        """
         self.i_frame += 1
         if self.i_frame % self.every_nth_frame == 0:
             self.images.append(image)
 
     def close(self):
+        """
+        Close the image
+
+        Args:
+            self: (todo): write your description
+        """
         import imageio
         if len(self.images) > 0:
             print('writing movie', self.filename)
@@ -54,6 +74,15 @@ class DonkeySimMsgHandler(IMesgHandler):
     THROTTLE = 1
 
     def __init__(self, model, constant_throttle, movie_handler=None):
+        """
+        Initialize movie.
+
+        Args:
+            self: (todo): write your description
+            model: (todo): write your description
+            constant_throttle: (todo): write your description
+            movie_handler: (todo): write your description
+        """
         self.model = model
         self.constant_throttle = constant_throttle
         self.sock = None
@@ -63,10 +92,24 @@ class DonkeySimMsgHandler(IMesgHandler):
         self.fns = {'telemetry' : self.on_telemetry}
 
     def on_connect(self, client):
+        """
+        Called when the client.
+
+        Args:
+            self: (todo): write your description
+            client: (todo): write your description
+        """
         self.client = client
         self.timer.reset()
 
     def on_recv_message(self, message):
+        """
+        Called when a message is received.
+
+        Args:
+            self: (todo): write your description
+            message: (str): write your description
+        """
         self.timer.on_frame()
         if not 'msg_type' in message:
             print('expected msg_type field')
@@ -80,6 +123,13 @@ class DonkeySimMsgHandler(IMesgHandler):
             print('unknown message type', msg_type)
 
     def on_telemetry(self, data):
+        """
+        Predict the image.
+
+        Args:
+            self: (todo): write your description
+            data: (array): write your description
+        """
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
@@ -91,10 +141,24 @@ class DonkeySimMsgHandler(IMesgHandler):
 
 
     def predict(self, image_array):
+        """
+        Predict the model.
+
+        Args:
+            self: (array): write your description
+            image_array: (array): write your description
+        """
         outputs = self.model.predict(image_array[None, :, :, :])
         self.parse_outputs(outputs)
     
     def parse_outputs(self, outputs):
+        """
+        Parses outputs.
+
+        Args:
+            self: (todo): write your description
+            outputs: (todo): write your description
+        """
         res = []
         for iO, output in enumerate(outputs):            
             if len(output.shape) == 2:
@@ -113,6 +177,13 @@ class DonkeySimMsgHandler(IMesgHandler):
         self.on_parsed_outputs(res)
         
     def on_parsed_outputs(self, outputs):
+        """
+        Send output to_parsed output.
+
+        Args:
+            self: (todo): write your description
+            outputs: (todo): write your description
+        """
         self.outputs = outputs
         steering_angle = 0.0
         throttle = 0.2
@@ -128,16 +199,39 @@ class DonkeySimMsgHandler(IMesgHandler):
         self.send_control(steering_angle, throttle)
 
     def send_control(self, steer, throttle):
+        """
+        Send control control control.
+
+        Args:
+            self: (todo): write your description
+            steer: (str): write your description
+            throttle: (str): write your description
+        """
         msg = { 'msg_type' : 'control', 'steering': steer.__str__(), 'throttle':throttle.__str__(), 'brake': '0.0' }
         #print(steer, throttle)
         self.client.queue_message(msg)
 
     def on_disconnect(self):
+        """
+        Close the movie.
+
+        Args:
+            self: (todo): write your description
+        """
         if self.movie_handler:
             self.movie_handler.close()
 
 
 def go(filename, address, constant_throttle, gif):
+    """
+    Go through the movie.
+
+    Args:
+        filename: (str): write your description
+        address: (str): write your description
+        constant_throttle: (str): write your description
+        gif: (todo): write your description
+    """
 
     model = load_model(filename, compile=False)
 

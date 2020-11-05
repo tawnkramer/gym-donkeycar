@@ -26,6 +26,11 @@ def make_env(env_id, rank, seed=0):
     :param rank: (int) index of the subprocess
     """
     def _init():
+        """
+        Initialize the environment.
+
+        Args:
+        """
         env = gym.make(env_id)
         env.seed(seed + rank)
         env.reset()

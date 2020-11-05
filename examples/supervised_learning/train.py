@@ -49,6 +49,12 @@ def shuffle(samples):
     return ret_arr
 
 def parse_img_filepath(filepath):
+    """
+    Parse an image file
+
+    Args:
+        filepath: (str): write your description
+    """
     basename = os.path.basename(filepath)
 
     #less .jpg
@@ -63,6 +69,12 @@ def parse_img_filepath(filepath):
     return data
 
 def load_json(filename):
+    """
+    Load a json file.
+
+    Args:
+        filename: (str): write your description
+    """
     with open(filename, "rt") as fp:
         data = json.load(fp)
     return data
@@ -188,6 +200,15 @@ def make_generators(inputs, limit=None, batch_size=32, aug_perc=0.0):
 
 
 def go(model_name, epochs=50, inputs='./log/*.jpg', limit=None):
+    """
+    Plots a keras model.
+
+    Args:
+        model_name: (str): write your description
+        epochs: (int): write your description
+        inputs: (array): write your description
+        limit: (int): write your description
+    """
 
     print('working on model', model_name)
 
