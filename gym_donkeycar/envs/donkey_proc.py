@@ -10,11 +10,26 @@ import os
 class DonkeyUnityProcess(object):
 
     def __init__(self):
+        """
+        Initialize the process.
+
+        Args:
+            self: (todo): write your description
+        """
         self.proc1 = None
 
     ## ------ Launch Unity Env ----------- ##
 
     def start(self, sim_path, host='0.0.0.0', port=9091):
+        """
+        Starts a port
+
+        Args:
+            self: (todo): write your description
+            sim_path: (str): write your description
+            host: (str): write your description
+            port: (int): write your description
+        """
 
         if sim_path == "remote":
             return

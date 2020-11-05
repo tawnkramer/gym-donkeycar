@@ -28,28 +28,75 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 
 class IAgent:
     def begin(self):
+        """
+        Begin a new thread.
+
+        Args:
+            self: (todo): write your description
+        """
         pass
 
     def wait(self):
+        """
+        Wait for the next call to complete.
+
+        Args:
+            self: (todo): write your description
+        """
         pass
 
     def get_score(self):
+        """
+        Get the score.
+
+        Args:
+            self: (todo): write your description
+        """
         pass
 
     def make_new(self, parent1, parent2):
+        """
+        Make a new parent.
+
+        Args:
+            self: (todo): write your description
+            parent1: (todo): write your description
+            parent2: (todo): write your description
+        """
         return IAgent()
 
 
 class GeneticAlg:
 
     def __init__(self, population, conf = {}):
+        """
+        Initialize population. population.
+
+        Args:
+            self: (todo): write your description
+            population: (todo): write your description
+            conf: (todo): write your description
+        """
         self.population = population
         self.conf = conf
 
     def finished(self):
+        """
+        Returns true if the job is running.
+
+        Args:
+            self: (todo): write your description
+        """
         return False
 
     def process(self, num_iter):
+        """
+        Process num_agents
+
+        Args:
+            self: (todo): write your description
+            num_iter: (int): write your description
+        """
         iIter = 0
         while not self.finished() and iIter < num_iter:
             print("starting epoch", iIter)
@@ -67,9 +114,21 @@ class GeneticAlg:
             
 
     def on_agents_finished(self):
+        """
+        Called if_agents ().
+
+        Args:
+            self: (todo): write your description
+        """
         pass
 
     def evaluate_agents(self):
+        """
+        Evaluate all agents on the population.
+
+        Args:
+            self: (todo): write your description
+        """
         for agent in self.population:
             agent.begin()
         
@@ -82,6 +141,12 @@ class GeneticAlg:
         print("scores:", [a.score for a in self.population])
 
     def how_many_to_keep(self):
+        """
+        Returns the number of items that have no more than the same number of them.
+
+        Args:
+            self: (todo): write your description
+        """
         return round(len(self.population) / 4) + 1
             
     def breed_agents(self):
@@ -104,15 +169,33 @@ class GeneticAlg:
         self.population = pop_to_keep + new_population
 
     def sort_agents(self):
+        """
+        Sort the population according to the population.
+
+        Args:
+            self: (todo): write your description
+        """
         self.population.sort(key=lambda x: x.get_score(), reverse=False)
 
     def select_pop_index(self):
+        """
+        Return a random index of the population.
+
+        Args:
+            self: (todo): write your description
+        """
         r = np.random.uniform(low=0.0, high=1.0)
         N = len(self.population)
         iP = round(r * N) % N
         return iP
 
     def select_parents(self):
+        """
+        Finds the list of parents.
+
+        Args:
+            self: (todo): write your description
+        """
         iP1 = self.select_pop_index()
         iP2 = self.select_pop_index()
         
@@ -129,26 +212,74 @@ class GeneticAlg:
 
 class NNAgent(IAgent):
     def __init__(self, model, conf):
+        """
+        Initialize the configuration.
+
+        Args:
+            self: (todo): write your description
+            model: (todo): write your description
+            conf: (todo): write your description
+        """
         self.model = model
         self.score = 0.0
         self.conf = conf
 
     def begin(self):
+        """
+        Begin a score.
+
+        Args:
+            self: (todo): write your description
+        """
         self.score = 0.0
 
     def wait(self):
+        """
+        Wait for the next call to complete.
+
+        Args:
+            self: (todo): write your description
+        """
         pass
 
     def get_score(self):
+        """
+        Get the score.
+
+        Args:
+            self: (todo): write your description
+        """
         return self.score
 
     def mutate(self):
+        """
+        Mutate the list of this function.
+
+        Args:
+            self: (todo): write your description
+        """
         pass
 
     def breed(self, agent1, agent2):
+        """
+        Returns the intersection between two agent1 and agent2.
+
+        Args:
+            self: (todo): write your description
+            agent1: (todo): write your description
+            agent2: (todo): write your description
+        """
         return agent1.model
 
     def make_new(self, parent1, parent2):
+        """
+        Make a new agent
+
+        Args:
+            self: (todo): write your description
+            parent1: (todo): write your description
+            parent2: (todo): write your description
+        """
         new_model = self.breed(parent1, parent2)
         agent = NNAgent(new_model, self.conf)
         agent.mutate()
@@ -158,10 +289,24 @@ class NNAgent(IAgent):
 class KerasNNAgent(NNAgent):
 
     def __init__(self, model, conf):
+        """
+        Initialize the conf.
+
+        Args:
+            self: (todo): write your description
+            model: (todo): write your description
+            conf: (todo): write your description
+        """
         super().__init__(model, conf)
         self.mutation_rate = conf["mutation_rate"]
 
     def mutate(self):
+        """
+        Mutate all layers.
+
+        Args:
+            self: (todo): write your description
+        """
         layers_to_mutate = self.conf['layers_to_mutate']
 
         for iLayer in layers_to_mutate:
@@ -173,9 +318,24 @@ class KerasNNAgent(NNAgent):
         self.decay_mutations()
 
     def rand_float(self, mn, mx):
+        """
+        Generate a random float.
+
+        Args:
+            self: (todo): write your description
+            mn: (array): write your description
+            mx: (array): write your description
+        """
         return float(np.random.uniform(mn, mx, 1)[0])
 
     def modify_weights(self, w):
+        """
+        Modifies the weights of the weights.
+
+        Args:
+            self: (todo): write your description
+            w: (array): write your description
+        """
         mx = self.conf["mutation_max"]
         mn = self.conf["mutation_min"]
         mag = self.rand_float(mn, mx)
@@ -191,9 +351,23 @@ class KerasNNAgent(NNAgent):
         return w
 
     def decay_mutations(self):
+        """
+        Decay the mutations.
+
+        Args:
+            self: (todo): write your description
+        """
         self.conf["mutation_max"] *= self.conf["mutation_decay"]
 
     def breed(self, agent1, agent2):
+        """
+        Breaks the keras model.
+
+        Args:
+            self: (todo): write your description
+            agent1: (todo): write your description
+            agent2: (todo): write your description
+        """
         model1, model2 = agent1.model, agent2.model
         jsm = model1.to_json()
         new_model = tf.keras.models.model_from_json(jsm)
@@ -209,6 +383,15 @@ class KerasNNAgent(NNAgent):
         return new_model
 
     def merge_layers(self, dest_layer, src1_layer, src2_layer):
+        """
+        Merge one layer layers.
+
+        Args:
+            self: (todo): write your description
+            dest_layer: (todo): write your description
+            src1_layer: (todo): write your description
+            src2_layer: (todo): write your description
+        """
         w1 = src1_layer.get_weights()
         w2 = src2_layer.get_weights()
         res = w1.copy()
@@ -228,15 +411,37 @@ class KerasNNImageAgent(KerasNNAgent):
     '''
 
     def __init__(self, model, conf):
+        """
+        Initialize the config.
+
+        Args:
+            self: (todo): write your description
+            model: (todo): write your description
+            conf: (todo): write your description
+        """
         super().__init__(model, conf)
         self.image = conf["image"]
         self.target = conf["target"]
 
     def begin(self):
+        """
+        Begin the model.
+
+        Args:
+            self: (todo): write your description
+        """
         pred = self.model.predict(self.image)
         self.score = np.sum(np.absolute(pred - self.target))
 
     def make_new(self, parent1, parent2):
+        """
+        Creates a new agent
+
+        Args:
+            self: (todo): write your description
+            parent1: (todo): write your description
+            parent2: (todo): write your description
+        """
         new_model = self.breed(parent1, parent2)
         agent = KerasNNImageAgent(new_model, self.conf)
         agent.mutate()
@@ -245,6 +450,15 @@ class KerasNNImageAgent(KerasNNAgent):
 
 
 def test_image_agent(model_filename, record_filename, num_agents, num_iter):
+    """
+    Test to disk agents.
+
+    Args:
+        model_filename: (str): write your description
+        record_filename: (str): write your description
+        num_agents: (int): write your description
+        num_iter: (int): write your description
+    """
     with open(os.path.expanduser(record_filename), "r") as fp:
         record = json.load(fp)
     img_filename = os.path.join(os.path.dirname(record_filename), record["cam/image_array"])

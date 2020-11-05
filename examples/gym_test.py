@@ -18,6 +18,13 @@ MAX_TIME_STEPS = 1000
 
 
 def test_track(env_name, conf):
+    """
+    Create a conf for a conf file.
+
+    Args:
+        env_name: (str): write your description
+        conf: (todo): write your description
+    """
     env = gym.make(env_name, conf=conf)
 
     # make sure you have no track loaded
@@ -31,10 +38,22 @@ def test_track(env_name, conf):
 
 
 def select_action(env):
+    """
+    Select an action.
+
+    Args:
+        env: (todo): write your description
+    """
     return env.action_space.sample()  # taking random action from the action_space
 
 
 def simulate(env):
+    """
+    Simulates an environment.
+
+    Args:
+        env: (todo): write your description
+    """
 
     for episode in range(NUM_EPISODES):
 
@@ -55,6 +74,12 @@ def simulate(env):
 
 
 def exit_scene(env):
+    """
+    Exit a scene
+
+    Args:
+        env: (todo): write your description
+    """
     env.viewer.exit_scene()
 
 

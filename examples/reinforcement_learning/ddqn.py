@@ -42,6 +42,15 @@ img_channels = 4 # We stack 4 frames
 class DQNAgent:
 
     def __init__(self, state_size, action_space, train=True):
+        """
+        Initialize the target.
+
+        Args:
+            self: (todo): write your description
+            state_size: (int): write your description
+            action_space: (todo): write your description
+            train: (todo): write your description
+        """
         self.t = 0
         self.max_Q = 0
         self.train = train
@@ -78,6 +87,12 @@ class DQNAgent:
 
 
     def build_model(self):
+        """
+        Builds the model.
+
+        Args:
+            self: (todo): write your description
+        """
         model = Sequential()
         model.add(Conv2D(24, (5, 5), strides=(2, 2), padding="same",input_shape=(img_rows,img_cols,img_channels)))  #80*80*4
         model.add(Activation('relu'))
@@ -110,16 +125,36 @@ class DQNAgent:
 
 
     def process_image(self, obs):
+        """
+        Resize an rgb image
+
+        Args:
+            self: (todo): write your description
+            obs: (todo): write your description
+        """
         obs = self.rgb2gray(obs)
         obs = cv2.resize(obs, (img_rows, img_cols))
         return obs
         
 
     def update_target_model(self):
+        """
+        Updates the weights of the model
+
+        Args:
+            self: (todo): write your description
+        """
         self.target_model.set_weights(self.model.get_weights())
 
     # Get action from model using epsilon-greedy policy
     def get_action(self, s_t):
+        """
+        Get a single action.
+
+        Args:
+            self: (todo): write your description
+            s_t: (str): write your description
+        """
         if np.random.rand() <= self.epsilon:
             return self.action_space.sample()[0]       
         else:
@@ -131,15 +166,38 @@ class DQNAgent:
 
 
     def replay_memory(self, state, action, reward, next_state, done):
+        """
+        Takes the memory.
+
+        Args:
+            self: (todo): write your description
+            state: (todo): write your description
+            action: (str): write your description
+            reward: (float): write your description
+            next_state: (todo): write your description
+            done: (str): write your description
+        """
         self.memory.append((state, action, reward, next_state, done))
 
 
     def update_epsilon(self):
+        """
+        Update the epsilon.
+
+        Args:
+            self: (todo): write your description
+        """
         if self.epsilon > self.epsilon_min:
             self.epsilon -= (self.initial_epsilon - self.epsilon_min) / self.explore
 
 
     def train_replay(self):
+        """
+        Train the model.
+
+        Args:
+            self: (todo): write your description
+        """
         if len(self.memory) < self.train_start:
             return
         
@@ -164,11 +222,25 @@ class DQNAgent:
 
 
     def load_model(self, name):
+        """
+        Load a model from disk.
+
+        Args:
+            self: (str): write your description
+            name: (str): write your description
+        """
         self.model.load_weights(name)
 
 
     # Save the model which is under training
     def save_model(self, name):
+        """
+        Save the model to disk.
+
+        Args:
+            self: (todo): write your description
+            name: (str): write your description
+        """
         self.model.save_weights(name)
 
 
@@ -245,6 +317,13 @@ def run_ddqn(args):
 
     # not working on windows...
     def signal_handler(signal, frame):
+        """
+        Signal handler.
+
+        Args:
+            signal: (str): write your description
+            frame: (todo): write your description
+        """
         print("catching ctrl+c")
         env.unwrapped.close()
         sys.exit(0)

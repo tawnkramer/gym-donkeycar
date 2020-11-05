@@ -23,6 +23,15 @@ logger = logging.getLogger(__name__)
 
 class SDClient:
     def __init__(self, host, port, poll_socket_sleep_time=0.05):
+        """
+        Connect to a connection.
+
+        Args:
+            self: (todo): write your description
+            host: (str): write your description
+            port: (int): write your description
+            poll_socket_sleep_time: (todo): write your description
+        """
         self.msg = None
         self.host = host
         self.port = port
@@ -36,6 +45,12 @@ class SDClient:
 
 
     def connect(self):
+        """
+        Connect to a connection.
+
+        Args:
+            self: (todo): write your description
+        """
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # connecting to the server 
@@ -52,17 +67,44 @@ class SDClient:
 
 
     def send(self, m):
+        """
+        Sends a message.
+
+        Args:
+            self: (todo): write your description
+            m: (str): write your description
+        """
         self.msg = m
 
     def send_now(self, msg):
+        """
+        Send a message
+
+        Args:
+            self: (todo): write your description
+            msg: (str): write your description
+        """
         logger.debug("send_now:" + msg)
         self.s.sendall(msg.encode("utf-8"))
 
     def on_msg_recv(self, j):
+        """
+        Handle a message handler
+
+        Args:
+            self: (todo): write your description
+            j: (todo): write your description
+        """
         logger.debug("got:" + j['msg_type'])
 
 
     def stop(self):
+        """
+        Stop the process.
+
+        Args:
+            self: (todo): write your description
+        """
         # signal proc_msg loop to stop, then wait for thread to finish
         # close socket
         self.do_process_msgs = False
