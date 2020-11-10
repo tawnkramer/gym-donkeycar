@@ -83,23 +83,22 @@ class SDClient:
         sock.setblocking(0)
         inputs = [ sock ]
         outputs = [ sock ]
-        partial = []
+        localbuffer=""
 
         while self.do_process_msgs:
             # without this sleep, I was getting very consistent socket errors
             # on Windows. Perhaps we don't need this sleep on other platforms.
             time.sleep(self.poll_socket_sleep_sec)
-
             try:
                 # test our socket for readable, writable states.
                 readable, writable, exceptional = select.select(inputs, outputs, inputs)
 
                 for s in readable:
-                    # print("waiting to recv")
                     try:
                         data = s.recv(1024 * 256)
                     except ConnectionAbortedError:
                         logger.warn("socket connection aborted")
+                        print("socket connection aborted")
                         self.do_process_msgs = False
                         break
                     
@@ -107,55 +106,41 @@ class SDClient:
                     # for json.loads, but we do need a string in order to do
                     # the split by \n newline char. This seperates each json msg.
                     data = data.decode("utf-8")
-                    msgs = data.split("\n")
 
-                    for m in msgs:
-                        if len(m) < 2:
-                            continue
-                        last_char = m[-1]
-                        first_char = m[0]
-                        # check first and last char for a valid json terminator
-                        # if not, then add to our partial packets list and see
-                        # if we get the rest of the packet on our next go around.                
-                        if first_char == "{" and last_char == '}':
-                            # Replace comma with dots for floats
-                            # useful when using unity in a language different from English
-                            m = replace_float_notation(m)
-                            try:
-                                j = json.loads(m)
-                                self.on_msg_recv(j)
-                            except Exception as e:
-                                logger.error("Exception:" + str(e))
-                                logger.error("json: " + m)
-                        else:
-                            partial.append(m)
-                            # logger.info("partial packet:" + m)
-                            if last_char == '}':
-                                if partial[0][0] == "{":
-                                    assembled_packet = "".join(partial)
-                                    assembled_packet = replace_float_notation(assembled_packet)
-                                    second_open = assembled_packet.find('{"msg', 1)
-                                    if second_open != -1:
-                                        # hmm what to do? We have a partial packet. Trimming just
-                                        # the good part and discarding the rest.
-                                        logger.warn("got partial packet:" + assembled_packet[:20])
-                                        assembled_packet = assembled_packet[second_open:]
+                    localbuffer += data
+                    
+                    n0=localbuffer.find("{")
+                    n1=localbuffer.rfind("}")
+                    if  n1>=0 and n0>=0:  # there is at least one message :
+                        msgs=localbuffer[n0:n1+1].split("\n")
+                        localbuffer=localbuffer[n1:]
 
-                                    try:
-                                        j = json.loads(assembled_packet)
-                                        self.on_msg_recv(j)
-                                    except Exception as e:
-                                        logger.error("Exception:" + str(e))
-                                        logger.error("partial json: " + assembled_packet)
-                                else:
-                                    logger.error("failed packet.")
-                                partial.clear()
-                        
+                        for m in msgs:
+                              if len(m) <= 2:
+                                  continue
+                              # Replace comma with dots for floats
+                              # useful when using unity in a language different from English
+                              m = replace_float_notation(m)
+                              try:
+                                    j = json.loads(m)
+                              except Exception as e:
+                                    logger.error("Exception:" + str(e))
+                                    logger.error("json: " + m)
+                                    continue
+
+                              if 'msg_type' not in j:
+                                    logger.error('Warning expected msg_type field')
+                                    logger.error("json: " + m)
+                                    continue
+                              else : 
+                                    self.on_msg_recv(j)
+
                 for s in writable:
                     if self.msg != None:
                         logger.debug("sending " + self.msg)
                         s.sendall(self.msg.encode("utf-8"))
                         self.msg = None
+                        
                 if len(exceptional) > 0:
                     logger.error("problems w sockets!")
 
