@@ -111,7 +111,7 @@ class SDClient:
                     
                     n0=localbuffer.find("{")
                     n1=localbuffer.rfind("}")
-                    if  n1>=0 and n0>=0:  # there is at least one message :
+                    if  n1>=0 and n0>=0 and n0<n1 :  # there is at least one message :
                         msgs=localbuffer[n0:n1+1].split("\n")
                         localbuffer=localbuffer[n1:]
 
