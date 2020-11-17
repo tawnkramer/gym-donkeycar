@@ -168,3 +168,9 @@ class RoboRacingLeagueTrackEnv(DonkeyEnv):
 
     def __init__(self, *args, **kwargs):
         super(RoboRacingLeagueTrackEnv, self).__init__(level='roboracingleague_1', *args, **kwargs)
+
+
+class WaveshareEnv(DonkeyEnv):
+
+    def __init__(self, *args, **kwargs):
+        super(WaveshareEnv, self).__init__(level='waveshare', *args, **kwargs)
