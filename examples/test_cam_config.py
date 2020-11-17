@@ -17,7 +17,8 @@ if __name__ == "__main__":
         "donkey-generated-roads-v0",
         "donkey-avc-sparkfun-v0",
         "donkey-generated-track-v0",
-        "donkey-roboracingleague-track-v0"
+        "donkey-roboracingleague-track-v0",
+        "donkey-waveshare-track-v0"
     ]
 
     parser = argparse.ArgumentParser(description='gym_test')
