@@ -174,3 +174,9 @@ class WaveshareEnv(DonkeyEnv):
 
     def __init__(self, *args, **kwargs):
         super(WaveshareEnv, self).__init__(level='waveshare', *args, **kwargs)
+
+
+class MiniMonacoEnv(DonkeyEnv):
+
+    def __init__(self, *args, **kwargs):
+        super(MiniMonacoEnv, self).__init__(level='mini_monaco', *args, **kwargs)
