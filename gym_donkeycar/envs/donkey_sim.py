@@ -114,6 +114,16 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "aborted": self.on_abort,
                     "missed_checkpoint": self.on_missed_checkpoint,
                     "need_car_config": self.on_need_car_config}
+        self.gyro_x = 0.0
+        self.gyro_y = 0.0
+        self.gyro_z = 0.0
+        self.accel_x = 0.0
+        self.accel_y = 0.0
+        self.accel_z = 0.0
+        self.vel_x = 0.0
+        self.vel_y = 0.0
+        self.vel_z = 0.0
+
 
     def on_connect(self, client):
         logger.debug("socket connected")
@@ -184,6 +194,15 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.over = False
         self.missed_checkpoint = False
         self.dq = False
+        self.gyro_x = 0.0
+        self.gyro_y = 0.0
+        self.gyro_z = 0.0
+        self.accel_x = 0.0
+        self.accel_y = 0.0
+        self.accel_z = 0.0
+        self.vel_x = 0.0
+        self.vel_y = 0.0
+        self.vel_z = 0.0
 
 
     def get_sensor_size(self):
@@ -200,8 +219,13 @@ class DonkeyUnitySimHandler(IMesgHandler):
         observation = self.image_array
         done = self.is_game_over()
         reward = self.calc_reward(done)
-        info = {'pos': (self.x, self.y, self.z), 'cte': self.cte,
-                "speed": self.speed, "hit": self.hit}
+        #info = {'pos': (self.x, self.y, self.z), 'cte': self.cte,
+        #        "speed": self.speed, "hit": self.hit}
+        info = {'pos'  : (self.x, self.y, self.z), 'cte': self.cte,
+                "speed":  self.speed, "hit": self.hit,
+                'gyro' : (self.gyro_x, self.gyro_y, self.gyro_z),
+                'accel': (self.accel_x, self.accel_y, self.accel_z),
+                'vel'  : (self.vel_x, self.vel_y, self.vel_z)}
 
         #self.timer.on_frame()
 
@@ -247,6 +271,19 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.y = data["pos_y"]
         self.z = data["pos_z"]
         self.speed = data["speed"]
+
+        if "gyro_x" in data:
+            self.gyro_x = data["gyro_x"]
+            self.gyro_y = data["gyro_y"]
+            self.gyro_z = data["gyro_z"]
+        if "accel_x" in data:
+            self.accel_x = data["accel_x"]
+            self.accel_y = data["accel_y"]
+            self.accel_z = data["accel_z"]
+        if "vel_x" in data:
+            self.vel_x = data["vel_x"]
+            self.vel_y = data["vel_y"]
+            self.vel_z = data["vel_z"]
 
         # Cross track error not always present.
         # Will be missing if path is not setup in the given scene.
