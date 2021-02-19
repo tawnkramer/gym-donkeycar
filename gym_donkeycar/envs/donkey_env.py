@@ -180,3 +180,9 @@ class MiniMonacoEnv(DonkeyEnv):
 
     def __init__(self, *args, **kwargs):
         super(MiniMonacoEnv, self).__init__(level='mini_monaco', *args, **kwargs)
+
+
+class WarrenTrackEnv(DonkeyEnv):
+
+    def __init__(self, *args, **kwargs):
+        super(WarrenTrackEnv, self).__init__(level='warren', *args, **kwargs)

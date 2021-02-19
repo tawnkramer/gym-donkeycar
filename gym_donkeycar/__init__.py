@@ -11,7 +11,7 @@ from gym.envs.registration import register
 from .envs.donkey_env import (AvcSparkfunEnv, GeneratedRoadsEnv,
                               GeneratedTrackEnv, MountainTrackEnv,
                               RoboRacingLeagueTrackEnv, WarehouseEnv,
-                              WaveshareEnv, MiniMonacoEnv)
+                              WaveshareEnv, MiniMonacoEnv, WarrenTrackEnv)
 
 register(
     id='donkey-generated-roads-v0',
@@ -51,4 +51,9 @@ register(
 register(
     id='donkey-minimonaco-track-v0',
     entry_point='gym_donkeycar.envs.donkey_env:MiniMonacoEnv',
+)
+
+register(
+    id='donkey-warren-track-v0',
+    entry_point='gym_donkeycar.envs.donkey_env:WarrenTrackEnv',
 )

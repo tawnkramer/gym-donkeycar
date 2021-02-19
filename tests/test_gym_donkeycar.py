@@ -16,7 +16,8 @@ env_list = [
     "donkey-generated-track-v0",
     "donkey-roboracingleague-track-v0",
     "donkey-waveshare-v0",
-    "donkey-minimonaco-track-v0"
+    "donkey-minimonaco-track-v0",
+    "donkey-warren-track-v0"
 ]
 
 def test_load_gyms(mocker):

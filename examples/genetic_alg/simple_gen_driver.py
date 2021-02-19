@@ -198,7 +198,8 @@ if __name__ == "__main__":
         "donkey-generated-track-v0",
         "donkey-roboracingleague-track-v0",
         "donkey-waveshare-v0",
-        "donkey-minimonaco-track-v0"
+        "donkey-minimonaco-track-v0",
+        "donkey-warren-track-v0"
     ]
 	
     parser = argparse.ArgumentParser(description='simple_gen_driver')
