@@ -99,6 +99,8 @@ Environments
 * "donkey-generated-track-v0"
 * "donkey-roboracingleague-track-v0"
 * "donkey-waveshare-v0"
+* "donkey-minimonaco-track-v0"
+* "donkey-warren-track-v0"
 
 
 Credits
@@ -109,6 +111,10 @@ Original Source Code
 Tawn Kramer - https://github.com/tawnkramer/gym-donkeycar
 
 Roma Sokolkov - https://github.com/r7vme/gym-donkeycar cloned with permission from https://github.com/tawnkramer/sdsandbox
+
+Maintainer
+
+Maxime Ellerbach - https://github.com/Maximellerbach/gym-donkeycar
 
 Release Engineer
 
