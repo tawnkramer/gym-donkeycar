@@ -1,5 +1,6 @@
 import re
 
+
 def replace_float_notation(string):
     """
     Replace unity float notation for languages like
@@ -17,7 +18,6 @@ def replace_float_notation(string):
         matches = re.finditer(regex, string, re.MULTILINE)
 
         for match in matches:
-            num = match.group('num').replace(',', '.')
-            string = string.replace(match.group('num'), num)
+            num = match.group("num").replace(",", ".")
+            string = string.replace(match.group("num"), num)
     return string
-    

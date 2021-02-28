@@ -3,10 +3,7 @@
 
 """Tests for `gym_donkeycar.core` package."""
 
-import pytest
-
 from gym_donkeycar.core.fps import FPSTimer
-
 
 # @pytest.fixture
 # def response():

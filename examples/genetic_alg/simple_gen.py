@@ -1,27 +1,26 @@
-'''
+"""
 file: simple_gen.py
 author: Tawn Kramer
 date: 17 May 2020
 notes: a most basic implementation of genetic cross breeding and mutation to attempt to improve
         a neural network. Assumes the standard Keras model from Donkeycar project.
         Lower score means less loss = better.
-'''
-import os
-import random
-import time
+"""
 import argparse
 import json
+import os
+import time
+import warnings
 
 import numpy as np
 from PIL import Image
 
 # noisy, noisy tensorflow. we love you.
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import warnings  
-with warnings.catch_warnings():  
-    warnings.filterwarnings("ignore",category=FutureWarning)
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", category=FutureWarning)
     import tensorflow as tf
-    from tensorflow.keras import backend as K
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 
@@ -41,8 +40,7 @@ class IAgent:
 
 
 class GeneticAlg:
-
-    def __init__(self, population, conf = {}):
+    def __init__(self, population, conf={}):
         self.population = population
         self.conf = conf
 
@@ -63,8 +61,7 @@ class GeneticAlg:
             d = time.time() - s
             # Time per iteration getting worse?!
             print("finish epoch", iIter)
-            print("Iter %d eval time: %f total time: %f" % ( iIter, e, d))
-            
+            print("Iter %d eval time: %f total time: %f" % (iIter, e, d))
 
     def on_agents_finished(self):
         pass
@@ -72,10 +69,10 @@ class GeneticAlg:
     def evaluate_agents(self):
         for agent in self.population:
             agent.begin()
-        
+
         for agent in self.population:
             agent.wait()
-        
+
         self.sort_agents()
 
         # progress
@@ -83,13 +80,13 @@ class GeneticAlg:
 
     def how_many_to_keep(self):
         return round(len(self.population) / 4) + 1
-            
+
     def breed_agents(self):
-        '''
+        """
         keep the best N of our population and replace the rest
         with versions cross bred from other agents.
-        '''
-        
+        """
+
         keep = self.how_many_to_keep()
         num_new = len(self.population) - keep
         pop_to_keep = self.population[0:keep]
@@ -115,15 +112,15 @@ class GeneticAlg:
     def select_parents(self):
         iP1 = self.select_pop_index()
         iP2 = self.select_pop_index()
-        
-        #hack, always select the best 2
-        #iP1 = 0
-        #iP2 = 1
 
-        #lets make sure parents are not the same
-        while(iP2 == iP1):
+        # hack, always select the best 2
+        # iP1 = 0
+        # iP2 = 1
+
+        # lets make sure parents are not the same
+        while iP2 == iP1:
             iP2 = self.select_pop_index()
-            
+
         return self.population[iP1], self.population[iP2]
 
 
@@ -156,13 +153,12 @@ class NNAgent(IAgent):
 
 
 class KerasNNAgent(NNAgent):
-
     def __init__(self, model, conf):
         super().__init__(model, conf)
         self.mutation_rate = conf["mutation_rate"]
 
     def mutate(self):
-        layers_to_mutate = self.conf['layers_to_mutate']
+        layers_to_mutate = self.conf["layers_to_mutate"]
 
         for iLayer in layers_to_mutate:
             layer = self.model.get_layer(index=iLayer)
@@ -222,10 +218,10 @@ class KerasNNAgent(NNAgent):
 
 
 class KerasNNImageAgent(KerasNNAgent):
-    '''
+    """
     Given an image and a target prediction, make an agent that will
     optimize for score of target.
-    '''
+    """
 
     def __init__(self, model, conf):
         super().__init__(model, conf)
@@ -243,7 +239,6 @@ class KerasNNImageAgent(KerasNNAgent):
         return agent
 
 
-
 def test_image_agent(model_filename, record_filename, num_agents, num_iter):
     with open(os.path.expanduser(record_filename), "r") as fp:
         record = json.load(fp)
@@ -257,21 +252,20 @@ def test_image_agent(model_filename, record_filename, num_agents, num_iter):
     img_arr = img_arr.reshape((1,) + img_arr.shape)
     steering = record["user/angle"]
     throttle = record["user/throttle"]
-    target = np.array([ np.array([[steering]]), np.array([[throttle]]) ])
+    target = np.array([np.array([[steering]]), np.array([[throttle]])])
 
     # These are the final two dense layers we will mutate. We will use the same two layers we breeding.
     to_mutate = [14, 16]
 
-    conf = { "layers_to_mutate" : to_mutate}
+    conf = {"layers_to_mutate": to_mutate}
     conf["layers_to_combine"] = to_mutate
     conf["mutation_rate"] = 1.0
     conf["mutation_max"] = 0.3
     conf["mutation_min"] = 0.0
     conf["mutation_decay"] = 1.0
     conf["image"] = img_arr
-    conf['target'] = target
+    conf["target"] = target
     population = []
-    
 
     for i in range(num_agents):
         model = tf.keras.models.load_model(os.path.expanduser(model_filename))
@@ -280,7 +274,7 @@ def test_image_agent(model_filename, record_filename, num_agents, num_iter):
             agent.mutate()
         population.append(agent)
 
-    ## Some initial state
+    # Some initial state
     print("target: steering: %f throttle: %f" % (target[0][0][0], target[1][0][0]))
     agent = population[0]
     agent.begin()
@@ -288,38 +282,34 @@ def test_image_agent(model_filename, record_filename, num_agents, num_iter):
     pred = agent.model.predict(img_arr)
     print("initial pred", pred[0][0], pred[1][0])
 
-    ## Try to improve
+    # Try to improve
     alg = GeneticAlg(population)
     alg.process(num_iter=num_iter)
 
-    ## Our best agent
+    # Our best agent
     agent = alg.population[0]
     print("final score:", agent.score)
     pred = agent.model.predict(img_arr)
     print("final pred", pred[0][0], pred[1][0])
 
 
-
 if __name__ == "__main__":
-    # Example: python ~\projects\gym-donkeycar\examples\genetic_alg\simple_gen.py --model models\lane_keeper.h5 --record data\tub_6_20-05-16\record_2000.json
-    parser = argparse.ArgumentParser(description='simple_gen')
-    parser.add_argument('--model', type=str, help='.h5 model produced by donkeycar. expects the default linear model type.')
-    parser.add_argument('--record', type=str, help='donkey json record to use for training')
-    parser.add_argument('--num_agents', type=int, default=8, help='how many agents in our population')
-    parser.add_argument('--num_iter', type=int, default=8, help='how many generations before we stop')
+    # Example: python ~\projects\gym-donkeycar\examples\genetic_alg\simple_gen.py
+    # --model models\lane_keeper.h5 --record data\tub_6_20-05-16\record_2000.json
+    parser = argparse.ArgumentParser(description="simple_gen")
+    parser.add_argument("--model", type=str, help=".h5 model produced by donkeycar. expects the default linear model type.")
+    parser.add_argument("--record", type=str, help="donkey json record to use for training")
+    parser.add_argument("--num_agents", type=int, default=8, help="how many agents in our population")
+    parser.add_argument("--num_iter", type=int, default=8, help="how many generations before we stop")
 
     args = parser.parse_args()
 
     # only needed if TF==1.13.1
-    #config = tf.ConfigProto()
-    #config.gpu_options.allow_growth = True
-    #sess = tf.Session(config=config)
-    #K.set_session(sess)
-
+    # config = tf.ConfigProto()
+    # config.gpu_options.allow_growth = True
+    # sess = tf.Session(config=config)
+    # K.set_session(sess)
 
     test_image_agent(
-        model_filename = args.model,
-        record_filename = args.record,
-        num_agents = args.num_agents,
-        num_iter = args.num_iter
+        model_filename=args.model, record_filename=args.record, num_agents=args.num_agents, num_iter=args.num_iter
     )

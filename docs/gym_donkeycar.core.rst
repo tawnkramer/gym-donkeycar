@@ -12,10 +12,10 @@ gym\_donkeycar.core.fps module
     :undoc-members:
     :show-inheritance:
 
-gym\_donkeycar.core.tcp\_server module
+gym\_donkeycar.core.sim\_client module
 --------------------------------------
 
-.. automodule:: gym_donkeycar.core.tcp_server
+.. automodule:: gym_donkeycar.core.sim_client
     :members:
     :undoc-members:
     :show-inheritance:
