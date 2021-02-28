@@ -31,7 +31,7 @@ def supply_defaults(conf):
     for key, val in defaults:
         if key not in conf:
             conf[key] = val
-            print("setting default: %s %s" % (key, val.__str__()))
+            print(f"Setting default: {key} {val}")
 
 
 class DonkeyEnv(gym.Env):
@@ -64,7 +64,7 @@ class DonkeyEnv(gym.Env):
         supply_defaults(conf)
 
         # set logging level
-        logging.basicConfig(level=conf["log_level"])
+        logging.basicConfig(level=conf["log_level"])  # pytype: disable=key-error
 
         logger.debug("DEBUG ON")
         logger.debug(conf)
@@ -96,7 +96,7 @@ class DonkeyEnv(gym.Env):
         self.seed()
 
         # Frame Skipping
-        self.frame_skip = conf["frame_skip"]
+        self.frame_skip = conf["frame_skip"]  # pytype: disable=key-error
 
         # wait until loaded
         self.viewer.wait_until_loaded()
