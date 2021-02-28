@@ -119,6 +119,40 @@ Example info:
 - "donkey-minimonaco-track-v0"
 - "donkey-warren-track-v0"
 
+
+## Codestyle
+
+We are using [black codestyle](https://github.com/psf/black) (max line length of 127 characters) together with [isort](https://github.com/timothycrosley/isort) to sort the imports.
+
+**Please run `make format`** to reformat your code. You can check the codestyle using `make check-codestyle` and `make lint`.
+
+## Tests
+
+Type checking with `pytype`:
+
+```
+make type
+```
+
+Codestyle check with `black`, `isort` and `flake8`:
+
+```
+make check-codestyle
+make lint
+```
+
+To run `pytype`, `format` and `lint` in one command:
+```
+make commit-checks
+```
+
+Build the documentation:
+
+```
+make docs
+```
+
+
 ## Credits
 
 Original Source Code
