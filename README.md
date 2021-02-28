@@ -1,6 +1,6 @@
 # OpenAI Gym Environments for Donkey Car
 
-[![pypi](https://img.shields.io/pypi/v/gym-donkeycar.svg)](https://pypi.python.org/pypi/gym-donkeycar) <!-- [![image](https://img.shields.io/travis/leigh-johnson/gym-donkeycar.svg)](https://travis-ci.org/leigh-johnson/gym-donkeycar) --> [![Documentation Status](https://readthedocs.org/projects/gym-donkeycar/badge/?version=latest)](https://gym-donkeycar.readthedocs.io/en/latest/?badge=latest)
+[![pypi](https://img.shields.io/pypi/v/gym-donkeycar.svg)](https://pypi.python.org/pypi/gym-donkeycar) [![CI](https://github.com/tawnkramer/gym-donkeycar/workflows/CI/badge.svg)](https://github.com/tawnkramer/gym-donkeycar/actions) [![Documentation Status](https://readthedocs.org/projects/gym-donkeycar/badge/?version=latest)](https://gym-donkeycar.readthedocs.io/en/latest/?badge=latest)
 
 Donkey Car OpenAI Gym
 
@@ -118,6 +118,40 @@ Example info:
 - "donkey-waveshare-v0"
 - "donkey-minimonaco-track-v0"
 - "donkey-warren-track-v0"
+
+
+## Codestyle
+
+We are using [black codestyle](https://github.com/psf/black) (max line length of 127 characters) together with [isort](https://github.com/timothycrosley/isort) to sort the imports.
+
+**Please run `make format`** to reformat your code. You can check the codestyle using `make check-codestyle` and `make lint`.
+
+## Tests
+
+Type checking with `pytype`:
+
+```
+make type
+```
+
+Codestyle check with `black`, `isort` and `flake8`:
+
+```
+make check-codestyle
+make lint
+```
+
+To run `pytype`, `format` and `lint` in one command:
+```
+make commit-checks
+```
+
+Build the documentation:
+
+```
+make docs
+```
+
 
 ## Credits
 
