@@ -49,6 +49,31 @@ for t in range(100):
 env.close()
 ```
 
+or if you already launched the simulator:
+
+```python
+import gym
+import numpy as np
+
+import gym_donkeycar
+
+env = gym.make("donkey-warren-track-v0")
+
+obs = env.reset()
+try:
+    for _ in range(100):
+        # drive straight with small speed
+        action = np.array([0.0, 0.5])  
+        # execute the action
+        obs, reward, done, info = env.step(action)
+except KeyboardInterrupt:
+    # You can kill the program using ctrl+c
+    pass
+
+    # Exit the scene
+env.close()
+```
+
 - see more examples: https://github.com/tawnkramer/gym-donkeycar/tree/master/examples
 
 ## Action space

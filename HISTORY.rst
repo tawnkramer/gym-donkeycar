@@ -6,6 +6,8 @@ History
 -----
 * black + isort for autoformatting
 * Many flake8 fixes (removed unused imports, ...)
+* The simulator can be launched separately
+* Made the client Thread daemon (so we can use ctrl+c to kill it)
 
 1.0.0 (2019-07-26)
 ------------------

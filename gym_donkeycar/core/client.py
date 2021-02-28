@@ -51,7 +51,7 @@ class SDClient:
 
         # time.sleep(pause_on_create)
         self.do_process_msgs = True
-        self.th = Thread(target=self.proc_msg, args=(self.s,))
+        self.th = Thread(target=self.proc_msg, args=(self.s,), daemon=True)
         self.th.start()
 
     def send(self, m):
