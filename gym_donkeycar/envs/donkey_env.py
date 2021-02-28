@@ -24,6 +24,8 @@ def supply_defaults(conf):
         ("frame_skip", 2),
         ("cam_resolution", (120, 160, 3)),
         ("log_level", logging.INFO),
+        ("host", "localhost"),
+        ("port", 9091),
     ]
 
     for key, val in defaults:
@@ -48,10 +50,14 @@ class DonkeyEnv(gym.Env):
     THROTTLE_MAX = 1.0
     VAL_PER_PIXEL = 255
 
-    def __init__(self, level, conf):
+    def __init__(self, level, conf=None):
         print("starting DonkeyGym env")
         self.viewer = None
         self.proc = None
+
+        if conf is None:
+            conf = {}
+
         conf["level"] = level
 
         # ensure defaults are supplied if missing.
@@ -64,13 +70,14 @@ class DonkeyEnv(gym.Env):
         logger.debug(conf)
 
         # start Unity simulation subprocess
-        self.proc = DonkeyUnityProcess()
+        self.proc = None
+        if "exe_path" in conf:
+            self.proc = DonkeyUnityProcess()
+            # the unity sim server will bind to the host ip given
+            self.proc.start(conf["exe_path"], host="0.0.0.0", port=conf["port"])
 
-        # the unity sim server will bind to the host ip given
-        self.proc.start(conf["exe_path"], host="0.0.0.0", port=conf["port"])
-
-        # wait for simulator to startup and begin listening
-        time.sleep(conf["start_delay"])
+            # wait for simulator to startup and begin listening
+            time.sleep(conf["start_delay"])
 
         # start simulation com
         self.viewer = DonkeyUnitySimContoller(conf=conf)
