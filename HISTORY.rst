@@ -2,8 +2,12 @@
 History
 =======
 
-1.1.0
------
+1.1.1 (2021-02-28)
+------------------
+* Fix type checking error
+
+1.1.0 (2021-02-28)
+------------------
 * black + isort for autoformatting
 * Many flake8 fixes (removed unused imports, ...)
 * The simulator can be launched separately
