@@ -1,31 +1,33 @@
-'''
+"""
 file: donkey_env.py
 author: Tawn Kramer
 date: 2018-08-31
-'''
-import os
-import random
-import time
+"""
 import logging
+import time
 
-import numpy as np
 import gym
+import numpy as np
 from gym import spaces
 from gym.utils import seeding
-from gym_donkeycar.envs.donkey_sim import DonkeyUnitySimContoller
+
 from gym_donkeycar.envs.donkey_proc import DonkeyUnityProcess
+from gym_donkeycar.envs.donkey_sim import DonkeyUnitySimContoller
 
 logger = logging.getLogger(__name__)
 
+
 def supply_defaults(conf):
-    defaults = [("start_delay", 5.0),
-                ("max_cte", 5.0),
-                ("frame_skip", 2),
-                ("cam_resolution", (120,160,3)),
-                ("log_level", logging.INFO)]
+    defaults = [
+        ("start_delay", 5.0),
+        ("max_cte", 5.0),
+        ("frame_skip", 2),
+        ("cam_resolution", (120, 160, 3)),
+        ("log_level", logging.INFO),
+    ]
 
     for key, val in defaults:
-        if not key in conf:
+        if key not in conf:
             conf[key] = val
             print("setting default: %s %s" % (key, val.__str__()))
 
@@ -53,7 +55,7 @@ class DonkeyEnv(gym.Env):
         conf["level"] = level
 
         # ensure defaults are supplied if missing.
-        supply_defaults(conf)        
+        supply_defaults(conf)
 
         # set logging level
         logging.basicConfig(level=conf["log_level"])
@@ -65,7 +67,7 @@ class DonkeyEnv(gym.Env):
         self.proc = DonkeyUnityProcess()
 
         # the unity sim server will bind to the host ip given
-        self.proc.start(conf['exe_path'], host='0.0.0.0', port=conf['port'])
+        self.proc.start(conf["exe_path"], host="0.0.0.0", port=conf["port"])
 
         # wait for simulator to startup and begin listening
         time.sleep(conf["start_delay"])
@@ -74,12 +76,14 @@ class DonkeyEnv(gym.Env):
         self.viewer = DonkeyUnitySimContoller(conf=conf)
 
         # steering and throttle
-        self.action_space = spaces.Box(low=np.array([self.STEER_LIMIT_LEFT, self.THROTTLE_MIN]),
-                                       high=np.array([self.STEER_LIMIT_RIGHT, self.THROTTLE_MAX]), dtype=np.float32)
+        self.action_space = spaces.Box(
+            low=np.array([self.STEER_LIMIT_LEFT, self.THROTTLE_MIN]),
+            high=np.array([self.STEER_LIMIT_RIGHT, self.THROTTLE_MAX]),
+            dtype=np.float32,
+        )
 
         # camera sensor data
-        self.observation_space = spaces.Box(
-            0, self.VAL_PER_PIXEL, self.viewer.get_sensor_size(), dtype=np.uint8)
+        self.observation_space = spaces.Box(0, self.VAL_PER_PIXEL, self.viewer.get_sensor_size(), dtype=np.uint8)
 
         # simulation related variables.
         self.seed()
@@ -89,7 +93,6 @@ class DonkeyEnv(gym.Env):
 
         # wait until loaded
         self.viewer.wait_until_loaded()
-
 
     def __del__(self):
         self.close()
@@ -132,57 +135,49 @@ class DonkeyEnv(gym.Env):
         return self.viewer.is_game_over()
 
 
-## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
 
 class GeneratedRoadsEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(GeneratedRoadsEnv, self).__init__(level='generated_road', *args, **kwargs)
+        super(GeneratedRoadsEnv, self).__init__(level="generated_road", *args, **kwargs)
 
 
 class WarehouseEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(WarehouseEnv, self).__init__(level='warehouse', *args, **kwargs)
+        super(WarehouseEnv, self).__init__(level="warehouse", *args, **kwargs)
 
 
 class AvcSparkfunEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(AvcSparkfunEnv, self).__init__(level='sparkfun_avc', *args, **kwargs)
+        super(AvcSparkfunEnv, self).__init__(level="sparkfun_avc", *args, **kwargs)
 
 
 class GeneratedTrackEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(GeneratedTrackEnv, self).__init__(level='generated_track', *args, **kwargs)
+        super(GeneratedTrackEnv, self).__init__(level="generated_track", *args, **kwargs)
 
 
 class MountainTrackEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(MountainTrackEnv, self).__init__(level='mountain_track', *args, **kwargs)
+        super(MountainTrackEnv, self).__init__(level="mountain_track", *args, **kwargs)
 
 
 class RoboRacingLeagueTrackEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(RoboRacingLeagueTrackEnv, self).__init__(level='roboracingleague_1', *args, **kwargs)
+        super(RoboRacingLeagueTrackEnv, self).__init__(level="roboracingleague_1", *args, **kwargs)
 
 
 class WaveshareEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(WaveshareEnv, self).__init__(level='waveshare', *args, **kwargs)
+        super(WaveshareEnv, self).__init__(level="waveshare", *args, **kwargs)
 
 
 class MiniMonacoEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(MiniMonacoEnv, self).__init__(level='mini_monaco', *args, **kwargs)
+        super(MiniMonacoEnv, self).__init__(level="mini_monaco", *args, **kwargs)
 
 
 class WarrenTrackEnv(DonkeyEnv):
-
     def __init__(self, *args, **kwargs):
-        super(WarrenTrackEnv, self).__init__(level='warren', *args, **kwargs)
+        super(WarrenTrackEnv, self).__init__(level="warren", *args, **kwargs)

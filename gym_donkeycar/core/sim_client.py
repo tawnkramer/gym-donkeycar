@@ -1,23 +1,23 @@
-'''
+"""
 author: Tawn Kramer
 date: 9 Dec 2019
 file: sim_client.py
 notes: wraps a tcp socket client with a handler to talk to the unity donkey simulator
-'''
+"""
 import json
+
 from .client import SDClient
-from .message import IMesgHandler
-import time
+
 
 class SimClient(SDClient):
     """
-      Handles messages from a single TCP client.
+    Handles messages from a single TCP client.
     """
 
     def __init__(self, address, msg_handler):
         # we expect an IMesgHandler derived handler
         # assert issubclass(msg_handler, IMesgHandler)
-                
+
         # hold onto the handler
         self.msg_handler = msg_handler
 
@@ -55,4 +55,3 @@ class SimClient(SDClient):
 
         if self.msg_handler:
             self.msg_handler.on_close()
-

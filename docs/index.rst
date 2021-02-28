@@ -5,7 +5,6 @@ OpenAI Gym Environments for Donkey Car
    :maxdepth: 2
    :caption: Contents:
 
-   readme
    installation
    usage
    modules

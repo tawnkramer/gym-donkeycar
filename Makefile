@@ -1,3 +1,5 @@
+LINT_PATHS=gym_donkeycar/ tests/ docs/conf.py setup.py examples/
+
 .PHONY: clean clean-test clean-pyc clean-build docs help
 .DEFAULT_GOAL := help
 
@@ -26,6 +28,33 @@ export PRINT_HELP_PYSCRIPT
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
+# pytest:
+# 	./scripts/run_tests.sh
+
+type:
+	pytype -j auto
+
+lint:
+	# stop the build if there are Python syntax errors or undefined names
+	# see https://lintlyci.github.io/Flake8Rules/
+	flake8 ${LINT_PATHS} --count --select=E9,F63,F7,F82 --show-source --statistics
+	# exit-zero treats all errors as warnings.
+	flake8 ${LINT_PATHS} --count --exit-zero --statistics
+
+format:
+	# Sort imports
+	isort ${LINT_PATHS}
+	# Reformat using black
+	black -l 127 ${LINT_PATHS}
+
+check-codestyle:
+	# Sort imports
+	isort --check ${LINT_PATHS}
+	# Reformat using black
+	black --check -l 127 ${LINT_PATHS}
+
+commit-checks: format type lint
+
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
@@ -50,11 +79,8 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
-lint: ## check style with flake8
-	flake8 gym_donkeycar tests
-
 test: ## run tests quickly with the default Python
-	py.test
+	pytest -v tests/
 
 test-all: ## run tests on every Python version with tox
 	tox

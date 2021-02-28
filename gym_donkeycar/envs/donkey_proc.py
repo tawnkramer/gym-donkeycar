@@ -1,20 +1,19 @@
-'''
+"""
 file: donkey_proc.py
 author: Felix Yu
 date: 2018-09-12
-'''
-import subprocess
+"""
 import os
+import subprocess
 
 
 class DonkeyUnityProcess(object):
-
     def __init__(self):
         self.proc1 = None
 
-    ## ------ Launch Unity Env ----------- ##
+    # ------ Launch Unity Env ----------- #
 
-    def start(self, sim_path, host='0.0.0.0', port=9091):
+    def start(self, sim_path, host="0.0.0.0", port=9091):
 
         if sim_path == "remote":
             return
@@ -23,11 +22,10 @@ class DonkeyUnityProcess(object):
             print(sim_path, "does not exist. you must start sim manually.")
             return
 
-        port_args = ["--port", str(port),"--host", str(host), '-logFile', 'unitylog.txt']
+        port_args = ["--port", str(port), "--host", str(host), "-logFile", "unitylog.txt"]
 
         # Launch Unity environment
-        self.proc1 = subprocess.Popen(
-            [sim_path] + port_args)
+        self.proc1 = subprocess.Popen([sim_path] + port_args)
 
         print("donkey subprocess started")
 
