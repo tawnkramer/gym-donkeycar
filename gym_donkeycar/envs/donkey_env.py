@@ -5,6 +5,7 @@ date: 2018-08-31
 """
 import logging
 import time
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import gym
 import numpy as np
@@ -17,7 +18,7 @@ from gym_donkeycar.envs.donkey_sim import DonkeyUnitySimContoller
 logger = logging.getLogger(__name__)
 
 
-def supply_defaults(conf):
+def supply_defaults(conf: Dict[str, Any]) -> None:
     defaults = [
         ("start_delay", 5.0),
         ("max_cte", 5.0),
@@ -37,20 +38,23 @@ def supply_defaults(conf):
 class DonkeyEnv(gym.Env):
     """
     OpenAI Gym Environment for Donkey
+
+    :param level: name of the level to load
+    :param conf: configuration dictionary
     """
 
     metadata = {
         "render.modes": ["human", "rgb_array"],
     }
 
-    ACTION_NAMES = ["steer", "throttle"]
-    STEER_LIMIT_LEFT = -1.0
-    STEER_LIMIT_RIGHT = 1.0
-    THROTTLE_MIN = 0.0
-    THROTTLE_MAX = 1.0
-    VAL_PER_PIXEL = 255
+    ACTION_NAMES: List[str] = ["steer", "throttle"]
+    STEER_LIMIT_LEFT: float = -1.0
+    STEER_LIMIT_RIGHT: float = 1.0
+    THROTTLE_MIN: float = 0.0
+    THROTTLE_MAX: float = 1.0
+    VAL_PER_PIXEL: int = 255
 
-    def __init__(self, level, conf=None):
+    def __init__(self, level: str, conf: Optional[Dict[str, Any]] = None):
         print("starting DonkeyGym env")
         self.viewer = None
         self.proc = None
@@ -98,47 +102,47 @@ class DonkeyEnv(gym.Env):
         # Frame Skipping
         self.frame_skip = conf["frame_skip"]  # pytype: disable=key-error
 
-        # wait until loaded
+        # wait until the car is loaded in the scene
         self.viewer.wait_until_loaded()
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.close()
 
-    def close(self):
+    def close(self) -> None:
         if hasattr(self, "viewer") and self.viewer is not None:
             self.viewer.quit()
         if hasattr(self, "proc") and self.proc is not None:
             self.proc.quit()
 
-    def set_reward_fn(self, reward_fn):
+    def set_reward_fn(self, reward_fn: Callable) -> None:
         self.viewer.set_reward_fn(reward_fn)
 
-    def set_episode_over_fn(self, ep_over_fn):
+    def set_episode_over_fn(self, ep_over_fn: Callable) -> None:
         self.viewer.set_episode_over_fn(ep_over_fn)
 
-    def seed(self, seed=None):
+    def seed(self, seed: Optional[int] = None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def step(self, action):
+    def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, Dict[str, Any]]:
         for i in range(self.frame_skip):
             self.viewer.take_action(action)
             observation, reward, done, info = self.viewer.observe()
         return observation, reward, done, info
 
-    def reset(self):
+    def reset(self) -> np.ndarray:
         self.viewer.reset()
         observation, reward, done, info = self.viewer.observe()
         time.sleep(1)
         return observation
 
-    def render(self, mode="human", close=False):
+    def render(self, mode: str = "human", close: bool = False) -> Optional[np.ndarray]:
         if close:
             self.viewer.quit()
 
         return self.viewer.render(mode)
 
-    def is_game_over(self):
+    def is_game_over(self) -> bool:
         return self.viewer.is_game_over()
 
 
