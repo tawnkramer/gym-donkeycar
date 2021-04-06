@@ -2,6 +2,7 @@ include AUTHORS.rst
 include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
+include gym_donkeycar/version.txt
 
 recursive-include tests *
 recursive-exclude * __pycache__
