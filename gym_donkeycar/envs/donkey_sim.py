@@ -123,6 +123,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.vel_z = 0.0
         self.lidar = []
 
+        # car in Unity lefthand coordinate system: roll is Z, pitch is X and yaw is Y
+        self.roll = 0.0
+        self.pitch = 0.0
+        self.yaw = 0.0
+
     def on_connect(self, client):
         logger.debug("socket connected")
         self.client = client
@@ -260,6 +265,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.vel_z = 0.0
         self.lidar = []
 
+        # car
+        self.roll = 0.0
+        self.pitch = 0.0
+        self.yaw = 0.0
+
     def get_sensor_size(self):
         return self.camera_img_size
 
@@ -285,6 +295,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "accel": (self.accel_x, self.accel_y, self.accel_z),
             "vel": (self.vel_x, self.vel_y, self.vel_z),
             "lidar": (self.lidar),
+            "car": (self.roll, self.pitch, self.yaw),
         }
 
         # self.timer.on_frame()
@@ -344,6 +355,12 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.vel_y = data["vel_y"]
             self.vel_z = data["vel_z"]
 
+        if "roll" in data:
+            self.roll = data["roll"]
+            self.pitch = data["pitch"]
+            self.yaw = data["yaw"]
+            print(self.roll, self.pitch, self.yaw)
+
         # Cross track error not always present.
         # Will be missing if path is not setup in the given scene.
         # It should be setup in the 4 scenes available now.
@@ -358,9 +375,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         try:
             self.lidar = data["lidar"]
-            logger.info("reading lidar in telemetry package DONE.")
+            # logger.info("reading lidar in telemetry package DONE.")
         except:
-            logger.info("reading lidar in telemetry package FAILED.")
+            pass
+            # logger.info("reading lidar in telemetry package FAILED.")
 
         self.determine_episode_over()
 
