@@ -121,6 +121,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.vel_x = 0.0
         self.vel_y = 0.0
         self.vel_z = 0.0
+        self.lidar = []
 
     def on_connect(self, client):
         logger.debug("socket connected")
@@ -166,7 +167,48 @@ class DonkeyUnitySimHandler(IMesgHandler):
                 "rot_x",
             ],
         )
-        self.send_cam_config(**cam_config)
+        try:
+            cam_config = self.extract_keys(
+                conf,
+                [
+                    "img_w",
+                    "img_h",
+                    "img_d",
+                    "img_enc",
+                    "fov",
+                    "fish_eye_x",
+                    "fish_eye_y",
+                    "offset_x",
+                    "offset_y",
+                    "offset_z",
+                    "rot_x",
+                ],
+            )
+            self.send_cam_config(**cam_config)
+            logger.info("done sending cam config.", cam_config)
+        except:
+            logger.info("sending cam config FAILED.")
+
+        try:
+            lidar_config = self.extract_keys(
+                conf,
+                [
+                    "degPerSweepInc",
+                    "degAngDown",
+                    "degAngDelta",
+                    "numSweepsLevels",
+                    "maxRange",
+                    "noise",
+                    "offset_x",
+                    "offset_y",
+                    "offset_z",
+                    "rot_x",
+                ],
+            )
+            self.send_lidar_config(**lidar_config)
+            logger.info("done sending lidar config.", lidar_config)
+        except:
+            logger.info("sending lidar config FAILED.")
         logger.info("done sending car config.")
 
     def set_car_config(self, conf):
@@ -216,6 +258,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.vel_x = 0.0
         self.vel_y = 0.0
         self.vel_z = 0.0
+        self.lidar = []
 
     def get_sensor_size(self):
         return self.camera_img_size
@@ -241,6 +284,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "gyro": (self.gyro_x, self.gyro_y, self.gyro_z),
             "accel": (self.accel_x, self.accel_y, self.accel_z),
             "vel": (self.vel_x, self.vel_y, self.vel_z),
+            "lidar": (self.lidar),
         }
 
         # self.timer.on_frame()
@@ -311,6 +355,12 @@ class DonkeyUnitySimHandler(IMesgHandler):
             return
 
         self.hit = data["hit"]
+
+        try:
+            self.lidar = data["lidar"]
+            logger.info("reading lidar in telemetry package DONE.")
+        except:
+            logger.info("reading lidar in telemetry package FAILED.")
 
         self.determine_episode_over()
 
@@ -469,6 +519,46 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "img_h": str(img_h),
             "img_d": str(img_d),
             "img_enc": str(img_enc),
+            "offset_x": str(offset_x),
+            "offset_y": str(offset_y),
+            "offset_z": str(offset_z),
+            "rot_x": str(rot_x),
+        }
+        self.blocking_send(msg)
+        time.sleep(0.1)
+
+    def send_lidar_config(
+        self, degPerSweepInc, degAngDown, degAngDelta, numSweepsLevels, maxRange, noise, offset_x, offset_y, offset_z, rot_x
+    ):
+        """Lidar config
+        the offset_x moves lidar left/right
+        the offset_y moves lidar up/down
+        the offset_z moves lidar forward/back
+        degPerSweepInc : as the ray sweeps around, how many degrees does it advance per sample (int)
+        degAngDown : what is the starting angle for the initial sweep compared to the forward vector
+        degAngDelta : what angle change between sweeps
+        numSweepsLevels : how many complete 360 sweeps (int)
+        maxRange : what it max distance we will register a hit
+        noise : what is the scalar on the perlin noise applied to point position
+        Here's some sample settings that similate a more sophisticated lidar:
+        msg = '{ "msg_type" : "lidar_config",
+        "degPerSweepInc" : "2.0", "degAngDown" : "25", "degAngDelta" : "-1.0",
+        "numSweepsLevels" : "25", "maxRange" : "50.0", "noise" : "0.2",
+        "offset_x" : "0.0", "offset_y" : "1.0", "offset_z" : "1.0", "rot_x" : "0.0" }'
+        And here's some sample settings that similate a simple RpLidar A2 one level horizontal scan.
+        msg = '{ "msg_type" : "lidar_config", "degPerSweepInc" : "2.0",
+        "degAngDown" : "0.0", "degAngDelta" : "-1.0", "numSweepsLevels" : "1",
+        "maxRange" : "50.0", "noise" : "0.4",
+        "offset_x" : "0.0", "offset_y" : "0.5", "offset_z" : "0.5", "rot_x" : "0.0" }'
+        """
+        msg = {
+            "msg_type": "lidar_config",
+            "degPerSweepInc": str(degPerSweepInc),
+            "degAngDown": str(degAngDown),
+            "degAngDelta": str(degAngDelta),
+            "numSweepsLevels": str(numSweepsLevels),
+            "maxRange": str(maxRange),
+            "noise": str(noise),
             "offset_x": str(offset_x),
             "offset_y": str(offset_y),
             "offset_z": str(offset_z),
