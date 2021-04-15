@@ -12,10 +12,10 @@ from gym_donkeycar.envs.donkey_env import (
     MiniMonacoEnv,
     MountainTrackEnv,
     RoboRacingLeagueTrackEnv,
+    ThunderhillTrackEnv,
     WarehouseEnv,
     WarrenTrackEnv,
     WaveshareEnv,
-    ThunderhillTrackEnv,
 )
 
 # Read version from file
