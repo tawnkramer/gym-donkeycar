@@ -531,9 +531,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self, degPerSweepInc, degAngDown, degAngDelta, numSweepsLevels, maxRange, noise, offset_x, offset_y, offset_z, rot_x
     ):
         """Lidar config
-        the offset_x moves camera left/right
-        the offset_y moves camera up/down
-        the offset_z moves camera forward/back
+        the offset_x moves lidar left/right
+        the offset_y moves lidar up/down
+        the offset_z moves lidar forward/back
         degPerSweepInc : as the ray sweeps around, how many degrees does it advance per sample (int)
         degAngDown : what is the starting angle for the initial sweep compared to the forward vector
         degAngDelta : what angle change between sweeps
