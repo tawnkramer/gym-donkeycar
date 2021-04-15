@@ -359,7 +359,6 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.roll = data["roll"]
             self.pitch = data["pitch"]
             self.yaw = data["yaw"]
-            print(self.roll, self.pitch, self.yaw)
 
         # Cross track error not always present.
         # Will be missing if path is not setup in the given scene.
@@ -367,18 +366,14 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if "cte" in data:
             self.cte = data["cte"]
 
+        if "lidar" in data:
+            self.lidar = data["lidar"]
+
         # don't update hit once session over
         if self.over:
             return
 
         self.hit = data["hit"]
-
-        try:
-            self.lidar = data["lidar"]
-            # logger.info("reading lidar in telemetry package DONE.")
-        except:
-            pass
-            # logger.info("reading lidar in telemetry package FAILED.")
 
         self.determine_episode_over()
 
