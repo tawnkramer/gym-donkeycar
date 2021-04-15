@@ -12,6 +12,7 @@ from gym_donkeycar.envs.donkey_env import (
     MiniMonacoEnv,
     MountainTrackEnv,
     RoboRacingLeagueTrackEnv,
+    ThunderhillTrackEnv,
     WarehouseEnv,
     WarrenTrackEnv,
     WaveshareEnv,
@@ -69,4 +70,9 @@ register(
 register(
     id="donkey-warren-track-v0",
     entry_point="gym_donkeycar.envs.donkey_env:WarrenTrackEnv",
+)
+
+register(
+    id="donkey-thunderhill-track-v0",
+    entry_point="gym_donkeycar.envs.donkey_env:ThunderhillTrackEnv",
 )
