@@ -40,8 +40,10 @@ class IAgent:
 
 
 class GeneticAlg:
-    def __init__(self, population, conf={}):
+    def __init__(self, population, conf=None):
         self.population = population
+        if conf is None:
+            conf = {}
         self.conf = conf
 
     def finished(self):

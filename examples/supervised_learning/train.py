@@ -103,7 +103,7 @@ def generator(samples, batch_size=32, perc_to_augment=0.5):
 
                     try:
                         image = Image.open(fullpath)
-                    except:  # noqa: E722
+                    except:  # noqa: E722, B001
                         image = None
 
                     if image is None:
@@ -141,7 +141,7 @@ def get_files(filemask):
     path, mask = os.path.split(filemask)
 
     matches = []
-    for root, dirnames, filenames in os.walk(path):
+    for root, _, filenames in os.walk(path):
         for filename in fnmatch.filter(filenames, mask):
             matches.append(os.path.join(root, filename))
     return matches
@@ -244,7 +244,7 @@ def go(model_name, epochs=50, inputs="./log/*.jpg", limit=None):
             plt.legend(["train", "test"], loc="upper left")
             plt.savefig(model_name + "loss.png")
             plt.show()
-    except:  # noqa: E722
+    except:  # noqa: E722, B001
         print("problems with loss graph")
 
 

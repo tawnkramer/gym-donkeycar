@@ -197,7 +197,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             )
             self.send_cam_config(**cam_config)
             logger.info("done sending cam config.", cam_config)
-        except:
+        except Exception:
             logger.info("sending cam config FAILED.")
 
         try:
@@ -218,7 +218,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             )
             self.send_lidar_config(**lidar_config)
             logger.info("done sending lidar config.", lidar_config)
-        except:
+        except Exception:
             logger.info("sending lidar config FAILED.")
         logger.info("done sending car config.")
 
@@ -360,10 +360,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.vel_y = message["vel_y"]
             self.vel_z = message["vel_z"]
 
-        if "roll" in data:
-            self.roll = data["roll"]
-            self.pitch = data["pitch"]
-            self.yaw = data["yaw"]
+        if "roll" in message:
+            self.roll = message["roll"]
+            self.pitch = message["pitch"]
+            self.yaw = message["yaw"]
 
         # Cross track error not always present.
         # Will be missing if path is not setup in the given scene.
@@ -371,8 +371,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if "cte" in message:
             self.cte = message["cte"]
 
-        if "lidar" in data:
-            self.lidar = data["lidar"]
+        if "lidar" in message:
+            self.lidar = message["lidar"]
 
         # don't update hit once session over
         if self.over:

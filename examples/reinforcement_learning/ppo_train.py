@@ -9,31 +9,7 @@ import argparse
 import uuid
 
 import gym
-from stable_baselines import PPO2
-from stable_baselines.common import set_global_seeds
-from stable_baselines.common.policies import CnnPolicy
-from stable_baselines.common.vec_env import DummyVecEnv
-
-
-def make_env(env_id, rank, seed=0):
-    """
-    Utility function for multiprocessed env.
-
-    :param env_id: (str) the environment ID
-    :param num_env: (int) the number of environment you wish to have in subprocesses
-    :param seed: (int) the inital seed for RNG
-    :param rank: (int) index of the subprocess
-    """
-
-    def _init():
-        env = gym.make(env_id)
-        env.seed(seed + rank)
-        env.reset()
-        return env
-
-    set_global_seeds(seed)
-    return _init
-
+from stable_baselines3 import PPO
 
 if __name__ == "__main__":
 
@@ -92,15 +68,16 @@ if __name__ == "__main__":
 
         # Make an environment test our trained policy
         env = gym.make(args.env_name, conf=conf)
-        env = DummyVecEnv([lambda: env])
 
-        model = PPO2.load("ppo_donkey")
+        model = PPO.load("ppo_donkey")
 
         obs = env.reset()
-        for i in range(1000):
-            action, _states = model.predict(obs)
-            obs, rewards, dones, info = env.step(action)
+        for _ in range(1000):
+            action, _states = model.predict(obs, deterministic=True)
+            obs, reward, done, info = env.step(action)
             env.render()
+            if done:
+                obs = env.reset()
 
         print("done testing")
 
@@ -109,11 +86,8 @@ if __name__ == "__main__":
         # make gym env
         env = gym.make(args.env_name, conf=conf)
 
-        # Create the vectorized environment
-        env = DummyVecEnv([lambda: env])
-
         # create cnn policy
-        model = PPO2(CnnPolicy, env, verbose=1)
+        model = PPO("CnnPolicy", env, verbose=1)
 
         # set up model in learning mode with goal number of timesteps to complete
         model.learn(total_timesteps=10000)
@@ -122,15 +96,18 @@ if __name__ == "__main__":
 
         for i in range(1000):
 
-            action, _states = model.predict(obs)
+            action, _states = model.predict(obs, deterministic=True)
 
-            obs, rewards, dones, info = env.step(action)
+            obs, reward, done, info = env.step(action)
 
             try:
                 env.render()
             except Exception as e:
                 print(e)
                 print("failure in render, continuing...")
+
+            if done:
+                obs = env.reset()
 
             if i % 100 == 0:
                 print("saving...")

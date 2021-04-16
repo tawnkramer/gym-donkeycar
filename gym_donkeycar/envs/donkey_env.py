@@ -125,7 +125,7 @@ class DonkeyEnv(gym.Env):
         return [seed]
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, Dict[str, Any]]:
-        for i in range(self.frame_skip):
+        for _ in range(self.frame_skip):
             self.viewer.take_action(action)
             observation, reward, done, info = self.viewer.observe()
         return observation, reward, done, info

@@ -33,12 +33,12 @@ def select_action(env):
 
 def simulate(env):
 
-    for episode in range(NUM_EPISODES):
+    for _ in range(NUM_EPISODES):
 
         # Reset the environment
         obv = env.reset()
 
-        for t in range(MAX_TIME_STEPS):
+        for _ in range(MAX_TIME_STEPS):
 
             # Select an action
             action = select_action(env)
