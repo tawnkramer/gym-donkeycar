@@ -2,6 +2,12 @@
 History
 =======
 
+1.1.2 (WIP)
+------------------
+* Added type hints to most core methods
+* Added ``send_lidar_config()`` method to configure LIDAR
+* Added car roll, pitch yaw angle
+
 1.1.1 (2021-02-28)
 ------------------
 * Fix type checking error

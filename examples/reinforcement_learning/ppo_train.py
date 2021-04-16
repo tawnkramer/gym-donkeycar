@@ -48,6 +48,7 @@ if __name__ == "__main__":
         "donkey-waveshare-v0",
         "donkey-minimonaco-track-v0",
         "donkey-warren-track-v0",
+        "donkey-thunderhill-track-v0",
     ]
 
     parser = argparse.ArgumentParser(description="ppo_train")

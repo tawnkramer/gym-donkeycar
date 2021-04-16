@@ -192,3 +192,8 @@ class MiniMonacoEnv(DonkeyEnv):
 class WarrenTrackEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
         super(WarrenTrackEnv, self).__init__(level="warren", *args, **kwargs)
+
+
+class ThunderhillTrackEnv(DonkeyEnv):
+    def __init__(self, *args, **kwargs):
+        super(ThunderhillTrackEnv, self).__init__(level="thunderhill", *args, **kwargs)
