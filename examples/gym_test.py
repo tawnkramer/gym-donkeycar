@@ -9,6 +9,7 @@ import argparse
 import uuid
 
 import gym
+import gym_donkeycar
 
 NUM_EPISODES = 3
 MAX_TIME_STEPS = 1000

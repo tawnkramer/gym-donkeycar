@@ -190,7 +190,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
                 ],
             )
             self.send_cam_config(**cam_config)
-            logger.info("done sending cam config.", cam_config)
+            logger.info(f"done sending cam config. {cam_config}")
         except:
             logger.info("sending cam config FAILED.")
 
@@ -211,7 +211,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
                 ],
             )
             self.send_lidar_config(**lidar_config)
-            logger.info("done sending lidar config.", lidar_config)
+            logger.info(f"done sending lidar config., {lidar_config}")
         except:
             logger.info("sending lidar config FAILED.")
         logger.info("done sending car config.")
