@@ -128,6 +128,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.pitch = 0.0
         self.yaw = 0.0
 
+        # variables required for lidar points decoding into array format
+        self.lidar_deg_per_sweep_inc = 0
+        self.lidar_num_sweep_levels = 0
+
     def on_connect(self, client):
         logger.debug("socket connected")
         self.client = client
@@ -367,7 +371,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.cte = data["cte"]
 
         if "lidar" in data:
-            self.lidar = data["lidar"]
+            self.lidar = self.process_lidar_packet(data["lidar"])
 
         # don't update hit once session over
         if self.over:
@@ -579,6 +583,28 @@ class DonkeyUnitySimHandler(IMesgHandler):
         }
         self.blocking_send(msg)
         time.sleep(0.1)
+
+        self.lidar_deg_per_sweep_inc = float(degPerSweepInc)
+        self.lidar_num_sweep_levels = int(numSweepsLevels)
+        self.lidar_deg_ang_delta = float(degAngDelta)
+
+    def process_lidar_packet(self, lidar_info):
+        point_per_sweep = int(360 / self.lidar_deg_per_sweep_inc)
+        points_num = round(abs(self.lidar_num_sweep_levels * point_per_sweep))
+        reconstructed_lidar_info = [-1 for _ in range(points_num)]  # we chose -1 to be the "None" value
+
+        for point in lidar_info:
+            rx = point['rx']
+            ry = point['ry']
+            d = point['d']
+
+            x_index = round(abs(rx / self.lidar_deg_per_sweep_inc))
+            y_index = round(abs(ry / self.lidar_deg_ang_delta))
+
+            reconstructed_lidar_info[point_per_sweep * y_index + x_index] = d
+
+        print(np.array(reconstructed_lidar_info))
+        return reconstructed_lidar_info
 
     def blocking_send(self, msg):
         if self.client is None:
