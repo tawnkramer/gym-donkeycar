@@ -602,9 +602,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             y_index = round(abs(ry / self.lidar_deg_ang_delta))
 
             reconstructed_lidar_info[point_per_sweep * y_index + x_index] = d
-
-        print(np.array(reconstructed_lidar_info))
-        return reconstructed_lidar_info
+        return np.array(reconstructed_lidar_info)
 
     def blocking_send(self, msg):
         if self.client is None:
