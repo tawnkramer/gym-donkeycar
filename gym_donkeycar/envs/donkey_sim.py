@@ -129,8 +129,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.yaw = 0.0
 
         # variables required for lidar points decoding into array format
-        self.lidar_deg_per_sweep_inc = 0
-        self.lidar_num_sweep_levels = 0
+        self.lidar_deg_per_sweep_inc = 1
+        self.lidar_num_sweep_levels = 1
+        self.lidar_deg_ang_delta = 1
 
     def on_connect(self, client):
         logger.debug("socket connected")
