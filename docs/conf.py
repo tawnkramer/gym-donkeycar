@@ -125,7 +125,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass
 # [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "gym_donkeycar.tex", u"OpenAI Gym Environments for Donkey CarDocumentation", u"Leigh Johnson", "manual"),
+    (master_doc, "gym_donkeycar.tex", u"OpenAI Gym Environments for Donkey CarDocumentation", u"Leigh Johnson", "manual")
 ]
 
 
@@ -150,5 +150,5 @@ texinfo_documents = [
         "gym_donkeycar",
         "One line description of project.",
         "Miscellaneous",
-    ),
+    )
 ]
