@@ -39,9 +39,7 @@ class DonkeyEnv(gym.Env):
     OpenAI Gym Environment for Donkey
     """
 
-    metadata = {
-        "render.modes": ["human", "rgb_array"],
-    }
+    metadata = {"render.modes": ["human", "rgb_array"]}
 
     ACTION_NAMES = ["steer", "throttle"]
     STEER_LIMIT_LEFT = -1.0

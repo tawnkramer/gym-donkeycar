@@ -595,9 +595,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         reconstructed_lidar_info = [-1 for _ in range(points_num)]  # we chose -1 to be the "None" value
 
         for point in lidar_info:
-            rx = point['rx']
-            ry = point['ry']
-            d = point['d']
+            rx = point["rx"]
+            ry = point["ry"]
+            d = point["d"]
 
             x_index = round(abs(rx / self.lidar_deg_per_sweep_inc))
             y_index = round(abs(ry / self.lidar_deg_ang_delta))
