@@ -10,6 +10,8 @@ import uuid
 
 import gym
 
+import gym_donkeycar
+
 NUM_EPISODES = 3
 MAX_TIME_STEPS = 1000
 
@@ -100,6 +102,16 @@ if __name__ == "__main__":
         "guid": str(uuid.uuid4()),
         "start_delay": 1,
         "max_cte": 5,
+        "degPerSweepInc": 2.0,
+        "degAngDown": 0.0,
+        "degAngDelta": -1.0,
+        "numSweepsLevels": 1,
+        "maxRange": 50.0,
+        "noise": 0.4,
+        "offset_x": 0.0,
+        "offset_y": 0.5,
+        "offset_z": 0.5,
+        "rot_x": 0.0,
     }
 
     if args.env_name == "all":
