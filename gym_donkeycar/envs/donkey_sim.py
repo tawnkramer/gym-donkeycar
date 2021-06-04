@@ -175,6 +175,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
                 "offset_y",
                 "offset_z",
                 "rot_x",
+                "rot_y",
+                "rot_z",
             ],
         )
         try:
@@ -192,6 +194,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "offset_y",
                     "offset_z",
                     "rot_x",
+                    "rot_y",
+                    "rot_z",
                 ],
             )
             self.send_cam_config(**cam_config)
@@ -518,6 +522,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         offset_y=0,
         offset_z=0,
         rot_x=0,
+        rot_y=0,
+        rot_z=0
     ):
         """Camera config
         set any field to Zero to get the default camera setting.
@@ -541,6 +547,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "offset_y": str(offset_y),
             "offset_z": str(offset_z),
             "rot_x": str(rot_x),
+            "rot_y": str(rot_y),
+            "rot_z": str(rot_z),
         }
         self.blocking_send(msg)
         time.sleep(0.1)
