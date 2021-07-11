@@ -14,6 +14,7 @@ from collections import deque
 
 import cv2
 import gym
+import gym_donkeycar
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import backend as K
