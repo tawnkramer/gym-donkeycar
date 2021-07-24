@@ -7,6 +7,7 @@ from gym.envs.registration import register
 
 from gym_donkeycar.envs.donkey_env import (
     AvcSparkfunEnv,
+    CircuitLaunchEnv,
     GeneratedRoadsEnv,
     GeneratedTrackEnv,
     MiniMonacoEnv,
@@ -46,3 +47,5 @@ register(id="donkey-minimonaco-track-v0", entry_point="gym_donkeycar.envs.donkey
 register(id="donkey-warren-track-v0", entry_point="gym_donkeycar.envs.donkey_env:WarrenTrackEnv")
 
 register(id="donkey-thunderhill-track-v0", entry_point="gym_donkeycar.envs.donkey_env:ThunderhillTrackEnv")
+
+register(id="donkey-circuit-launch-track-v0", entry_point="gym_donkeycar.envs.donkey_env:CircuitLaunchEnv")
