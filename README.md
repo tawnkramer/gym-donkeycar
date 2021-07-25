@@ -119,6 +119,7 @@ Example info:
 - "donkey-minimonaco-track-v0"
 - "donkey-warren-track-v0"
 - "donkey-thunderhill-track-v0"
+- "donkey-circuit-launch-track-v0"
 
 
 ## Codestyle
