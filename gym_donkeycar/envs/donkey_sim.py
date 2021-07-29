@@ -131,6 +131,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
+        self.speed = 0.0
         self.forward_vel = 0.0
         self.missed_checkpoint = False
         self.dq = False
@@ -297,6 +298,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
+        self.speed = 0.0
         self.forward_vel = 0.0
         self.over = False
         self.missed_checkpoint = False
@@ -336,6 +338,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         info = {
             "pos": (self.x, self.y, self.z),
             "cte": self.cte,
+            "speed": self.speed,
             "forward_vel": self.forward_vel,
             "hit": self.hit,
             "gyro": (self.gyro_x, self.gyro_y, self.gyro_z),
@@ -386,6 +389,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.x = data["pos_x"]
         self.y = data["pos_y"]
         self.z = data["pos_z"]
+        self.speed = data["speed"]
 
         e = [self.pitch * np.pi / 180.0, self.yaw * np.pi / 180.0, self.roll * np.pi / 180.0]
         q = euler_to_quat(e)
