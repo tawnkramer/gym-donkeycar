@@ -21,6 +21,46 @@ from gym_donkeycar.core.sim_client import SimClient
 logger = logging.getLogger(__name__)
 
 
+# Math helpers added by CireNeikual (222464)
+def euler_to_quat(e):
+    cx = np.cos(e[0] * 0.5)
+    sx = np.sin(e[0] * 0.5)
+    cy = np.cos(e[1] * 0.5)
+    sy = np.sin(e[1] * 0.5)
+    cz = np.cos(e[2] * 0.5)
+    sz = np.sin(e[2] * 0.5)
+
+    x = sz * cx * cy - cz * sx * sy
+    y = cz * sx * cy + sz * cx * sy
+    z = cz * cx * sy - sz * sx * cy
+    w = cz * cx * cy + sz * sx * sy
+
+    return [ x, y, z, w ]
+
+def cross(v0, v1):
+    return [ v0[1] * v1[2] - v0[2] * v1[1],
+        v0[2] * v1[0] - v0[0] * v1[2],
+        v0[0] * v1[1] - v0[1] * v1[0] ]
+
+def rotate_vec(q, v):
+    uv = cross(q[0:3], v)
+    uuv = cross(q[0:3], uv)
+
+    scaleUv = 2.0 * q[3]
+
+    uv[0] *= scaleUv
+    uv[1] *= scaleUv
+    uv[2] *= scaleUv
+
+    uuv[0] *= 2.0
+    uuv[1] *= 2.0
+    uuv[2] *= 2.0
+
+    return [ v[0] + uv[0] + uuv[0],
+        v[1] + uv[1] + uuv[1],
+        v[2] + uv[2] + uuv[2] ]
+
+
 class DonkeyUnitySimContoller:
     def __init__(self, conf):
         logger.setLevel(conf["log_level"])
@@ -93,7 +133,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
-        self.speed = 0.0
+        self.forward_vel = 0.0
         self.missed_checkpoint = False
         self.dq = False
         self.over = False
@@ -259,7 +299,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
-        self.speed = 0.0
+        self.forward_vel = 0.0
         self.over = False
         self.missed_checkpoint = False
         self.dq = False
@@ -294,11 +334,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         done = self.is_game_over()
         reward = self.calc_reward(done)
         # info = {'pos': (self.x, self.y, self.z), 'cte': self.cte,
-        #        "speed": self.speed, "hit": self.hit}
+        #        "forward_vel": self.forward_vel, "hit": self.hit}
         info = {
             "pos": (self.x, self.y, self.z),
             "cte": self.cte,
-            "speed": self.speed,
+            "forward_vel": self.forward_vel,
             "hit": self.hit,
             "gyro": (self.gyro_x, self.gyro_y, self.gyro_z),
             "accel": (self.accel_x, self.accel_y, self.accel_z),
@@ -334,12 +374,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
             return -2.0
 
         # going fast close to the center of lane yeilds best reward
-        return (1.0 - (math.fabs(self.cte) / self.max_cte)) * self.speed
+        return (1.0 - (math.fabs(self.cte) / self.max_cte)) * self.forward_vel
 
     # ------ Socket interface ----------- #
 
     def on_telemetry(self, data):
-
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
 
@@ -349,7 +388,14 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.x = data["pos_x"]
         self.y = data["pos_y"]
         self.z = data["pos_z"]
-        self.speed = data["speed"]
+        
+        e = [ self.pitch * np.pi / 180.0, self.yaw * np.pi / 180.0, self.roll * np.pi / 180.0 ]
+        q = euler_to_quat(e)
+
+        forward = rotate_vec(q, [ 0.0, 0.0, 1.0 ])
+
+        # dot
+        self.forward_vel = forward[0] * self.vel_x + forward[1] * self.vel_y + forward[2] * self.vel_z
 
         if "gyro_x" in data:
             self.gyro_x = data["gyro_x"]
