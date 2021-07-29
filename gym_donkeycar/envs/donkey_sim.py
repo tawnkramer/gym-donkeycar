@@ -375,7 +375,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
             return -2.0
 
         # going fast close to the center of lane yeilds best reward
-        return (1.0 - (math.fabs(self.cte) / self.max_cte)) * self.forward_vel
+        if self.forward_vel > 0.0:
+            return (1.0 - (math.fabs(self.cte) / self.max_cte)) * self.forward_vel
+
+        return self.forward_vel # in reverse, reward doesn't have centering term as this can result in some exploits
 
     # ------ Socket interface ----------- #
 
