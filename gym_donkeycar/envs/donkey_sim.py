@@ -35,12 +35,12 @@ def euler_to_quat(e):
     z = cz * cx * sy - sz * sx * cy
     w = cz * cx * cy + sz * sx * sy
 
-    return [ x, y, z, w ]
+    return [x, y, z, w]
+
 
 def cross(v0, v1):
-    return [ v0[1] * v1[2] - v0[2] * v1[1],
-        v0[2] * v1[0] - v0[0] * v1[2],
-        v0[0] * v1[1] - v0[1] * v1[0] ]
+    return [v0[1] * v1[2] - v0[2] * v1[1], v0[2] * v1[0] - v0[0] * v1[2], v0[0] * v1[1] - v0[1] * v1[0]]
+
 
 def rotate_vec(q, v):
     uv = cross(q[0:3], v)
@@ -56,9 +56,7 @@ def rotate_vec(q, v):
     uuv[1] *= 2.0
     uuv[2] *= 2.0
 
-    return [ v[0] + uv[0] + uuv[0],
-        v[1] + uv[1] + uuv[1],
-        v[2] + uv[2] + uuv[2] ]
+    return [v[0] + uv[0] + uuv[0], v[1] + uv[1] + uuv[1], v[2] + uv[2] + uuv[2]]
 
 
 class DonkeyUnitySimContoller:
@@ -388,11 +386,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.x = data["pos_x"]
         self.y = data["pos_y"]
         self.z = data["pos_z"]
-        
-        e = [ self.pitch * np.pi / 180.0, self.yaw * np.pi / 180.0, self.roll * np.pi / 180.0 ]
+
+        e = [self.pitch * np.pi / 180.0, self.yaw * np.pi / 180.0, self.roll * np.pi / 180.0]
         q = euler_to_quat(e)
 
-        forward = rotate_vec(q, [ 0.0, 0.0, 1.0 ])
+        forward = rotate_vec(q, [0.0, 0.0, 1.0])
 
         # dot
         self.forward_vel = forward[0] * self.vel_x + forward[1] * self.vel_y + forward[2] * self.vel_z
@@ -569,7 +567,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         offset_z=0,
         rot_x=0,
         rot_y=0,
-        rot_z=0
+        rot_z=0,
     ):
         """Camera config
         set any field to Zero to get the default camera setting.
