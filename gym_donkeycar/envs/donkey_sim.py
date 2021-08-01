@@ -158,28 +158,11 @@ class DonkeyUnitySimHandler(IMesgHandler):
         return ret_dct
 
     def send_config(self, conf):
-        logger.info("sending car config.")
-        self.set_car_config(conf)
-        # self.set_racer_bio(conf)
-        cam_config = self.extract_keys(
-            conf,
-            [
-                "img_w",
-                "img_h",
-                "img_d",
-                "img_enc",
-                "fov",
-                "fish_eye_x",
-                "fish_eye_y",
-                "offset_x",
-                "offset_y",
-                "offset_z",
-                "rot_x",
-                "rot_y",
-                "rot_z",
-            ],
-        )
-        try:
+        # not recommended way
+        if isinstance(conf, dict):
+            self.set_car_config(conf)
+            logger.info("done sending car config.")
+
             cam_config = self.extract_keys(
                 conf,
                 [
@@ -200,10 +183,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             )
             self.send_cam_config(**cam_config)
             logger.info(f"done sending cam config. {cam_config}")
-        except:
-            logger.info("sending cam config FAILED.")
 
-        try:
             lidar_config = self.extract_keys(
                 conf,
                 [
@@ -221,9 +201,79 @@ class DonkeyUnitySimHandler(IMesgHandler):
             )
             self.send_lidar_config(**lidar_config)
             logger.info(f"done sending lidar config., {lidar_config}")
-        except:
-            logger.info("sending lidar config FAILED.")
-        logger.info("done sending car config.")
+
+            logger.warning("// instructions to change from the old way to pass conf to new way")
+
+        # new way
+        elif isinstance(conf, list):
+            for c in conf:
+                assert isinstance(c, dict)
+
+                if c.get("msg_type") == "cam_config":
+                    cam_config = self.extract_keys(
+                        c,
+                        [
+                            "img_w",
+                            "img_h",
+                            "img_d",
+                            "img_enc",
+                            "fov",
+                            "fish_eye_x",
+                            "fish_eye_y",
+                            "offset_x",
+                            "offset_y",
+                            "offset_z",
+                            "rot_x",
+                            "rot_y",
+                            "rot_z",
+                        ],
+                    )
+                    self.send_cam_config(**cam_config)
+                    logger.info(f"done sending cam config. {cam_config}")
+
+                if c.get("msg_type") == "cam_config_b":
+                    cam_config = self.extract_keys(
+                        c,
+                        [
+                            "img_w",
+                            "img_h",
+                            "img_d",
+                            "img_enc",
+                            "fov",
+                            "fish_eye_x",
+                            "fish_eye_y",
+                            "offset_x",
+                            "offset_y",
+                            "offset_z",
+                            "rot_x",
+                            "rot_y",
+                            "rot_z",
+                        ],
+                    )
+                    self.send_cam_config(**cam_config, msg="cam_config_b")
+                    logger.info(f"done sending cam config B. {cam_config}")
+
+                if c.get("msg_type") == "lidar_config":
+                    lidar_config = self.extract_keys(
+                        c,
+                        [
+                            "degPerSweepInc",
+                            "degAngDown",
+                            "degAngDelta",
+                            "numSweepsLevels",
+                            "maxRange",
+                            "noise",
+                            "offset_x",
+                            "offset_y",
+                            "offset_z",
+                            "rot_x",
+                        ],
+                    )
+                    self.send_lidar_config(**lidar_config)
+                    logger.info(f"done sending lidar config., {lidar_config}")
+
+        else:
+            raise ValueError(f'conf must be a dict or a list, not {conf.type}')
 
     def set_car_config(self, conf):
         if "body_style" in conf:
@@ -475,20 +525,26 @@ class DonkeyUnitySimHandler(IMesgHandler):
         msg = {"msg_type": "exit_scene"}
         self.queue_message(msg)
 
-    def send_car_config(self, body_style, body_rgb, car_name, font_size):
+    def send_car_config(self, body_style="donkey", body_rgb=[255, 255, 255], car_name="car", font_size=100):
         """
         # body_style = "donkey" | "bare" | "car01" choice of string
         # body_rgb  = (128, 128, 128) tuple of ints
         # car_name = "string less than 64 char"
         """
+        assert isinstance(body_style, str)
+        assert isinstance(body_rgb, list)
+        assert len(body_rgb) == 3
+        assert isinstance(car_name, str)
+        assert isinstance(font_size, int)
+
         msg = {
             "msg_type": "car_config",
             "body_style": body_style,
-            "body_r": body_rgb[0].__str__(),
-            "body_g": body_rgb[1].__str__(),
-            "body_b": body_rgb[2].__str__(),
+            "body_r": str(body_rgb[0]),
+            "body_g": str(body_rgb[1]),
+            "body_b": str(body_rgb[2]),
             "car_name": car_name,
-            "font_size": font_size.__str__(),
+            "font_size": str(font_size),
         }
         self.blocking_send(msg)
         time.sleep(0.1)
@@ -511,6 +567,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def send_cam_config(
         self,
+        msg_type="cam_config",
         img_w=0,
         img_h=0,
         img_d=0,
@@ -535,7 +592,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         img_enc can be one of JPG|PNG|TGA
         """
         msg = {
-            "msg_type": "cam_config",
+            "msg_type": msg_type,
             "fov": str(fov),
             "fish_eye_x": str(fish_eye_x),
             "fish_eye_y": str(fish_eye_y),
