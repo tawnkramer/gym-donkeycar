@@ -158,13 +158,14 @@ class DonkeyUnitySimHandler(IMesgHandler):
         return ret_dct
 
     def send_config(self, conf):
-        # not recommended way
-        if isinstance(conf, dict):
-            self.set_car_config(conf)
+
+        if "car_config" in conf.keys():
+            self.set_car_config(conf["car_config"])
             logger.info("done sending car config.")
 
+        if "cam_config" in conf.keys():
             cam_config = self.extract_keys(
-                conf,
+                conf["cam_config"],
                 [
                     "img_w",
                     "img_h",
@@ -184,8 +185,31 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.send_cam_config(**cam_config)
             logger.info(f"done sending cam config. {cam_config}")
 
+        if "cam_config_b" in conf.keys():
+            cam_config = self.extract_keys(
+                conf["cam_config_b"],
+                [
+                    "img_w",
+                    "img_h",
+                    "img_d",
+                    "img_enc",
+                    "fov",
+                    "fish_eye_x",
+                    "fish_eye_y",
+                    "offset_x",
+                    "offset_y",
+                    "offset_z",
+                    "rot_x",
+                    "rot_y",
+                    "rot_z",
+                ],
+            )
+            self.send_cam_config(**cam_config, msg="cam_config_b")
+            logger.info(f"done sending cam config B. {cam_config}")
+
+        if "lidar_config" in conf.keys():
             lidar_config = self.extract_keys(
-                conf,
+                conf["lidar_config"],
                 [
                     "degPerSweepInc",
                     "degAngDown",
@@ -202,78 +226,60 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.send_lidar_config(**lidar_config)
             logger.info(f"done sending lidar config., {lidar_config}")
 
-            logger.warning("// instructions to change from the old way to pass conf to new way")
+        # what follows is needed in order not to break older conf
+        self.set_car_config(conf)
+        logger.info("done sending car config.")
 
-        # new way
-        elif isinstance(conf, list):
-            for c in conf:
-                assert isinstance(c, dict)
+        cam_config = self.extract_keys(
+            conf,
+            [
+                "img_w",
+                "img_h",
+                "img_d",
+                "img_enc",
+                "fov",
+                "fish_eye_x",
+                "fish_eye_y",
+                "offset_x",
+                "offset_y",
+                "offset_z",
+                "rot_x",
+                "rot_y",
+                "rot_z",
+            ],
+        )
+        if cam_config != {}:
+            self.send_cam_config(**cam_config)
+            logger.info(f"done sending cam config. {cam_config}")
+            logger.warning(
+                f"""This way of passing cam_config is deprecated,
+                please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
+                Example: GYM_CONF = {'cam_config':{cam_config}}"""
+            )
 
-                if c.get("msg_type") == "cam_config":
-                    cam_config = self.extract_keys(
-                        c,
-                        [
-                            "img_w",
-                            "img_h",
-                            "img_d",
-                            "img_enc",
-                            "fov",
-                            "fish_eye_x",
-                            "fish_eye_y",
-                            "offset_x",
-                            "offset_y",
-                            "offset_z",
-                            "rot_x",
-                            "rot_y",
-                            "rot_z",
-                        ],
-                    )
-                    self.send_cam_config(**cam_config)
-                    logger.info(f"done sending cam config. {cam_config}")
-
-                if c.get("msg_type") == "cam_config_b":
-                    cam_config = self.extract_keys(
-                        c,
-                        [
-                            "img_w",
-                            "img_h",
-                            "img_d",
-                            "img_enc",
-                            "fov",
-                            "fish_eye_x",
-                            "fish_eye_y",
-                            "offset_x",
-                            "offset_y",
-                            "offset_z",
-                            "rot_x",
-                            "rot_y",
-                            "rot_z",
-                        ],
-                    )
-                    self.send_cam_config(**cam_config, msg="cam_config_b")
-                    logger.info(f"done sending cam config B. {cam_config}")
-
-                if c.get("msg_type") == "lidar_config":
-                    lidar_config = self.extract_keys(
-                        c,
-                        [
-                            "degPerSweepInc",
-                            "degAngDown",
-                            "degAngDelta",
-                            "numSweepsLevels",
-                            "maxRange",
-                            "noise",
-                            "offset_x",
-                            "offset_y",
-                            "offset_z",
-                            "rot_x",
-                        ],
-                    )
-                    self.send_lidar_config(**lidar_config)
-                    logger.info(f"done sending lidar config., {lidar_config}")
-
-        else:
-            raise ValueError(f'conf must be a dict or a list, not {conf.type}')
+        lidar_config = self.extract_keys(
+            conf,
+            [
+                "degPerSweepInc",
+                "degAngDown",
+                "degAngDelta",
+                "numSweepsLevels",
+                "maxRange",
+                "noise",
+                "offset_x",
+                "offset_y",
+                "offset_z",
+                "rot_x",
+            ],
+        )
+        if lidar_config != {}:
+            self.send_lidar_config(**lidar_config)
+            logger.info(f"done sending lidar config., {lidar_config}")
+            logger.warning(
+                f"""This way of passing lidar_config is deprecated,
+                please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
+                Example: GYM_CONF = {'lidar_config':{lidar_config}}"""
+            )
 
     def set_car_config(self, conf):
         if "body_style" in conf:
