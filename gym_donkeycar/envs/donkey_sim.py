@@ -159,6 +159,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def send_config(self, conf):
 
+        # both ways work, car_config shouldn't interfere with other config, so keeping the two alternative
+        self.set_car_config(conf)
         if "car_config" in conf.keys():
             self.set_car_config(conf["car_config"])
             logger.info("done sending car config.")
@@ -227,8 +229,6 @@ class DonkeyUnitySimHandler(IMesgHandler):
             logger.info(f"done sending lidar config., {lidar_config}")
 
         # what follows is needed in order not to break older conf
-        self.set_car_config(conf)
-        logger.info("done sending car config.")
 
         cam_config = self.extract_keys(
             conf,
