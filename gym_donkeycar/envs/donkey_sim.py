@@ -188,7 +188,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             logger.info(f"done sending cam config. {cam_config}")
 
         if "cam_config_b" in conf.keys():
-            cam_config = self.extract_keys(
+            cam_config_b = self.extract_keys(
                 conf["cam_config_b"],
                 [
                     "img_w",
@@ -206,8 +206,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "rot_z",
                 ],
             )
-            self.send_cam_config(**cam_config, msg="cam_config_b")
-            logger.info(f"done sending cam config B. {cam_config}")
+            self.send_cam_config(**cam_config_b, msg="cam_config_b")
+            logger.info(f"done sending cam config B. {cam_config_b}")
 
         if "lidar_config" in conf.keys():
             lidar_config = self.extract_keys(
@@ -541,7 +541,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         assert isinstance(body_rgb, list)
         assert len(body_rgb) == 3
         assert isinstance(car_name, str)
-        assert isinstance(font_size, int)
+        assert isinstance(font_size, int) or isinstance(font_size, str)
 
         msg = {
             "msg_type": "car_config",
@@ -617,7 +617,17 @@ class DonkeyUnitySimHandler(IMesgHandler):
         time.sleep(0.1)
 
     def send_lidar_config(
-        self, degPerSweepInc, degAngDown, degAngDelta, numSweepsLevels, maxRange, noise, offset_x, offset_y, offset_z, rot_x
+        self,
+        degPerSweepInc=2.0,
+        degAngDown=0.0,
+        degAngDelta=-1.0,
+        numSweepsLevels=1,
+        maxRange=50.0,
+        noise=0.5,
+        offset_x=0.0,
+        offset_y=0.5,
+        offset_z=0.5,
+        rot_x=0.0
     ):
         """Lidar config
         the offset_x moves lidar left/right
