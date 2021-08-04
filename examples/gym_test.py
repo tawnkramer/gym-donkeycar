@@ -99,8 +99,7 @@ if __name__ == "__main__":
         "font_size": 100,
         "start_delay": 1,
         "max_cte": 5,
-        "lidar_config":
-        {
+        "lidar_config": {
             "degPerSweepInc": 2.0,
             "degAngDown": 0.0,
             "degAngDelta": -1.0,
@@ -111,7 +110,7 @@ if __name__ == "__main__":
             "offset_y": 0.5,
             "offset_z": 0.5,
             "rot_x": 0.0,
-        }
+        },
     }
 
     if args.env_name == "all":
