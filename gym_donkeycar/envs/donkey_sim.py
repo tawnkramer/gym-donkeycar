@@ -538,7 +538,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         # car_name = "string less than 64 char"
         """
         assert isinstance(body_style, str)
-        assert isinstance(body_rgb, list)
+        assert isinstance(body_rgb, list) or isinstance(body_rgb, tuple)
         assert len(body_rgb) == 3
         assert isinstance(car_name, str)
         assert isinstance(font_size, int) or isinstance(font_size, str)
@@ -675,15 +675,17 @@ class DonkeyUnitySimHandler(IMesgHandler):
         points_num = round(abs(self.lidar_num_sweep_levels * point_per_sweep))
         reconstructed_lidar_info = [-1 for _ in range(points_num)]  # we chose -1 to be the "None" value
 
-        for point in lidar_info:
-            rx = point["rx"]
-            ry = point["ry"]
-            d = point["d"]
+        if lidar_info is not None:
+            for point in lidar_info:
+                rx = point["rx"]
+                ry = point["ry"]
+                d = point["d"]
 
-            x_index = round(abs(rx / self.lidar_deg_per_sweep_inc))
-            y_index = round(abs(ry / self.lidar_deg_ang_delta))
+                x_index = round(abs(rx / self.lidar_deg_per_sweep_inc))
+                y_index = round(abs(ry / self.lidar_deg_ang_delta))
 
-            reconstructed_lidar_info[point_per_sweep * y_index + x_index] = d
+                reconstructed_lidar_info[point_per_sweep * y_index + x_index] = d
+
         return np.array(reconstructed_lidar_info)
 
     def blocking_send(self, msg):
