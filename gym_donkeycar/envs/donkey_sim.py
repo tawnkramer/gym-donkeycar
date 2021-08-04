@@ -283,12 +283,23 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def set_car_config(self, conf):
         if "body_style" in conf:
-            self.send_car_config(conf["body_style"], conf["body_rgb"], conf["car_name"], conf["font_size"])
+            self.send_car_config(
+                conf["body_style"],
+                conf["body_rgb"],
+                conf["car_name"],
+                conf["font_size"],
+            )
 
     def set_racer_bio(self, conf):
         self.conf = conf
         if "bio" in conf:
-            self.send_racer_bio(conf["racer_name"], conf["car_name"], conf["bio"], conf["country"], conf["guid"])
+            self.send_racer_bio(
+                conf["racer_name"],
+                conf["car_name"],
+                conf["bio"],
+                conf["country"],
+                conf["guid"],
+            )
 
     def on_recv_message(self, message):
         if "msg_type" not in message:
@@ -512,7 +523,12 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def send_control(self, steer, throttle):
         if not self.loaded:
             return
-        msg = {"msg_type": "control", "steering": steer.__str__(), "throttle": throttle.__str__(), "brake": "0.0"}
+        msg = {
+            "msg_type": "control",
+            "steering": steer.__str__(),
+            "throttle": throttle.__str__(),
+            "brake": "0.0",
+        }
         self.queue_message(msg)
 
     def send_reset_car(self):
@@ -531,7 +547,13 @@ class DonkeyUnitySimHandler(IMesgHandler):
         msg = {"msg_type": "exit_scene"}
         self.queue_message(msg)
 
-    def send_car_config(self, body_style="donkey", body_rgb=[255, 255, 255], car_name="car", font_size=100):
+    def send_car_config(
+        self,
+        body_style="donkey",
+        body_rgb=[255, 255, 255],
+        car_name="car",
+        font_size=100,
+    ):
         """
         # body_style = "donkey" | "bare" | "car01" choice of string
         # body_rgb  = (128, 128, 128) tuple of ints
@@ -586,7 +608,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         offset_z=0,
         rot_x=0,
         rot_y=0,
-        rot_z=0
+        rot_z=0,
     ):
         """Camera config
         set any field to Zero to get the default camera setting.
@@ -627,7 +649,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         offset_x=0.0,
         offset_y=0.5,
         offset_z=0.5,
-        rot_x=0.0
+        rot_x=0.0,
     ):
         """Lidar config
         the offset_x moves lidar left/right
