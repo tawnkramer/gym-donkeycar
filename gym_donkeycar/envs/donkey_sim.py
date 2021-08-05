@@ -87,7 +87,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         # sensor size - height, width, depth
         self.camera_img_size = conf["cam_resolution"]
         self.image_array = np.zeros(self.camera_img_size)
-        self.last_obs = None
+        self.image_array_b = None
+        self.last_obs = self.image_array
+        self.time_received = time.time()
+        self.last_received = self.time_received
         self.hit = "none"
         self.cte = 0.0
         self.x = 0.0
@@ -208,6 +211,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             )
             self.send_cam_config(**cam_config_b, msg_type="cam_config_b")
             logger.info(f"done sending cam config B. {cam_config_b}")
+            self.image_array_b = np.zeros(self.camera_img_size)
 
         if "lidar_config" in conf.keys():
             lidar_config = self.extract_keys(
@@ -320,7 +324,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.timer.reset()
         time.sleep(1)
         self.image_array = np.zeros(self.camera_img_size)
+        self.image_array_b = None
         self.last_obs = self.image_array
+        self.time_received = time.time()
+        self.last_received = self.time_received
         self.hit = "none"
         self.cte = 0.0
         self.x = 0.0
@@ -353,15 +360,14 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.send_control(action[0], action[1])
 
     def observe(self):
-        while self.last_obs is self.image_array:
-            time.sleep(1.0 / 120.0)
+        while self.last_received == self.time_received:
+            time.sleep(0.001)
 
-        self.last_obs = self.image_array
+        self.last_received = self.time_received
         observation = self.image_array
         done = self.is_game_over()
         reward = self.calc_reward(done)
-        # info = {'pos': (self.x, self.y, self.z), 'cte': self.cte,
-        #        "speed": self.speed, "hit": self.hit}
+
         info = {
             "pos": (self.x, self.y, self.z),
             "cte": self.cte,
@@ -373,6 +379,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "lidar": (self.lidar),
             "car": (self.roll, self.pitch, self.yaw),
         }
+
+        # Add the second image to the dict
+        if self.image_array_b is not None:
+            info["image_b"] = self.image_array_b
 
         # self.timer.on_frame()
 
@@ -412,11 +422,20 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         # always update the image_array as the observation loop will hang if not changing.
         self.image_array = np.asarray(image)
+        self.time_received = time.time()
 
-        self.x = data["pos_x"]
-        self.y = data["pos_y"]
-        self.z = data["pos_z"]
-        self.speed = data["speed"]
+        if "image_b" in data:
+            imgString_b = data["image_b"]
+            image_b = Image.open(BytesIO(base64.b64decode(imgString_b)))
+            self.image_array_b = np.asarray(image_b)
+
+        if "pos_x" in data:
+            self.x = data["pos_x"]
+            self.y = data["pos_y"]
+            self.z = data["pos_z"]
+
+        if "speed" in data:
+            self.speed = data["speed"]
 
         if "gyro_x" in data:
             self.gyro_x = data["gyro_x"]
@@ -449,7 +468,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if self.over:
             return
 
-        self.hit = data["hit"]
+        if "hit" in data:
+            self.hit = data["hit"]
 
         self.determine_episode_over()
 
