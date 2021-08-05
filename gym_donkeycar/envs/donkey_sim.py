@@ -206,7 +206,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
                     "rot_z",
                 ],
             )
-            self.send_cam_config(**cam_config_b, msg="cam_config_b")
+            self.send_cam_config(**cam_config_b, msg_type="cam_config_b")
             logger.info(f"done sending cam config B. {cam_config_b}")
 
         if "lidar_config" in conf.keys():
