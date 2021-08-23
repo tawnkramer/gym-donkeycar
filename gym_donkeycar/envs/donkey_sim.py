@@ -256,9 +256,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.send_cam_config(**cam_config)
             logger.info(f"done sending cam config. {cam_config}")
             logger.warning(
-                f"""This way of passing cam_config is deprecated,
+                """This way of passing cam_config is deprecated,
                 please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
-                Example: GYM_CONF = {'cam_config':{cam_config}}"""
+                Example: GYM_CONF = {'cam_config':""" + str(cam_config) + "}"
             )
 
         lidar_config = self.extract_keys(
@@ -280,9 +280,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.send_lidar_config(**lidar_config)
             logger.info(f"done sending lidar config., {lidar_config}")
             logger.warning(
-                f"""This way of passing lidar_config is deprecated,
+                """This way of passing lidar_config is deprecated,
                 please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
-                Example: GYM_CONF = {'lidar_config':{lidar_config}}"""
+                Example: GYM_CONF = {'lidar_config':""" + str(lidar_config) + "}"
             )
 
     def set_car_config(self, conf):
