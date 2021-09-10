@@ -114,6 +114,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "aborted": self.on_abort,
             "missed_checkpoint": self.on_missed_checkpoint,
             "need_car_config": self.on_need_car_config,
+            "collision_with_starting_line": self.on_collision_with_starting_line,
         }
         self.gyro_x = 0.0
         self.gyro_y = 0.0
@@ -136,6 +137,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.lidar_num_sweep_levels = 1
         self.lidar_deg_ang_delta = 1
 
+        self.last_time_crossed_finish = -1.0
+        self.first_time_crossed_finish = -1.0
+        self.lap_number = 0
+
     def on_connect(self, client):
         logger.debug("socket connected")
         self.client = client
@@ -151,6 +156,16 @@ class DonkeyUnitySimHandler(IMesgHandler):
         logger.info("on need car config")
         self.loaded = True
         self.send_config(self.conf)
+
+    def on_collision_with_starting_line(self, message):
+        if self.first_time_crossed_finish == -1:
+            self.first_time_crossed_finish = message['timeStamp']
+            self.last_time_crossed_finish = message['timeStamp']
+        last_lap_time = message['timeStamp'] - self.last_time_crossed_finish
+        self.last_time_crossed_finish = message['timeStamp']
+        all_laps_time = self.last_time_crossed_finish - self.first_time_crossed_finish
+        logger.info(f"CollisionWithStartingLine: lap_number={self.lap_number} total_time={all_laps_time:.2f} lap_time={last_lap_time:.2f}")
+        self.lap_number += 1
 
     @staticmethod
     def extract_keys(dct, lst):
