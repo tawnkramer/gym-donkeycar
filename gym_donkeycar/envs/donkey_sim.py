@@ -114,6 +114,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "aborted": self.on_abort,
             "missed_checkpoint": self.on_missed_checkpoint,
             "need_car_config": self.on_need_car_config,
+            "collision_with_starting_line": self.on_collision_with_starting_line,
         }
         self.gyro_x = 0.0
         self.gyro_y = 0.0
@@ -136,6 +137,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.lidar_num_sweep_levels = 1
         self.lidar_deg_ang_delta = 1
 
+        self.last_lap_time = 0.0
+        self.current_lap_time = 0.0
+
     def on_connect(self, client):
         logger.debug("socket connected")
         self.client = client
@@ -151,6 +155,15 @@ class DonkeyUnitySimHandler(IMesgHandler):
         logger.info("on need car config")
         self.loaded = True
         self.send_config(self.conf)
+
+    def on_collision_with_starting_line(self, message):
+        if self.current_lap_time == 0.0:
+            self.current_lap_time = time.time()
+        else:
+            self.last_lap_time = float(time.time() - self.current_lap_time)
+            self.current_lap_time = time.time()
+            lap_msg = f"New lap time: {round(self.last_lap_time, 2)} seconds"
+            logger.info(lap_msg)
 
     @staticmethod
     def extract_keys(dct, lst):
@@ -347,6 +360,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.vel_y = 0.0
         self.vel_z = 0.0
         self.lidar = []
+        self.current_lap_time = 0.0
 
         # car
         self.roll = 0.0
@@ -378,6 +392,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "vel": (self.vel_x, self.vel_y, self.vel_z),
             "lidar": (self.lidar),
             "car": (self.roll, self.pitch, self.yaw),
+            "last_lap_time": self.last_lap_time,
         }
 
         # Add the second image to the dict
