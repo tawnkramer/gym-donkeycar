@@ -139,6 +139,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         self.last_lap_time = 0.0
         self.current_lap_time = 0.0
+        self.starting_line_index = -1
 
     def on_connect(self, client):
         logger.debug("socket connected")
@@ -158,10 +159,12 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def on_collision_with_starting_line(self, message):
         if self.current_lap_time == 0.0:
-            self.current_lap_time = time.time()
-        else:
-            self.last_lap_time = float(time.time() - self.current_lap_time)
-            self.current_lap_time = time.time()
+            self.current_lap_time = message["timeStamp"]
+            self.starting_line_index = message["starting_line_index"]
+        elif self.starting_line_index == message["starting_line_index"]:
+            time_at_crossing = message["timeStamp"]
+            self.last_lap_time = float(time_at_crossing - self.current_lap_time)
+            self.current_lap_time = time_at_crossing
             lap_msg = f"New lap time: {round(self.last_lap_time, 2)} seconds"
             logger.info(lap_msg)
 
@@ -270,8 +273,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
             logger.info(f"done sending cam config. {cam_config}")
             logger.warning(
                 """This way of passing cam_config is deprecated,
-                please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
-                Example: GYM_CONF = {'cam_config':""" + str(cam_config) + "}"
+                please wrap the parameters in a sub-dictionary with the key 'cam_config'.
+                Example: GYM_CONF = {'cam_config':"""
+                + str(cam_config)
+                + "}"
             )
 
         lidar_config = self.extract_keys(
@@ -295,7 +300,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
             logger.warning(
                 """This way of passing lidar_config is deprecated,
                 please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
-                Example: GYM_CONF = {'lidar_config':""" + str(lidar_config) + "}"
+                Example: GYM_CONF = {'lidar_config':"""
+                + str(lidar_config)
+                + "}"
             )
 
     def set_car_config(self, conf):
@@ -361,6 +368,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.vel_z = 0.0
         self.lidar = []
         self.current_lap_time = 0.0
+        self.last_lap_time = 0.0
 
         # car
         self.roll = 0.0
