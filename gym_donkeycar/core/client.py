@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class SDClient:
-    def __init__(self, host, port, poll_socket_sleep_time=0.05):
+    def __init__(self, host, port, poll_socket_sleep_time=0.001):
         self.msg = None
         self.host = host
         self.port = port
