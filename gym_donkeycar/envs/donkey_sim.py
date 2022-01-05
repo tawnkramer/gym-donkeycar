@@ -125,7 +125,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         # sensor size - height, width, depth
         self.camera_img_size = conf["cam_resolution"]
         self.image_array = np.zeros(self.camera_img_size)
-        self.last_obs = None
+        self.image_array_b = None
+        self.last_obs = self.image_array
+        self.time_received = time.time()
+        self.last_received = self.time_received
         self.hit = "none"
         self.cte = 0.0
         self.x = 0.0
@@ -197,30 +200,16 @@ class DonkeyUnitySimHandler(IMesgHandler):
         return ret_dct
 
     def send_config(self, conf):
-        logger.info("sending car config.")
+
+        # both ways work, car_config shouldn't interfere with other config, so keeping the two alternative
         self.set_car_config(conf)
-        # self.set_racer_bio(conf)
-        cam_config = self.extract_keys(
-            conf,
-            [
-                "img_w",
-                "img_h",
-                "img_d",
-                "img_enc",
-                "fov",
-                "fish_eye_x",
-                "fish_eye_y",
-                "offset_x",
-                "offset_y",
-                "offset_z",
-                "rot_x",
-                "rot_y",
-                "rot_z",
-            ],
-        )
-        try:
+        if "car_config" in conf.keys():
+            self.set_car_config(conf["car_config"])
+            logger.info("done sending car config.")
+
+        if "cam_config" in conf.keys():
             cam_config = self.extract_keys(
-                conf,
+                conf["cam_config"],
                 [
                     "img_w",
                     "img_h",
@@ -239,12 +228,33 @@ class DonkeyUnitySimHandler(IMesgHandler):
             )
             self.send_cam_config(**cam_config)
             logger.info(f"done sending cam config. {cam_config}")
-        except:
-            logger.info("sending cam config FAILED.")
 
-        try:
+        if "cam_config_b" in conf.keys():
+            cam_config_b = self.extract_keys(
+                conf["cam_config_b"],
+                [
+                    "img_w",
+                    "img_h",
+                    "img_d",
+                    "img_enc",
+                    "fov",
+                    "fish_eye_x",
+                    "fish_eye_y",
+                    "offset_x",
+                    "offset_y",
+                    "offset_z",
+                    "rot_x",
+                    "rot_y",
+                    "rot_z",
+                ],
+            )
+            self.send_cam_config(**cam_config_b, msg_type="cam_config_b")
+            logger.info(f"done sending cam config B. {cam_config_b}")
+            self.image_array_b = np.zeros(self.camera_img_size)
+
+        if "lidar_config" in conf.keys():
             lidar_config = self.extract_keys(
-                conf,
+                conf["lidar_config"],
                 [
                     "degPerSweepInc",
                     "degAngDown",
@@ -260,18 +270,83 @@ class DonkeyUnitySimHandler(IMesgHandler):
             )
             self.send_lidar_config(**lidar_config)
             logger.info(f"done sending lidar config., {lidar_config}")
-        except:
-            logger.info("sending lidar config FAILED.")
-        logger.info("done sending car config.")
+
+        # what follows is needed in order not to break older conf
+
+        cam_config = self.extract_keys(
+            conf,
+            [
+                "img_w",
+                "img_h",
+                "img_d",
+                "img_enc",
+                "fov",
+                "fish_eye_x",
+                "fish_eye_y",
+                "offset_x",
+                "offset_y",
+                "offset_z",
+                "rot_x",
+                "rot_y",
+                "rot_z",
+            ],
+        )
+        if cam_config != {}:
+            self.send_cam_config(**cam_config)
+            logger.info(f"done sending cam config. {cam_config}")
+            logger.warning(
+                """This way of passing cam_config is deprecated,
+                please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
+                Example: GYM_CONF = {'cam_config':"""
+                + str(cam_config)
+                + "}"
+            )
+
+        lidar_config = self.extract_keys(
+            conf,
+            [
+                "degPerSweepInc",
+                "degAngDown",
+                "degAngDelta",
+                "numSweepsLevels",
+                "maxRange",
+                "noise",
+                "offset_x",
+                "offset_y",
+                "offset_z",
+                "rot_x",
+            ],
+        )
+        if lidar_config != {}:
+            self.send_lidar_config(**lidar_config)
+            logger.info(f"done sending lidar config., {lidar_config}")
+            logger.warning(
+                """This way of passing lidar_config is deprecated,
+                please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
+                Example: GYM_CONF = {'lidar_config':"""
+                + str(lidar_config)
+                + "}"
+            )
 
     def set_car_config(self, conf):
         if "body_style" in conf:
-            self.send_car_config(conf["body_style"], conf["body_rgb"], conf["car_name"], conf["font_size"])
+            self.send_car_config(
+                conf["body_style"],
+                conf["body_rgb"],
+                conf["car_name"],
+                conf["font_size"],
+            )
 
     def set_racer_bio(self, conf):
         self.conf = conf
         if "bio" in conf:
-            self.send_racer_bio(conf["racer_name"], conf["car_name"], conf["bio"], conf["country"], conf["guid"])
+            self.send_racer_bio(
+                conf["racer_name"],
+                conf["car_name"],
+                conf["bio"],
+                conf["country"],
+                conf["guid"],
+            )
 
     def on_recv_message(self, message):
         if "msg_type" not in message:
@@ -292,7 +367,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.timer.reset()
         time.sleep(1)
         self.image_array = np.zeros(self.camera_img_size)
+        self.image_array_b = None
         self.last_obs = self.image_array
+        self.time_received = time.time()
+        self.last_received = self.time_received
         self.hit = "none"
         self.cte = 0.0
         self.x = 0.0
@@ -326,15 +404,14 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.send_control(action[0], action[1])
 
     def observe(self):
-        while self.last_obs is self.image_array:
-            time.sleep(1.0 / 120.0)
+        while self.last_received == self.time_received:
+            time.sleep(0.001)
 
-        self.last_obs = self.image_array
+        self.last_received = self.time_received
         observation = self.image_array
         done = self.is_game_over()
         reward = self.calc_reward(done)
-        # info = {'pos': (self.x, self.y, self.z), 'cte': self.cte,
-        #        "forward_vel": self.forward_vel, "hit": self.hit}
+
         info = {
             "pos": (self.x, self.y, self.z),
             "cte": self.cte,
@@ -347,6 +424,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "lidar": (self.lidar),
             "car": (self.roll, self.pitch, self.yaw),
         }
+
+        # Add the second image to the dict
+        if self.image_array_b is not None:
+            info["image_b"] = self.image_array_b
 
         # self.timer.on_frame()
 
@@ -388,11 +469,20 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         # always update the image_array as the observation loop will hang if not changing.
         self.image_array = np.asarray(image)
+        self.time_received = time.time()
 
-        self.x = data["pos_x"]
-        self.y = data["pos_y"]
-        self.z = data["pos_z"]
-        self.speed = data["speed"]
+        if "image_b" in data:
+            imgString_b = data["image_b"]
+            image_b = Image.open(BytesIO(base64.b64decode(imgString_b)))
+            self.image_array_b = np.asarray(image_b)
+
+        if "pos_x" in data:
+            self.x = data["pos_x"]
+            self.y = data["pos_y"]
+            self.z = data["pos_z"]
+
+        if "speed" in data:
+            self.speed = data["speed"]
 
         e = [self.pitch * np.pi / 180.0, self.yaw * np.pi / 180.0, self.roll * np.pi / 180.0]
         q = euler_to_quat(e)
@@ -433,7 +523,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if self.over:
             return
 
-        self.hit = data["hit"]
+        if "hit" in data:
+            self.hit = data["hit"]
 
         self.determine_episode_over()
 
@@ -507,7 +598,12 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def send_control(self, steer, throttle):
         if not self.loaded:
             return
-        msg = {"msg_type": "control", "steering": steer.__str__(), "throttle": throttle.__str__(), "brake": "0.0"}
+        msg = {
+            "msg_type": "control",
+            "steering": steer.__str__(),
+            "throttle": throttle.__str__(),
+            "brake": "0.0",
+        }
         self.queue_message(msg)
 
     def send_reset_car(self):
@@ -526,20 +622,32 @@ class DonkeyUnitySimHandler(IMesgHandler):
         msg = {"msg_type": "exit_scene"}
         self.queue_message(msg)
 
-    def send_car_config(self, body_style, body_rgb, car_name, font_size):
+    def send_car_config(
+        self,
+        body_style="donkey",
+        body_rgb=[255, 255, 255],
+        car_name="car",
+        font_size=100,
+    ):
         """
         # body_style = "donkey" | "bare" | "car01" choice of string
         # body_rgb  = (128, 128, 128) tuple of ints
         # car_name = "string less than 64 char"
         """
+        assert isinstance(body_style, str)
+        assert isinstance(body_rgb, list) or isinstance(body_rgb, tuple)
+        assert len(body_rgb) == 3
+        assert isinstance(car_name, str)
+        assert isinstance(font_size, int) or isinstance(font_size, str)
+
         msg = {
             "msg_type": "car_config",
             "body_style": body_style,
-            "body_r": body_rgb[0].__str__(),
-            "body_g": body_rgb[1].__str__(),
-            "body_b": body_rgb[2].__str__(),
+            "body_r": str(body_rgb[0]),
+            "body_g": str(body_rgb[1]),
+            "body_b": str(body_rgb[2]),
             "car_name": car_name,
-            "font_size": font_size.__str__(),
+            "font_size": str(font_size),
         }
         self.blocking_send(msg)
         time.sleep(0.1)
@@ -562,6 +670,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
     def send_cam_config(
         self,
+        msg_type="cam_config",
         img_w=0,
         img_h=0,
         img_d=0,
@@ -586,7 +695,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         img_enc can be one of JPG|PNG|TGA
         """
         msg = {
-            "msg_type": "cam_config",
+            "msg_type": msg_type,
             "fov": str(fov),
             "fish_eye_x": str(fish_eye_x),
             "fish_eye_y": str(fish_eye_y),
@@ -605,7 +714,17 @@ class DonkeyUnitySimHandler(IMesgHandler):
         time.sleep(0.1)
 
     def send_lidar_config(
-        self, degPerSweepInc, degAngDown, degAngDelta, numSweepsLevels, maxRange, noise, offset_x, offset_y, offset_z, rot_x
+        self,
+        degPerSweepInc=2.0,
+        degAngDown=0.0,
+        degAngDelta=-1.0,
+        numSweepsLevels=1,
+        maxRange=50.0,
+        noise=0.5,
+        offset_x=0.0,
+        offset_y=0.5,
+        offset_z=0.5,
+        rot_x=0.0,
     ):
         """Lidar config
         the offset_x moves lidar left/right
@@ -653,15 +772,17 @@ class DonkeyUnitySimHandler(IMesgHandler):
         points_num = round(abs(self.lidar_num_sweep_levels * point_per_sweep))
         reconstructed_lidar_info = [-1 for _ in range(points_num)]  # we chose -1 to be the "None" value
 
-        for point in lidar_info:
-            rx = point["rx"]
-            ry = point["ry"]
-            d = point["d"]
+        if lidar_info is not None:
+            for point in lidar_info:
+                rx = point["rx"]
+                ry = point["ry"]
+                d = point["d"]
 
-            x_index = round(abs(rx / self.lidar_deg_per_sweep_inc))
-            y_index = round(abs(ry / self.lidar_deg_ang_delta))
+                x_index = round(abs(rx / self.lidar_deg_per_sweep_inc))
+                y_index = round(abs(ry / self.lidar_deg_ang_delta))
 
-            reconstructed_lidar_info[point_per_sweep * y_index + x_index] = d
+                reconstructed_lidar_info[point_per_sweep * y_index + x_index] = d
+
         return np.array(reconstructed_lidar_info)
 
     def blocking_send(self, msg):
