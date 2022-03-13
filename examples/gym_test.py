@@ -6,9 +6,10 @@ notes: This will do a basic test of gym_donkeycar environment by
         submitting random input for 3 episodes.
 """
 import argparse
-import uuid
 
 import gym
+
+import gym_donkeycar  # noqa: F401
 
 NUM_EPISODES = 3
 MAX_TIME_STEPS = 1000
@@ -69,6 +70,7 @@ if __name__ == "__main__":
         "donkey-minimonaco-track-v0",
         "donkey-warren-track-v0",
         "donkey-thunderhill-track-v0",
+        "donkey-circuit-launch-track-v0",
     ]
 
     parser = argparse.ArgumentParser(description="gym_test")
@@ -94,12 +96,20 @@ if __name__ == "__main__":
         "body_rgb": (128, 128, 128),
         "car_name": "me",
         "font_size": 100,
-        "racer_name": "test",
-        "country": "USA",
-        "bio": "I am test client",
-        "guid": str(uuid.uuid4()),
         "start_delay": 1,
         "max_cte": 5,
+        "lidar_config": {
+            "deg_per_sweep_inc": 2.0,
+            "deg_ang_down": 0.0,
+            "deg_ang_delta": -1.0,
+            "num_sweeps_levels": 1,
+            "max_range": 50.0,
+            "noise": 0.4,
+            "offset_x": 0.0,
+            "offset_y": 0.5,
+            "offset_z": 0.5,
+            "rot_x": 0.0,
+        },
     }
 
     if args.env_name == "all":

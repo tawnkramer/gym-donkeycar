@@ -20,6 +20,7 @@ if __name__ == "__main__":
         "donkey-minimonaco-track-v0",
         "donkey-warren-track-v0",
         "donkey-thunderhill-track-v0",
+        "donkey-circuit-launch-track-v0",
     ]
 
     parser = argparse.ArgumentParser(description="gym_test")

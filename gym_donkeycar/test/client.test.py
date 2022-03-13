@@ -61,10 +61,7 @@ class TestServer(asyncore.dispatcher):
 
 
 class SUT(SDClient):
-    def __init__(
-        self,
-        address,
-    ):
+    def __init__(self, address):
         super().__init__(*address, poll_socket_sleep_time=0.01)
         self.receivedMsg = None
         self.receivedCount = 0

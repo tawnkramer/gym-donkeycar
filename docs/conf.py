@@ -150,5 +150,5 @@ texinfo_documents = [
         "gym_donkeycar",
         "One line description of project.",
         "Miscellaneous",
-    ),
+    )
 ]

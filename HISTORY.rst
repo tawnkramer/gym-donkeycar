@@ -2,11 +2,12 @@
 History
 =======
 
-1.1.2 (WIP)
+1.2.0 (WIP)
 ------------------
 * Added type hints to most core methods
 * Added ``send_lidar_config()`` method to configure LIDAR
 * Added car roll, pitch yaw angle
+* Renamed lidar config to use snake case instead of CamelCase (for instance ``degPerSweepInc`` was renamed to ``deg_per_sweep_inc``)
 
 1.1.1 (2021-02-28)
 ------------------
