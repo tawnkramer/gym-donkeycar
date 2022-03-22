@@ -125,7 +125,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass
 # [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "gym_donkeycar.tex", "OpenAI Gym Environments for Donkey CarDocumentation", "Leigh Johnson", "manual"),
+    (master_doc, "gym_donkeycar.tex", "OpenAI Gym Environments for Donkey CarDocumentation", "Leigh Johnson", "manual")
 ]
 
 

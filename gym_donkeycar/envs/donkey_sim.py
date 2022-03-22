@@ -146,6 +146,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.last_lap_time = 0.0
         self.current_lap_time = 0.0
         self.starting_line_index = -1
+        self.lap_count = 0
 
     def on_connect(self, client: SimClient) -> None:
         logger.debug("socket connected")
@@ -171,6 +172,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             time_at_crossing = message["timeStamp"]
             self.last_lap_time = float(time_at_crossing - self.current_lap_time)
             self.current_lap_time = time_at_crossing
+            self.lap_count += 1
             lap_msg = f"New lap time: {round(self.last_lap_time, 2)} seconds"
             logger.info(lap_msg)
 
@@ -381,6 +383,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.lidar = []
         self.current_lap_time = 0.0
         self.last_lap_time = 0.0
+        self.lap_count = 0
 
         # car
         self.roll = 0.0
@@ -413,6 +416,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
             "lidar": (self.lidar),
             "car": (self.roll, self.pitch, self.yaw),
             "last_lap_time": self.last_lap_time,
+            "lap_count": self.lap_count,
         }
 
         # Add the second image to the dict
