@@ -45,6 +45,8 @@ setup(
             "pytype",
             # Lint code
             "flake8>=3.8",
+            # Find likely bugs
+            "flake8-bugbear",
             # Sort imports
             "isort>=5.0",
             # Reformat
