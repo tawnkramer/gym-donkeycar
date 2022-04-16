@@ -2,8 +2,9 @@
 History
 =======
 
-1.2.0 (WIP)
+1.3.0 (WIP)
 ------------------
+* Drop Python 3.6 support, pinned Gym to version 0.21
 * Added type hints to most core methods
 * Added ``send_lidar_config()`` method to configure LIDAR
 * Added car roll, pitch yaw angle

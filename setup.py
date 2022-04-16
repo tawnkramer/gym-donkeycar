@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import os
 
 from setuptools import find_packages, setup
 
-with open(os.path.join("gym_donkeycar", "version.txt"), "r") as file_handler:
+with open(os.path.join("gym_donkeycar", "version.txt")) as file_handler:
     __version__ = file_handler.read().strip()
 
 description = "OpenAI Gym Environments for Donkey Car"
@@ -16,20 +15,23 @@ with open("README.md") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-requirements = ["gym", "numpy", "pillow"]
+# gym 0.23 introduces breaking changes
+requirements = ["gym==0.21", "numpy", "pillow"]
 
 
 setup(
     name="gym_donkeycar",
     author="Tawn Kramer",
     author_email="tawnkramer@gmail.com",
+    python_requires=">=3.7",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     description=description,
     install_requires=requirements,

@@ -149,54 +149,54 @@ class DonkeyEnv(gym.Env):
 
 class GeneratedRoadsEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(GeneratedRoadsEnv, self).__init__(level="generated_road", *args, **kwargs)
+        super().__init__(level="generated_road", *args, **kwargs)
 
 
 class WarehouseEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(WarehouseEnv, self).__init__(level="warehouse", *args, **kwargs)
+        super().__init__(level="warehouse", *args, **kwargs)
 
 
 class AvcSparkfunEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(AvcSparkfunEnv, self).__init__(level="sparkfun_avc", *args, **kwargs)
+        super().__init__(level="sparkfun_avc", *args, **kwargs)
 
 
 class GeneratedTrackEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(GeneratedTrackEnv, self).__init__(level="generated_track", *args, **kwargs)
+        super().__init__(level="generated_track", *args, **kwargs)
 
 
 class MountainTrackEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(MountainTrackEnv, self).__init__(level="mountain_track", *args, **kwargs)
+        super().__init__(level="mountain_track", *args, **kwargs)
 
 
 class RoboRacingLeagueTrackEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(RoboRacingLeagueTrackEnv, self).__init__(level="roboracingleague_1", *args, **kwargs)
+        super().__init__(level="roboracingleague_1", *args, **kwargs)
 
 
 class WaveshareEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(WaveshareEnv, self).__init__(level="waveshare", *args, **kwargs)
+        super().__init__(level="waveshare", *args, **kwargs)
 
 
 class MiniMonacoEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(MiniMonacoEnv, self).__init__(level="mini_monaco", *args, **kwargs)
+        super().__init__(level="mini_monaco", *args, **kwargs)
 
 
 class WarrenTrackEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(WarrenTrackEnv, self).__init__(level="warren", *args, **kwargs)
+        super().__init__(level="warren", *args, **kwargs)
 
 
 class ThunderhillTrackEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(ThunderhillTrackEnv, self).__init__(level="thunderhill", *args, **kwargs)
+        super().__init__(level="thunderhill", *args, **kwargs)
 
 
 class CircuitLaunchEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
-        super(CircuitLaunchEnv, self).__init__(level="circuit_launch", *args, **kwargs)
+        super().__init__(level="circuit_launch", *args, **kwargs)
