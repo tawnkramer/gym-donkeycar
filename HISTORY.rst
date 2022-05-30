@@ -2,8 +2,12 @@
 History
 =======
 
-1.2.0 (WIP)
+1.3.0 (WIP)
 ------------------
+* Dropped Python 3.6 support, pinned Gym to version 0.21
+* Move steer limits and throttle limits to config dict
+* Normalized reward and use squared error for CTE
+* Enabled hand brake in ``send_control()`` and at reset time
 * Added type hints to most core methods
 * Added ``send_lidar_config()`` method to configure LIDAR
 * Added car roll, pitch yaw angle

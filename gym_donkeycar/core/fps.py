@@ -1,7 +1,7 @@
 import time
 
 
-class FPSTimer(object):
+class FPSTimer:
     """
     Every N on_frame events, give the average iterations per interval.
     """

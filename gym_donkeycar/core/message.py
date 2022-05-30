@@ -9,7 +9,7 @@ from typing import Any, Dict
 from gym_donkeycar.core.client import SDClient
 
 
-class IMesgHandler(object):
+class IMesgHandler:
     def on_connect(self, client: SDClient) -> None:
         pass
 

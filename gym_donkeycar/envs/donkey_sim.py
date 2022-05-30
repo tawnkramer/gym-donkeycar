@@ -6,6 +6,7 @@ date: 2018-08-31
 import base64
 import logging
 import math
+import os
 import time
 import types
 from io import BytesIO
@@ -50,9 +51,11 @@ class DonkeyUnitySimContoller:
         self.handler.set_episode_over_fn(ep_over_fn)
 
     def wait_until_loaded(self) -> None:
+        time.sleep(0.1)
         while not self.handler.loaded:
             logger.warning("waiting for sim to start..")
-            time.sleep(3.0)
+            time.sleep(1.0)
+        logger.info("sim started!")
 
     def reset(self) -> None:
         self.handler.reset()
@@ -440,17 +443,22 @@ class DonkeyUnitySimHandler(IMesgHandler):
         logger.debug("custom reward fn set.")
 
     def calc_reward(self, done: bool) -> float:
+        # Normalization factor, real max speed is around 30
+        # but only attained on a long straight line
+        max_speed = 10
+
         if done:
             return -1.0
 
         if self.cte > self.max_cte:
             return -1.0
 
+        # Collision
         if self.hit != "none":
             return -2.0
 
-        # going fast close to the center of lane yeilds best reward
-        return (1.0 - (math.fabs(self.cte) / self.max_cte)) * self.speed
+        # going fast close to the center of lane yields best reward
+        return (1.0 - (self.cte / self.max_cte) ** 2) * (self.speed / max_speed)
 
     # ------ Socket interface ----------- #
 
@@ -560,6 +568,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
             logger.debug("disqualified")
             self.over = True
 
+        # Disable reset
+        if os.environ.get("RACE") == "True":
+            self.over = False
+
     def on_scene_selection_ready(self, message: Dict[str, Any]) -> None:
         logger.debug("SceneSelectionReady")
         self.send_get_scene_names()
@@ -567,6 +579,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def on_car_loaded(self, message: Dict[str, Any]) -> None:
         logger.debug("car loaded")
         self.loaded = True
+        # Enable hand brake, so the car doesn't move
+        self.send_control(0, 0, 1.0)
         self.on_need_car_config({})
 
     def on_recv_scene_names(self, message: Dict[str, Any]) -> None:
@@ -579,14 +593,22 @@ class DonkeyUnitySimHandler(IMesgHandler):
             else:
                 raise ValueError(f"Scene name {self.SceneToLoad} not in scene list {names}")
 
-    def send_control(self, steer: float, throttle: float) -> None:
+    def send_control(self, steer: float, throttle: float, brake: float = 0.0) -> None:
+        """
+        Send command to simulator.
+
+        :param steer: desired steering
+        :param throttle: desired throttle
+        :param brake: whether to activate or not hand brake
+            (can be a continuous value)
+        """
         if not self.loaded:
             return
         msg = {
             "msg_type": "control",
-            "steering": steer.__str__(),
-            "throttle": throttle.__str__(),
-            "brake": "0.0",
+            "steering": str(steer),
+            "throttle": str(throttle),
+            "brake": str(brake),
         }
         self.queue_message(msg)
 
