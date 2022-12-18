@@ -6,11 +6,10 @@ notes: This will do a basic test of gym_donkeycar environment by
         submitting random input for 3 episodes.
 """
 import argparse
-import uuid
 
 import gym
 
-import gym_donkeycar
+import gym_donkeycar  # noqa: F401
 
 NUM_EPISODES = 3
 MAX_TIME_STEPS = 1000
@@ -35,12 +34,12 @@ def select_action(env):
 
 def simulate(env):
 
-    for episode in range(NUM_EPISODES):
+    for _ in range(NUM_EPISODES):
 
         # Reset the environment
         obv = env.reset()
 
-        for t in range(MAX_TIME_STEPS):
+        for _ in range(MAX_TIME_STEPS):
 
             # Select an action
             action = select_action(env)
@@ -100,11 +99,11 @@ if __name__ == "__main__":
         "start_delay": 1,
         "max_cte": 5,
         "lidar_config": {
-            "degPerSweepInc": 2.0,
-            "degAngDown": 0.0,
-            "degAngDelta": -1.0,
-            "numSweepsLevels": 1,
-            "maxRange": 50.0,
+            "deg_per_sweep_inc": 2.0,
+            "deg_ang_down": 0.0,
+            "deg_ang_delta": -1.0,
+            "num_sweeps_levels": 1,
+            "max_range": 50.0,
             "noise": 0.4,
             "offset_x": 0.0,
             "offset_y": 0.5,

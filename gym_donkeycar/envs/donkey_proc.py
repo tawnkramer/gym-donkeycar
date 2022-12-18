@@ -7,13 +7,13 @@ import os
 import subprocess
 
 
-class DonkeyUnityProcess(object):
+class DonkeyUnityProcess:
     def __init__(self):
         self.proc1 = None
 
     # ------ Launch Unity Env ----------- #
 
-    def start(self, sim_path, host="0.0.0.0", port=9091):
+    def start(self, sim_path: str, host: str = "0.0.0.0", port: int = 9091):
 
         if sim_path == "remote":
             return
@@ -29,7 +29,7 @@ class DonkeyUnityProcess(object):
 
         print("donkey subprocess started")
 
-    def quit(self):
+    def quit(self) -> None:
         """
         Shutdown unity environment
         """

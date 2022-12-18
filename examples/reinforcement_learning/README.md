@@ -2,9 +2,9 @@
 
 ## ppo_train.py
 
-An example using stable-baselines to train a ppo2 agent using the gym-donkeycar environment
+An example using stable-baselines to train a PPO agent using the gym-donkeycar environment
 
-* follow [stable-baselines](https://github.com/hill-a/stable-baselines) install
+* follow [stable-baselines3](https://github.com/DLR-RM/stable-baselines3) install
 * ```python gym-donkeycar/examples/reinforcement_learning/ppo_train.py --sim <path to simulator>```
 
 ## ddqn.py

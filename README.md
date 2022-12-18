@@ -98,6 +98,7 @@ What you receive back on step:
     - positions: x,y,z
     - speed: positive forward, negative backward
     - hit: 'none' if all is good.
+    - last_lap_time: time of last successful lap in seconds, 0.0 if there isn't one
 
 Example info:
 
@@ -105,7 +106,8 @@ Example info:
 {'pos': (51.49209, 0.7399381, 117.3004),
  'cte': -5.865292,
  'speed': 9.319956,
- 'hit': 'none'}
+ 'hit': 'none',
+ 'last_lap_time': 34.93437361717224}
 ```
 
 ## Environments

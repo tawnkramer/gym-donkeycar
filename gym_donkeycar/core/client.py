@@ -15,6 +15,7 @@ import select
 import socket
 import time
 from threading import Thread
+from typing import Any, Dict
 
 from .util import replace_float_notation
 
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class SDClient:
-    def __init__(self, host, port, poll_socket_sleep_time=0.05):
+    def __init__(self, host: str, port: int, poll_socket_sleep_time: float = 0.001):
         self.msg = None
         self.host = host
         self.port = port
@@ -32,9 +33,10 @@ class SDClient:
         # the aborted flag will be set when we have detected a problem with the socket
         # that we can't recover from.
         self.aborted = False
+        self.s = None
         self.connect()
 
-    def connect(self):
+    def connect(self) -> None:
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # connecting to the server
@@ -54,17 +56,17 @@ class SDClient:
         self.th = Thread(target=self.proc_msg, args=(self.s,), daemon=True)
         self.th.start()
 
-    def send(self, m):
+    def send(self, m: str) -> None:
         self.msg = m
 
-    def send_now(self, msg):
+    def send_now(self, msg: str) -> None:
         logger.debug("send_now:" + msg)
         self.s.sendall(msg.encode("utf-8"))
 
-    def on_msg_recv(self, j):
+    def on_msg_recv(self, j: Dict[str, Any]) -> None:
         logger.debug("got:" + j["msg_type"])
 
-    def stop(self):
+    def stop(self) -> None:
         # signal proc_msg loop to stop, then wait for thread to finish
         # close socket
         self.do_process_msgs = False
@@ -73,7 +75,7 @@ class SDClient:
         if self.s is not None:
             self.s.close()
 
-    def proc_msg(self, sock):  # noqa: C901
+    def proc_msg(self, sock: socket.socket) -> None:  # noqa: C901
         """
         This is the thread message loop to process messages.
         We will send any message that is queued via the self.msg variable
@@ -81,7 +83,7 @@ class SDClient:
         And we will read any messages when it's in a readable state and then
         call self.on_msg_recv with the json object message.
         """
-        sock.setblocking(0)
+        sock.setblocking(False)
         inputs = [sock]
         outputs = [sock]
         localbuffer = ""
