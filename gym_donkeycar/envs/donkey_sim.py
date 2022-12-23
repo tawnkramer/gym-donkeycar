@@ -535,18 +535,18 @@ class DonkeyUnitySimHandler(IMesgHandler):
         # dot
         self.forward_vel = forward[0] * self.vel_x + forward[1] * self.vel_y + forward[2] * self.vel_z
 
-        if "gyro_x" in data:
-            self.gyro_x = data["gyro_x"]
-            self.gyro_y = data["gyro_y"]
-            self.gyro_z = data["gyro_z"]
-        if "accel_x" in data:
-            self.accel_x = data["accel_x"]
-            self.accel_y = data["accel_y"]
-            self.accel_z = data["accel_z"]
-        if "vel_x" in data:
-            self.vel_x = data["vel_x"]
-            self.vel_y = data["vel_y"]
-            self.vel_z = data["vel_z"]
+        if "gyro_x" in message:
+            self.gyro_x = message["gyro_x"]
+            self.gyro_y = message["gyro_y"]
+            self.gyro_z = message["gyro_z"]
+        if "accel_x" in message:
+            self.accel_x = message["accel_x"]
+            self.accel_y = message["accel_y"]
+            self.accel_z = message["accel_z"]
+        if "vel_x" in message:
+            self.vel_x = message["vel_x"]
+            self.vel_y = message["vel_y"]
+            self.vel_z = message["vel_z"]
 
         if "roll" in message:
             self.roll = message["roll"]
