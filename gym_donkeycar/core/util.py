@@ -1,5 +1,7 @@
 import re
 
+import numpy as np
+
 
 def replace_float_notation(string: str) -> str:
     """
