@@ -32,6 +32,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     description=description,
     install_requires=requirements,
@@ -46,9 +47,7 @@ setup(
             # Type check
             "pytype",
             # Lint code
-            "flake8>=3.8",
-            # Find likely bugs
-            "flake8-bugbear",
+            "ruff"
             # Sort imports
             "isort>=5.0",
             # Reformat

@@ -5,6 +5,7 @@ History
 1.3.1 (WIP)
 ------------------
 - Use forward velocity in the reward function
+- Use ruff instead of flake8 and move most configs to ``pyproject.toml``
 
 1.3.0 (2022-05-30)
 ------------------
