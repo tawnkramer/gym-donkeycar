@@ -47,7 +47,7 @@ setup(
             # Type check
             "pytype",
             # Lint code
-            "ruff"
+            "ruff",
             # Sort imports
             "isort>=5.0",
             # Reformat
