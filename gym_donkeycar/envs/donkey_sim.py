@@ -190,7 +190,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.starting_line_index = -1
         self.lap_count = 0
 
-    def on_connect(self, client: SimClient) -> None:
+    def on_connect(self, client: SimClient) -> None:  # pytype: disable=signature-mismatch
         logger.debug("socket connected")
         self.client = client
 
@@ -486,7 +486,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def calc_reward(self, done: bool) -> float:
         # Normalization factor, real max speed is around 30
         # but only attained on a long straight line
-        max_speed = 10
+        # max_speed = 10
 
         if done:
             return -1.0
@@ -502,7 +502,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if self.forward_vel > 0.0:
             return (1.0 - (math.fabs(self.cte) / self.max_cte)) * self.forward_vel
 
-        return self.forward_vel # in reverse, reward doesn't have centering term as this can result in some exploits
+        # in reverse, reward doesn't have centering term as this can result in some exploits
+        return self.forward_vel
 
     # ------ Socket interface ----------- #
 

@@ -30,7 +30,7 @@ class SimClient(SDClient):
         # we connect right away
         msg_handler.on_connect(self)
 
-    def send_now(self, msg: Dict[str, Any]) -> None:
+    def send_now(self, msg: Dict[str, Any]) -> None:  # pytype: disable=signature-mismatch
         # takes a dict input msg, converts to json string
         # and sends immediately. right now, no queue.
         json_msg = json.dumps(msg)

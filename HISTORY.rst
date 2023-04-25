@@ -2,7 +2,12 @@
 History
 =======
 
-1.3.0 (WIP)
+1.3.1 (WIP)
+------------------
+- Use forward velocity in the reward function
+- Use ruff instead of flake8 and move most configs to ``pyproject.toml``
+
+1.3.0 (2022-05-30)
 ------------------
 * Dropped Python 3.6 support, pinned Gym to version 0.21
 * Move steer limits and throttle limits to config dict

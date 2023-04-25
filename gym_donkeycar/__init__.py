@@ -47,3 +47,17 @@ register(id="donkey-warren-track-v0", entry_point="gym_donkeycar.envs.donkey_env
 register(id="donkey-thunderhill-track-v0", entry_point="gym_donkeycar.envs.donkey_env:ThunderhillTrackEnv")
 
 register(id="donkey-circuit-launch-track-v0", entry_point="gym_donkeycar.envs.donkey_env:CircuitLaunchEnv")
+
+__all__ = [
+    "AvcSparkfunEnv",
+    "CircuitLaunchEnv",
+    "GeneratedRoadsEnv",
+    "GeneratedTrackEnv",
+    "MiniMonacoEnv",
+    "MountainTrackEnv",
+    "RoboRacingLeagueTrackEnv",
+    "ThunderhillTrackEnv",
+    "WarehouseEnv",
+    "WarrenTrackEnv",
+    "WaveshareEnv",
+]

@@ -1,0 +1,17 @@
+[tool.black]
+line-length = 127
+
+[tool.ruff]
+# The GitHub editor is 127 chars wide
+line-length = 127
+
+[tool.ruff.mccabe]
+max-complexity = 15
+
+[tool.pytype]
+inputs = ["gym_donkeycar"]
+
+[tool.isort]
+profile = "black"
+src_paths = ["gym_donkeycar"]
+line_length = 127
