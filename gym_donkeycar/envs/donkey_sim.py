@@ -427,6 +427,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.current_lap_time = 0.0
         self.last_lap_time = 0.0
         self.lap_count = 0
+        self.num_lap_bonuses_collected = 0
+        self.bonus_coeff = 1e4 # scaling factor for the bonus reward to encourage minimizing lap times
 
         # car
         self.roll = 0.0
@@ -487,16 +489,21 @@ class DonkeyUnitySimHandler(IMesgHandler):
         # Normalization factor, real max speed is around 30
         # but only attained on a long straight line
         # max_speed = 10
+        reward = 0.0
 
+        if self.lap_count > self.num_lap_bonuses_collected:
+            self.num_lap_bonuses_collected += 1
+            reward += bonus_coeff / self.last_lap_time
+        
         if done:
-            return -1.0
+            return reward - 1.0
 
         if self.cte > self.max_cte:
-            return -1.0
+            return reward - 1.0
 
         # Collision
         if self.hit != "none":
-            return -2.0
+            return reward - 2.0
 
         # going fast close to the center of lane yeilds best reward
         if self.forward_vel > 0.0:
