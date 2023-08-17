@@ -134,6 +134,12 @@ class DonkeyEnv(gym.Env):
         for _ in range(self.frame_skip):
             self.viewer.take_action(action)
             observation, reward, done, info = self.viewer.observe()
+
+            # Arthur modification
+            if done:
+                self.viewer.handler.send_control(0, 0, 1.0)
+                time.sleep(0.1)
+                
         return observation, reward, done, info
 
     def reset(self) -> np.ndarray:

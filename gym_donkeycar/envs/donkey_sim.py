@@ -175,6 +175,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.vel_z = 0.0
         self.lidar = []
 
+        # Arthur modification
+        self.n_steps = 0
+        self.n_Consecutive_no_speed = 0
+
         # car in Unity lefthand coordinate system: roll is Z, pitch is X and yaw is Y
         self.roll = 0.0
         self.pitch = 0.0
@@ -428,6 +432,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.last_lap_time = 0.0
         self.lap_count = 0
 
+        # Arthur modification
+        self.n_steps = 0
+        self.n_Consecutive_no_speed = 0
+
         # car
         self.roll = 0.0
         self.pitch = 0.0
@@ -437,6 +445,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         return self.camera_img_size
 
     def take_action(self, action: np.ndarray) -> None:
+        # Arthur modification
+        self.n_steps += 1
+        
         self.send_control(action[0], action[1])
 
     def observe(self) -> Tuple[np.ndarray, float, bool, Dict[str, Any]]:
@@ -619,6 +630,12 @@ class DonkeyUnitySimHandler(IMesgHandler):
         elif self.dq:
             logger.debug("disqualified")
             self.over = True
+
+         # Arthur modification
+        if np.abs(self.speed) < 1 and self.n_steps > 100:
+            self.n_consecutive_no_speed += 1
+            if self.n_consecutive_no_speed > 60:
+                self.over = True
 
         # Disable reset
         if os.environ.get("RACE") == "True":
