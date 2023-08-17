@@ -177,7 +177,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         # Arthur modification
         self.n_steps = 0
-        self.n_Consecutive_no_speed = 0
+        self.n_consecutive_no_speed = 0
 
         # car in Unity lefthand coordinate system: roll is Z, pitch is X and yaw is Y
         self.roll = 0.0
@@ -434,7 +434,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
 
         # Arthur modification
         self.n_steps = 0
-        self.n_Consecutive_no_speed = 0
+        self.n_consecutive_no_speed = 0
 
         # car
         self.roll = 0.0
@@ -447,7 +447,7 @@ class DonkeyUnitySimHandler(IMesgHandler):
     def take_action(self, action: np.ndarray) -> None:
         # Arthur modification
         self.n_steps += 1
-        
+
         self.send_control(action[0], action[1])
 
     def observe(self) -> Tuple[np.ndarray, float, bool, Dict[str, Any]]:
