@@ -16,7 +16,7 @@ with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
 # gym 0.23 introduces breaking changes
-requirements = ["gym==0.21", "numpy", "pillow"]
+requirements = ["gym==0.22", "numpy", "pillow"]
 
 
 setup(
