@@ -14,13 +14,14 @@ from collections import deque
 
 import cv2
 import gym
-import gym_donkeycar
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.layers import Activation, Conv2D, Dense, Flatten
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
+
+import gym_donkeycar
 
 EPISODES = 10000
 img_rows, img_cols = 80, 80
