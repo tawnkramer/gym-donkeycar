@@ -191,7 +191,6 @@ def make_generators(inputs, limit=None, batch_size=32, aug_perc=0.0):
 
 
 def go(model_name, epochs=50, inputs="./log/*.jpg", limit=None):
-
     print("working on model", model_name)
 
     """

@@ -137,12 +137,10 @@ class KerasDriveAgent(KerasNNAgent):
             return action
 
     def simulate(self, env):
-
         # Reset the environment
         obv = env.reset()
 
         for _ in range(self.conf["MAX_TIME_STEPS"]):
-
             # Select an action
             action = self.select_action(obv)
 
@@ -179,7 +177,6 @@ class GeneticPositiveRewardAlg(GeneticAlg):
 
 
 if __name__ == "__main__":
-
     # Initialize the donkey environment
     # where env_name one of:
     env_list = [
@@ -220,7 +217,6 @@ if __name__ == "__main__":
         pass  # todo
 
     else:
-
         # These are the final two dense layers we will mutate.
         # We will use the same two layers we breeding.
         to_mutate = [14, 16]
