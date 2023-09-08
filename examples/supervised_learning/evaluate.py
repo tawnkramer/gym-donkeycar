@@ -25,7 +25,6 @@ from gym_donkeycar.core.sim_client import SimClient
 
 class GifCreator(object):
     def __init__(self, filename):
-
         self.filename = filename
         self.images = []
         self.every_nth_frame = 4

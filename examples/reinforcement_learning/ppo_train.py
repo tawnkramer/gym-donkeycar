@@ -12,7 +12,6 @@ import gym
 from stable_baselines3 import PPO
 
 if __name__ == "__main__":
-
     # Initialize the donkey environment
     # where env_name one of:
     env_list = [
@@ -66,7 +65,6 @@ if __name__ == "__main__":
     }
 
     if args.test:
-
         # Make an environment test our trained policy
         env = gym.make(args.env_name, conf=conf)
 
@@ -83,7 +81,6 @@ if __name__ == "__main__":
         print("done testing")
 
     else:
-
         # make gym env
         env = gym.make(args.env_name, conf=conf)
 
@@ -96,7 +93,6 @@ if __name__ == "__main__":
         obs = env.reset()
 
         for i in range(1000):
-
             action, _states = model.predict(obs, deterministic=True)
 
             obs, reward, done, info = env.step(action)

@@ -248,7 +248,6 @@ def run_ddqn(args):
             agent.load_model(args.model)
 
         for e in range(EPISODES):
-
             print("Episode: ", e)
 
             done = False
@@ -263,7 +262,6 @@ def run_ddqn(args):
             s_t = s_t.reshape(1, s_t.shape[0], s_t.shape[1], s_t.shape[2])  # 1*80*80*4
 
             while not done:
-
                 # Get action for the current state and go one step in environment
                 steering = agent.get_action(s_t)
                 action = [steering, throttle]
@@ -301,7 +299,6 @@ def run_ddqn(args):
                     )
 
                 if done:
-
                     # Every episode update the target model to be same with model
                     agent.update_target_model()
 
@@ -329,7 +326,6 @@ def run_ddqn(args):
 
 
 if __name__ == "__main__":
-
     # Initialize the donkey environment
     # where env_name one of:
     env_list = [

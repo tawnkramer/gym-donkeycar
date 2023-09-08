@@ -227,7 +227,6 @@ class DonkeyUnitySimHandler(IMesgHandler):
         return return_dict
 
     def send_config(self, conf: Dict[str, Any]) -> None:
-
         if "degPerSweepInc" in conf:
             raise ValueError("LIDAR config keys were renamed to use snake_case name instead of CamelCase")
 
