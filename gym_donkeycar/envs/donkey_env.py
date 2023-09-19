@@ -30,7 +30,7 @@ def supply_defaults(conf: Dict[str, Any]) -> None:
         ("start_delay", 5.0),
         ("max_cte", 8.0),
         ("frame_skip", 1),
-        ("cam_resolution", (120, 160, 3)),
+        ("cam_resolution", (240, 320, 3)),
         ("log_level", logging.INFO),
         ("host", "localhost"),
         ("port", 9091),
@@ -212,3 +212,12 @@ class ThunderhillTrackEnv(DonkeyEnv):
 class CircuitLaunchEnv(DonkeyEnv):
     def __init__(self, *args, **kwargs):
         super().__init__(level="circuit_launch", *args, **kwargs)
+
+class VbarcAutoLabEnv(DonkeyEnv):
+    def __init__(self, *args, **kwargs):
+        super().__init__(level="testing_lab", *args, **kwargs)
+
+
+class VbarcOpenDayEnv(DonkeyEnv):
+    def __init__(self, *args, **kwargs):
+        super().__init__(level="open_day", *args, **kwargs)
