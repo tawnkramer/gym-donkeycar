@@ -175,10 +175,6 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.vel_z = 0.0
         self.lidar = []
 
-        # Arthur modification
-        self.n_steps = 0
-        self.n_consecutive_no_speed = 0
-
         # car in Unity lefthand coordinate system: roll is Z, pitch is X and yaw is Y
         self.roll = 0.0
         self.pitch = 0.0
@@ -193,6 +189,10 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.current_lap_time = 0.0
         self.starting_line_index = -1
         self.lap_count = 0
+        # Arthur modification
+        self.n_steps_low_speed = 0
+        self.min_speed = 1.0
+        self.n_steps = 0
 
     def on_connect(self, client: SimClient) -> None:  # pytype: disable=signature-mismatch
         logger.debug("socket connected")
@@ -221,6 +221,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
             self.lap_count += 1
             lap_msg = f"New lap time: {round(self.last_lap_time, 2)} seconds"
             logger.info(lap_msg)
+            # Arthur add
+            self.over = True
 
     @staticmethod
     def extract_keys(dict_: Dict[str, Any], list_: List[str]) -> Dict[str, Any]:
@@ -432,8 +434,8 @@ class DonkeyUnitySimHandler(IMesgHandler):
         self.lap_count = 0
 
         # Arthur modification
+        self.n_steps_low_speed = 0
         self.n_steps = 0
-        self.n_consecutive_no_speed = 0
 
         # car
         self.roll = 0.0
@@ -444,10 +446,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         return self.camera_img_size
 
     def take_action(self, action: np.ndarray) -> None:
+        self.send_control(action[0], action[1])
         # Arthur modification
         self.n_steps += 1
-
-        self.send_control(action[0], action[1])
 
     def observe(self) -> Tuple[np.ndarray, float, bool, Dict[str, Any]]:
         while self.last_received == self.time_received:
@@ -630,11 +631,13 @@ class DonkeyUnitySimHandler(IMesgHandler):
             logger.debug("disqualified")
             self.over = True
 
-         # Arthur modification
-        if np.abs(self.speed) < 1 and self.n_steps > 100:
-            self.n_consecutive_no_speed += 1
-            if self.n_consecutive_no_speed > 60:
+        # Arthur modification
+        if abs(self.speed) < self.min_speed and self.n_steps > 100:
+            self.n_steps_low_speed += 1
+            if self.n_steps_low_speed > 60:
                 self.over = True
+        else:
+            self.n_steps_low_speed = 0
 
         # Disable reset
         if os.environ.get("RACE") == "True":
