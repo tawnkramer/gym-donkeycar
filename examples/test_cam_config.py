@@ -7,7 +7,6 @@ import gym
 import numpy as np
 
 if __name__ == "__main__":
-
     # Initialize the donkey environment
     # where env_name one of:
     env_list = [

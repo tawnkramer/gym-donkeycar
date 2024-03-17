@@ -33,14 +33,11 @@ def select_action(env):
 
 
 def simulate(env):
-
     for _ in range(NUM_EPISODES):
-
         # Reset the environment
         obv = env.reset()
 
         for _ in range(MAX_TIME_STEPS):
-
             # Select an action
             action = select_action(env)
 
@@ -57,7 +54,6 @@ def exit_scene(env):
 
 
 if __name__ == "__main__":
-
     # Initialize the donkey environment
     # where env_name one of:
     env_list = [
