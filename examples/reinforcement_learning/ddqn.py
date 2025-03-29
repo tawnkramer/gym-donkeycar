@@ -206,7 +206,7 @@ def run_ddqn(args):
 
     conf = {
         "exe_path": args.sim,
-        "host": "127.0.0.1",
+        "host": args.host,
         "port": args.port,
         "body_style": "donkey",
         "body_rgb": (128, 128, 128),
@@ -350,6 +350,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--model", type=str, default="rl_driver.h5", help="path to model")
     parser.add_argument("--test", action="store_true", help="agent uses learned model to navigate env")
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="host to use for tcp")
     parser.add_argument("--port", type=int, default=9091, help="port to use for websockets")
     parser.add_argument("--throttle", type=float, default=0.3, help="constant throttle for driving")
     parser.add_argument(
