@@ -277,9 +277,7 @@ if __name__ == "__main__":
         choices=[0, 1, 2, 3],
         help="verbosity level: 0=silent, 1=episode only, 2=every N steps, 3=every step",
     )
-    parser.add_argument(
-        "--log-interval", type=int, default=10, help="log every N steps when verbose=2 (default: 10)"
-    )
+    parser.add_argument("--log-interval", type=int, default=10, help="log every N steps when verbose=2 (default: 10)")
     parser.add_argument(
         "--log-file", type=str, default=None, help="optional file path to log data (in addition to screen output)"
     )

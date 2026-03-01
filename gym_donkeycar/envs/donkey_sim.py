@@ -328,13 +328,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if cam_config != {}:
             self.send_cam_config(**cam_config)
             logger.info(f"done sending cam config. {cam_config}")
-            logger.warning(
-                """This way of passing cam_config is deprecated,
+            logger.warning("""This way of passing cam_config is deprecated,
                 please wrap the parameters in a sub-dictionary with the key 'cam_config'.
-                Example: GYM_CONF = {'cam_config':"""
-                + str(cam_config)
-                + "}"
-            )
+                Example: GYM_CONF = {'cam_config':""" + str(cam_config) + "}")
 
         lidar_config = self.extract_keys(
             conf,
@@ -354,13 +350,9 @@ class DonkeyUnitySimHandler(IMesgHandler):
         if lidar_config != {}:
             self.send_lidar_config(**lidar_config)
             logger.info(f"done sending lidar config., {lidar_config}")
-            logger.warning(
-                """This way of passing lidar_config is deprecated,
+            logger.warning("""This way of passing lidar_config is deprecated,
                 please wrap the parameters in a sub-dictionary with the key 'lidar_config'.
-                Example: GYM_CONF = {'lidar_config':"""
-                + str(lidar_config)
-                + "}"
-            )
+                Example: GYM_CONF = {'lidar_config':""" + str(lidar_config) + "}")
 
     def set_car_config(self, conf: Dict[str, Any]) -> None:
         if "body_style" in conf:

@@ -45,12 +45,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--env_name", type=str, default="donkey-warehouse-v0", help="name of donkey sim environment", choices=env_list
     )
-    parser.add_argument(
-        "--timesteps", type=int, default=10000, help="number of timesteps to train for (default: 10000)"
-    )
-    parser.add_argument(
-        "--load", type=str, default=None, help="path to pretrained model to load and continue training"
-    )
+    parser.add_argument("--timesteps", type=int, default=10000, help="number of timesteps to train for (default: 10000)")
+    parser.add_argument("--load", type=str, default=None, help="path to pretrained model to load and continue training")
 
     args = parser.parse_args()
 
