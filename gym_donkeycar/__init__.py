@@ -1,7 +1,8 @@
-"""Top-level package for OpenAI Gym Environments for Donkey Car."""
+"""Top-level package for Gymnasium Environments for Donkey Car."""
+
 import os
 
-from gym.envs.registration import register
+from gymnasium.envs.registration import register
 
 from gym_donkeycar.envs.donkey_env import (
     AvcSparkfunEnv,

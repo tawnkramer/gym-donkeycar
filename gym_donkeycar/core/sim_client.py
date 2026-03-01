@@ -4,6 +4,7 @@ date: 9 Dec 2019
 file: sim_client.py
 notes: wraps a tcp socket client with a handler to talk to the unity donkey simulator
 """
+
 import json
 from typing import Any, Dict, Tuple
 

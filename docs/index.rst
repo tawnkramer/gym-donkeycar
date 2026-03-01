@@ -1,4 +1,4 @@
-OpenAI Gym Environments for Donkey Car
+Gymnasium Environments for Donkey Car
 ======================================
 
 .. toctree::

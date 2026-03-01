@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install OpenAI Gym Environments for Donkey Car, run this command in your terminal:
+To install Gymnasium Environments for Donkey Car, run this command in your terminal:
 
 .. code-block:: console
 
     $ pip install gym_donkeycar
 
-This is the preferred method to install OpenAI Gym Environments for Donkey Car, as it will always install the most recent stable release.
+This is the preferred method to install Gymnasium Environments for Donkey Car, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,7 +26,7 @@ you through the process.
 From sources
 ------------
 
-The sources for OpenAI Gym Environments for Donkey Carcan be downloaded from the `Github repo`_.
+The sources for Gymnasium Environments for Donkey Car can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 

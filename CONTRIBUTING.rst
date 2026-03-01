@@ -38,8 +38,8 @@ and "help wanted" is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-OpenAI Gym Environments for Donkey Carcould always use more documentation, whether as part of the
-official OpenAI Gym Environments for Donkey Cardocs, in docstrings, or even on the web in blog posts,
+Gymnasium Environments for Donkey Car could always use more documentation, whether as part of the
+official Gymnasium Environments for Donkey Car docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback

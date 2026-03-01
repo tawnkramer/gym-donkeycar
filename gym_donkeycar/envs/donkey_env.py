@@ -3,14 +3,14 @@ file: donkey_env.py
 author: Tawn Kramer
 date: 2018-08-31
 """
+
 import logging
 import time
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-import gym
+import gymnasium as gym
 import numpy as np
-from gym import spaces
-from gym.utils import seeding
+from gymnasium import spaces
 
 from gym_donkeycar.envs.donkey_proc import DonkeyUnityProcess
 from gym_donkeycar.envs.donkey_sim import DonkeyUnitySimContoller
@@ -47,21 +47,27 @@ def supply_defaults(conf: Dict[str, Any]) -> None:
 
 class DonkeyEnv(gym.Env):
     """
-    OpenAI Gym Environment for Donkey
+    Gymnasium Environment for Donkey
 
     :param level: name of the level to load
     :param conf: configuration dictionary
+    :param render_mode: mode for rendering ("human" or "rgb_array")
     """
 
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render_modes": ["human", "rgb_array"]}
 
     ACTION_NAMES: List[str] = ["steer", "throttle"]
     VAL_PER_PIXEL: int = 255
 
-    def __init__(self, level: str, conf: Optional[Dict[str, Any]] = None):
+    def __init__(self, level: str, conf: Optional[Dict[str, Any]] = None, render_mode: Optional[str] = None):
         print("starting DonkeyGym env")
         self.viewer = None
         self.proc = None
+
+        # Validate render_mode
+        if render_mode is not None and render_mode not in self.metadata["render_modes"]:
+            raise ValueError(f"Invalid render_mode '{render_mode}'. Supported modes: {self.metadata['render_modes']}")
+        self.render_mode = render_mode
 
         if conf is None:
             conf = {}
@@ -102,8 +108,8 @@ class DonkeyEnv(gym.Env):
         # camera sensor data
         self.observation_space = spaces.Box(0, self.VAL_PER_PIXEL, self.viewer.get_sensor_size(), dtype=np.uint8)
 
-        # simulation related variables.
-        self.seed()
+        # Initialize numpy random generator
+        self.np_random = np.random.default_rng()
 
         # Frame Skipping
         self.frame_skip = conf["frame_skip"]
@@ -126,17 +132,29 @@ class DonkeyEnv(gym.Env):
     def set_episode_over_fn(self, ep_over_fn: Callable) -> None:
         self.viewer.set_episode_over_fn(ep_over_fn)
 
-    def seed(self, seed: Optional[int] = None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
-
-    def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, Dict[str, Any]]:
+    def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, bool, Dict[str, Any]]:
         for _ in range(self.frame_skip):
             self.viewer.take_action(action)
             observation, reward, done, info = self.viewer.observe()
-        return observation, reward, done, info
+        # Gymnasium step returns (observation, reward, terminated, truncated, info)
+        # 'done' from the simulator represents termination (collision, out of bounds)
+        # truncated is always False as this env doesn't implement time-based truncation
+        return observation, reward, done, False, info
 
-    def reset(self) -> np.ndarray:
+    def reset(
+        self, *, seed: Optional[int] = None, options: Optional[Dict[str, Any]] = None
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
+        """
+        Reset the environment to initial state.
+
+        :param seed: Optional seed for random number generator
+        :param options: Optional dict for additional reset options (not currently used)
+        :return: Tuple of (observation, info)
+        """
+        # Handle seeding
+        if seed is not None:
+            self.np_random = np.random.default_rng(seed)
+
         # Activate hand brake, so the car does not move
         self.viewer.handler.send_control(0, 0, 1.0)
         time.sleep(0.1)
@@ -144,13 +162,11 @@ class DonkeyEnv(gym.Env):
         self.viewer.handler.send_control(0, 0, 1.0)
         time.sleep(0.1)
         observation, reward, done, info = self.viewer.observe()
-        return observation
+        # Gymnasium reset returns (observation, info)
+        return observation, info
 
-    def render(self, mode: str = "human", close: bool = False) -> Optional[np.ndarray]:
-        if close:
-            self.viewer.quit()
-
-        return self.viewer.render(mode)
+    def render(self) -> Optional[np.ndarray]:
+        return self.viewer.render(self.render_mode)
 
     def is_game_over(self) -> bool:
         return self.viewer.is_game_over()

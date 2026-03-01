@@ -6,6 +6,7 @@ notes: a most basic implementation of genetic cross breeding and mutation to att
         a neural network. Assumes the standard Keras model from Donkeycar project.
         Lower score means less loss = better.
 """
+
 import argparse
 import json
 import os

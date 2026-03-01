@@ -6,14 +6,17 @@ notes: a most basic implementation of genetic cross breeding and mutation to att
         a neural network. Assumes the standard Keras model from Donkeycar project.
         Lower score means less loss = better.
 """
+
 import argparse
 import os
 import threading
 import warnings
 
-import gym
+import gymnasium as gym
 import numpy as np
 from simple_gen import GeneticAlg, KerasNNAgent
+
+import gym_donkeycar  # noqa: F401
 
 # noisy, noisy tensorflow. we love you.
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -61,11 +64,11 @@ class KerasDriveAgent(KerasNNAgent):
             K.set_session(self.sess)
             self.model._make_predict_function()
 
-        env = gym.make(conf["env_name"], exe_path="remote", host=conf["host"], port=conf["port"])
+        env = gym.make(conf["env_name"], conf={"exe_path": "remote", "host": conf["host"], "port": conf["port"]})
 
         # setup some custom reward and over functions
-        env.set_reward_fn(custom_reward)
-        env.set_episode_over_fn(custom_episode_over)
+        env.unwrapped.viewer.set_reward_fn(custom_reward)
+        env.unwrapped.viewer.set_episode_over_fn(custom_episode_over)
 
         self.simulate(env)
         env.close()
@@ -138,18 +141,18 @@ class KerasDriveAgent(KerasNNAgent):
 
     def simulate(self, env):
         # Reset the environment
-        obv = env.reset()
+        obv, info = env.reset()
 
         for _ in range(self.conf["MAX_TIME_STEPS"]):
             # Select an action
             action = self.select_action(obv)
 
             # execute the action
-            obv, reward, done, _ = env.step(action)
+            obv, reward, terminated, truncated, _ = env.step(action)
 
             self.score += reward
 
-            if done:
+            if terminated or truncated:
                 break
 
         print("agent simulate step done. total reward:", self.score)

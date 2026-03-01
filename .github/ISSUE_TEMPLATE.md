@@ -1,4 +1,4 @@
-* OpenAI Gym Environments for Donkey Carversion:
+* Gymnasium Environments for Donkey Car version:
 * Python version:
 * Operating System:
 

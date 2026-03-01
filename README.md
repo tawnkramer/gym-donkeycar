@@ -1,8 +1,8 @@
-# OpenAI Gym Environments for Donkey Car
+# Gymnasium Environments for Donkey Car
 
 [![pypi](https://img.shields.io/pypi/v/gym-donkeycar.svg)](https://pypi.python.org/pypi/gym-donkeycar) [![CI](https://github.com/tawnkramer/gym-donkeycar/workflows/CI/badge.svg)](https://github.com/tawnkramer/gym-donkeycar/actions) [![Documentation Status](https://readthedocs.org/projects/gym-donkeycar/badge/?version=latest)](https://gym-donkeycar.readthedocs.io/en/latest/?badge=latest)
 
-Donkey Car OpenAI Gym
+Donkey Car Gymnasium (formerly OpenAI Gym)
 
   - Free software: MIT license
   - Documentation: <https://gym-donkeycar.readthedocs.io/en/latest/>
@@ -19,12 +19,12 @@ pip install git+https://github.com/tawnkramer/gym-donkeycar
 
 ## Example Usage
 
-A short and compact introduction for people who know gym environments,
+A short and compact introduction for people who know gym/gymnasium environments,
 but want to understand this one. Simple example code:
 
 ```python
 import os
-import gym
+import gymnasium as gym
 import gym_donkeycar
 import numpy as np
 
@@ -39,11 +39,11 @@ conf = { "exe_path" : exe_path, "port" : port }
 env = gym.make("donkey-generated-track-v0", conf=conf)
 
 # PLAY
-obs = env.reset()
+obs, info = env.reset()
 for t in range(100):
   action = np.array([0.0, 0.5]) # drive straight with small speed
   # execute the action
-  obs, reward, done, info = env.step(action)
+  obs, reward, terminated, truncated, info = env.step(action)
 
 # Exit the scene
 env.close()
@@ -52,20 +52,20 @@ env.close()
 or if you already launched the simulator:
 
 ```python
-import gym
+import gymnasium as gym
 import numpy as np
 
 import gym_donkeycar
 
 env = gym.make("donkey-warren-track-v0")
 
-obs = env.reset()
+obs, info = env.reset()
 try:
     for _ in range(100):
         # drive straight with small speed
         action = np.array([0.0, 0.5])  
         # execute the action
-        obs, reward, done, info = env.step(action)
+        obs, reward, terminated, truncated, info = env.step(action)
 except KeyboardInterrupt:
     # You can kill the program using ctrl+c
     pass

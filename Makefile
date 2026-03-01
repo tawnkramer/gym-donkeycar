@@ -37,9 +37,9 @@ type:
 lint:
 	# stop the build if there are Python syntax errors or undefined names
 	# see https://lintlyci.github.io/Flake8Rules/
-	ruff ${LINT_PATHS} --select=E9,F63,F7,F82 --show-source
+	ruff check ${LINT_PATHS} --select=E9,F63,F7,F82 --output-format=full
 	# exit-zero treats all errors as warnings.
-	ruff ${LINT_PATHS} --exit-zero
+	ruff check ${LINT_PATHS} --exit-zero
 
 format:
 	# Sort imports

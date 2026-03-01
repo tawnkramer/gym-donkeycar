@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 with open(os.path.join("gym_donkeycar", "version.txt")) as file_handler:
     __version__ = file_handler.read().strip()
 
-description = "OpenAI Gym Environments for Donkey Car"
+description = "Gymnasium Environments for Donkey Car"
 
 
 with open("README.md") as readme_file:
@@ -15,8 +15,8 @@ with open("README.md") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-# gym 0.23 introduces breaking changes
-requirements = ["gym==0.22", "numpy", "pillow"]
+# Migrated from OpenAI gym to gymnasium
+requirements = ["gymnasium>=0.29.0", "numpy", "pillow"]
 
 
 setup(
@@ -66,7 +66,7 @@ setup(
     license="MIT license",
     long_description=readme + "\n\n" + history,
     include_package_data=True,
-    keywords="donkeycar, environment, agent, rl, openaigym, openai-gym, gym",
+    keywords="donkeycar, environment, agent, rl, openaigym, openai-gym, gym, gymnasium",
     packages=find_packages(),
     url="https://github.com/tawnkramer/gym-donkeycar",
     version=__version__,

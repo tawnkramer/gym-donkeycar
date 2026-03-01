@@ -4,6 +4,15 @@ History
 
 1.3.1 (WIP)
 ------------------
+- **Major migration from OpenAI Gym to Gymnasium**
+
+  - OpenAI Gym is deprecated; Gymnasium is actively maintained by Farama Foundation
+  - Updated all imports: ``import gymnasium as gym``
+  - Updated API: ``step()`` returns 5 values (obs, reward, terminated, truncated, info), ``reset()`` returns 2 values (obs, info)
+  - See ``tests/UPDATE_GYM2GYMNASIUM.md`` for complete migration details
+  - All examples updated and tested with Gymnasium API
+  - All tests passing with gymnasium>=0.29.0
+
 - Use forward velocity in the reward function
 - Use ruff instead of flake8 and move most configs to ``pyproject.toml``
 

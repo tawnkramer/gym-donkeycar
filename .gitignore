@@ -4,7 +4,9 @@ __pycache__/
 *$py.class
 .DS_Store
 .pytype/
-
+CLAUDE.md
+examples/EXAMPLES_README.md
+tests/UPDATE_GYM2GYMNASIUM.md
 
 # C extensions
 *.so

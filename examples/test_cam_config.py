@@ -3,8 +3,10 @@
 import argparse
 import uuid
 
-import gym
+import gymnasium as gym
 import numpy as np
+
+import gym_donkeycar  # noqa: F401
 
 if __name__ == "__main__":
     # Initialize the donkey environment
@@ -60,18 +62,18 @@ if __name__ == "__main__":
 
     env = gym.make(args.env_name, conf=conf)
 
-    print("Env cam size: {}".format(env.viewer.get_sensor_size()))
+    print("Env cam size: {}".format(env.unwrapped.viewer.get_sensor_size()))
 
     speed = 0.5
     steer = 0.0
     max_steer = 1.0
 
     # PLAY
-    obv = env.reset()
+    obv, info = env.reset()
     for t in range(100):
         action = np.array([steer, speed])  # drive straight with small speed
         try:
-            obv, reward, done, info = env.step(action)
+            obv, reward, terminated, truncated, info = env.step(action)
         except Exception as ex:
             print("Exception: {}".format(ex))
 
@@ -80,8 +82,9 @@ if __name__ == "__main__":
         elif t == 10:
             print("Actual camera size: {}".format(obv.shape))
 
+        done = terminated or truncated
         if done or (info["hit"] is True):
-            obv = env.reset()
+            obv, info = env.reset()
             print("Exiting d/h: {}/{}".format(done, info["hit"]))
             break
 

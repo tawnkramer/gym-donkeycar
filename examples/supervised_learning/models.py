@@ -3,6 +3,7 @@ Models
 Define the different NN models we will use
 Author: Tawn Kramer
 """
+
 from __future__ import print_function
 
 import conf

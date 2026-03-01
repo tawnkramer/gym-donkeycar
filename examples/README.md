@@ -1,15 +1,51 @@
 # Examples
 
-some sample code to use the gym-donkeycar environment
+Sample code to use the gym-donkeycar Gymnasium environment.
 
-## gym_test.py
+**📖 For Gymnasium documentation and API reference, see [gymnasium.farama.org](https://gymnasium.farama.org/)**
 
-Some minimal code to load the gym-donkeycar environment and test
+## Quick Start
 
-## reinforcement_learning
+Make sure you have a simulator running, then:
 
-A dir of sample code of [reinforcement learning](https://github.com/tawnkramer/gym-donkeycar/tree/master/examples/reinforcement_learning) with gym-donkeycar
+```bash
+# Test with random actions
+python gym_test.py --sim manual --env_name donkey-generated-track-v0
 
-## supervised_learning
+# Test camera configuration
+python test_cam_config.py --sim manual --env_name donkey-warehouse-v0
 
-A dir of sample code of [supervised learning](https://github.com/tawnkramer/gym-donkeycar/tree/master/examples/supervised_learning) with gym-donkeycar
+# Train with PPO (requires: pip install stable-baselines3)
+python reinforcement_learning/ppo_train.py --sim manual --env_name donkey-warehouse-v0
+```
+
+## Important: Gymnasium Migration
+
+All examples have been updated for Gymnasium API. Key changes:
+
+- Use `import gymnasium as gym` (not `import gym`)
+- `step()` returns 5 values: `obs, reward, terminated, truncated, info`
+- `reset()` returns 2 values: `obs, info`
+- Access custom attributes with `env.unwrapped.viewer`
+
+See the [Gymnasium Migration Guide](https://gymnasium.farama.org/introduction/migration_guide/) for complete migration details.
+
+## Examples Overview
+
+### gym_test.py
+Minimal code to test the environment with random actions
+
+### test_cam_config.py
+Test custom camera configuration settings
+
+### reinforcement_learning/
+Sample code for [reinforcement learning](https://github.com/tawnkramer/gym-donkeycar/tree/master/examples/reinforcement_learning) with gym-donkeycar
+- `ppo_train.py`: PPO training with Stable-Baselines3
+- `ddqn.py`: Deep Double Q-Learning implementation
+
+### genetic_alg/
+Genetic algorithm for evolving neural network controllers
+- **Note**: Requires TensorFlow 1.x (legacy, may not work on Python 3.10+)
+
+### supervised_learning/
+Sample code for [supervised learning](https://github.com/tawnkramer/gym-donkeycar/tree/master/examples/supervised_learning) from recorded driving data

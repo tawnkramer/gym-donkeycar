@@ -4,6 +4,7 @@ author: Felix Yu
 date: 2018-09-12
 original: https://github.com/flyyufelix/donkey_rl/blob/master/donkey_rl/src/ddqn.py
 """
+
 import argparse
 import os
 import random
@@ -13,7 +14,7 @@ import uuid
 from collections import deque
 
 import cv2
-import gym
+import gymnasium as gym
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import backend as K
@@ -21,7 +22,7 @@ from tensorflow.keras.layers import Activation, Conv2D, Dense, Flatten
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 
-import gym_donkeycar
+import gym_donkeycar  # noqa: F401
 
 EPISODES = 10000
 img_rows, img_cols = 80, 80
@@ -251,7 +252,7 @@ def run_ddqn(args):
             print("Episode: ", e)
 
             done = False
-            obs = env.reset()
+            obs, info = env.reset()
 
             episode_len = 0
 
@@ -265,7 +266,8 @@ def run_ddqn(args):
                 # Get action for the current state and go one step in environment
                 steering = agent.get_action(s_t)
                 action = [steering, throttle]
-                next_obs, reward, done, info = env.step(action)
+                next_obs, reward, terminated, truncated, info = env.step(action)
+                done = terminated or truncated
 
                 x_t1 = agent.process_image(next_obs)
 

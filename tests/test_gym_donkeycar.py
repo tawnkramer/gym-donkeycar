@@ -3,7 +3,7 @@
 
 """Tests for `gym_donkeycar` package."""
 
-import gym
+import gymnasium as gym
 
 env_list = [
     "donkey-warehouse-v0",
@@ -26,7 +26,8 @@ def test_load_gyms(mocker):
 
     for i, gym_name in enumerate(env_list):
         env = gym.make(gym_name, conf=conf)
-        assert env.ACTION_NAMES == ["steer", "throttle"]
+        # Use env.unwrapped to access the underlying DonkeyEnv attributes
+        assert env.unwrapped.ACTION_NAMES == ["steer", "throttle"]
         assert env.spec.id == gym_name
         assert sim_ctl.call_count == i + 1
         assert unity_proc.call_count == i + 1

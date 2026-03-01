@@ -3,6 +3,7 @@ Train
 Train your neural network
 Author: Tawn Kramer
 """
+
 from __future__ import print_function
 
 import argparse

@@ -4,6 +4,7 @@ Author: Tawn Kramer
 
 Base class for a handler expected by SimClient
 """
+
 from typing import Any, Dict
 
 from gym_donkeycar.core.client import SDClient

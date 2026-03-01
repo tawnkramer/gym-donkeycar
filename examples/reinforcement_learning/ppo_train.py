@@ -5,11 +5,15 @@ date: 13 October 2018
 notes: ppo2 test from stable-baselines here:
 https://github.com/hill-a/stable-baselines
 """
+
 import argparse
 import uuid
 
-import gym
+import gymnasium as gym
 from stable_baselines3 import PPO
+from stable_baselines3.common.callbacks import CheckpointCallback
+
+import gym_donkeycar  # noqa: F401
 
 if __name__ == "__main__":
     # Initialize the donkey environment
@@ -25,6 +29,7 @@ if __name__ == "__main__":
         "donkey-warren-track-v0",
         "donkey-thunderhill-track-v0",
         "donkey-circuit-launch-track-v0",
+        "donkey-mountain-track-v0",
     ]
 
     parser = argparse.ArgumentParser(description="ppo_train")
@@ -39,6 +44,12 @@ if __name__ == "__main__":
     parser.add_argument("--multi", action="store_true", help="start multiple sims at once")
     parser.add_argument(
         "--env_name", type=str, default="donkey-warehouse-v0", help="name of donkey sim environment", choices=env_list
+    )
+    parser.add_argument(
+        "--timesteps", type=int, default=10000, help="number of timesteps to train for (default: 10000)"
+    )
+    parser.add_argument(
+        "--load", type=str, default=None, help="path to pretrained model to load and continue training"
     )
 
     args = parser.parse_args()
@@ -70,13 +81,13 @@ if __name__ == "__main__":
 
         model = PPO.load("ppo_donkey")
 
-        obs = env.reset()
+        obs, info = env.reset()
         for _ in range(1000):
             action, _states = model.predict(obs, deterministic=True)
-            obs, reward, done, info = env.step(action)
+            obs, reward, terminated, truncated, info = env.step(action)
             env.render()
-            if done:
-                obs = env.reset()
+            if terminated or truncated:
+                obs, info = env.reset()
 
         print("done testing")
 
@@ -84,18 +95,35 @@ if __name__ == "__main__":
         # make gym env
         env = gym.make(args.env_name, conf=conf)
 
-        # create cnn policy
-        model = PPO("CnnPolicy", env, verbose=1)
+        # create or load model
+        if args.load:
+            print(f"Loading pretrained model from {args.load}")
+            model = PPO.load(args.load, env=env)
+            print("Continuing training from pretrained model...")
+        else:
+            print("Creating new model from scratch...")
+            model = PPO("CnnPolicy", env, verbose=1)
+
+        # set up checkpoint callback to save model every 5000 steps
+        checkpoint_callback = CheckpointCallback(
+            save_freq=5000,
+            save_path="./checkpoints/",
+            name_prefix="ppo_donkey",
+            save_replay_buffer=False,
+            save_vecnormalize=False,
+        )
 
         # set up model in learning mode with goal number of timesteps to complete
-        model.learn(total_timesteps=10000)
+        print(f"Training for {args.timesteps} timesteps...")
+        print("Model will be saved every 5000 steps to ./checkpoints/")
+        model.learn(total_timesteps=args.timesteps, callback=checkpoint_callback)
 
-        obs = env.reset()
+        obs, info = env.reset()
 
         for i in range(1000):
             action, _states = model.predict(obs, deterministic=True)
 
-            obs, reward, done, info = env.step(action)
+            obs, reward, terminated, truncated, info = env.step(action)
 
             try:
                 env.render()
@@ -103,15 +131,11 @@ if __name__ == "__main__":
                 print(e)
                 print("failure in render, continuing...")
 
-            if done:
-                obs = env.reset()
-
-            if i % 100 == 0:
-                print("saving...")
-                model.save("ppo_donkey")
+            if terminated or truncated:
+                obs, info = env.reset()
 
         # Save the agent
         model.save("ppo_donkey")
-        print("done training")
+        print("done training, model saved as ppo_donkey.zip")
 
     env.close()
